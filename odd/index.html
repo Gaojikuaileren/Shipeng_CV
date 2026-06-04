@@ -28,6 +28,7 @@
 
   <!-- 独立数据（不引用主站 base.js，彻底隔离）-->
   <script src="./data.js"></script>
+  <script src="../scripts/stats.js"></script>
   <script src="../scripts/i18n-ui.js"></script>
   <script src="../scripts/i18n.js"></script>
   <script src="../scripts/identity.js"></script>
@@ -38,6 +39,7 @@
     // 兼职页极简启动：直接用本页 data.js 的 RESUME_BASE，不走变体系统
     document.addEventListener("DOMContentLoaded", function () {
       if (!window.RESUME_BASE) return;
+      if (window.Stats) window.Stats.ping();
       window.Identity.init();
       window.I18n.init(RESUME_BASE.meta);
       window.toast = window.toast || function (m) { console.log(m); };

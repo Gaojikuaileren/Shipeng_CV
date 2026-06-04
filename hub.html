@@ -7,75 +7,110 @@
   <meta name="robots" content="noindex, nofollow" />
   <meta name="color-scheme" content="light" />
   <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%232f5043"/><text x="50" y="74" font-size="60" fill="white" font-family="sans-serif" text-anchor="middle">S</text></svg>' />
-
   <link rel="stylesheet" href="styles/fonts.css" />
   <link rel="stylesheet" href="styles/tokens.css" />
   <style>
     * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100vh; background: var(--paper-2);
-      font-family: var(--font-sans); display: flex; align-items: center; justify-content: center; padding: 24px; }
-    .hub-grid { width: 100%; max-width: 680px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-    @media (max-width: 520px) { .hub-grid { grid-template-columns: 1fr; gap: 14px; } }
+    body { margin: 0; min-height: 100vh; background: var(--paper-2); font-family: var(--font-sans);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+    .console { width: 100%; max-width: 460px; display: flex; flex-direction: column; align-items: center; gap: 18px; }
 
-    .hub-card { position: relative; aspect-ratio: 3 / 2; background: #fff; border: 1px solid var(--line);
-      display: flex; align-items: center; justify-content: center; cursor: pointer;
-      box-shadow: inset 5px 0 0 transparent; transition: border-color .15s, box-shadow .15s, transform .15s; }
-    .hub-card:hover { border-color: var(--ink); box-shadow: inset 5px 0 0 var(--accent); transform: translateY(-3px); }
-    .hub-card.is-primary { box-shadow: inset 5px 0 0 var(--accent); }
-    .hub-no { font-family: var(--font-mono); font-size: clamp(3rem, 11vw, 5rem); font-weight: 700;
-      color: var(--ink); letter-spacing: -.03em; line-height: 1; }
+    /* 指令输入框 */
+    .cmd-wrap { width: 100%; display: flex; border: 1px solid var(--line-ink); background: #fff; }
+    .cmd-wrap.shake { animation: shake .3s; border-color: var(--accent); }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+    #cmd { flex: 1; border: none; outline: none; background: none; font-family: var(--font-mono);
+      font-size: 1.15rem; padding: 14px 16px; color: var(--ink); letter-spacing: .04em; }
+    #send { border: none; background: var(--ink); color: #fff; padding: 0 18px; cursor: pointer; font-size: 1.1rem; }
+    #send:hover { background: var(--accent); }
 
-    .hub-copy { position: absolute; top: 10px; right: 10px; width: 34px; height: 34px;
-      border: 1px solid var(--line); background: #fff; color: var(--ink-soft); cursor: pointer;
-      font-size: 15px; line-height: 1; display: flex; align-items: center; justify-content: center;
-      transition: background .15s, color .15s, border-color .15s; }
-    .hub-copy:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
-    .hub-copy.done { background: var(--accent); color: #fff; border-color: var(--accent); }
-    .hub-copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    /* 底端两数字 */
+    .stats { font-family: var(--font-mono); font-size: .82rem; color: var(--ink-faint); letter-spacing: .05em;
+      display: flex; gap: 20px; }
+    .stats b { color: var(--ink); font-weight: 600; }
+
+    /* /sdata 数据视图 */
+    .data { width: 100%; max-width: 460px; margin-top: 10px; display: none; }
+    .data.show { display: block; }
+    .data-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;
+      font-family: var(--font-mono); font-size: .72rem; color: var(--ink-faint); letter-spacing: .08em; }
+    .data-close { border: none; background: none; color: var(--ink-faint); cursor: pointer; font-size: 1rem; }
+    .data-close:hover { color: var(--ink); }
+    .log { list-style: none; margin: 0; padding: 0; max-height: 50vh; overflow: auto; border-top: 1px solid var(--line); }
+    .log li { font-family: var(--font-mono); font-size: .76rem; color: var(--ink-soft);
+      padding: 5px 2px; border-bottom: 1px solid var(--line); display: flex; gap: 12px; }
+    .log .i { color: var(--ink-faint); min-width: 30px; text-align: right; }
+    .log-empty { font-family: var(--font-mono); font-size: .76rem; color: var(--ink-faint); padding: 12px 2px; }
   </style>
 </head>
 <body>
-  <div class="hub-grid" id="grid"></div>
+  <main class="console">
+    <div class="cmd-wrap" id="wrap">
+      <input id="cmd" placeholder="" autocomplete="off" autofocus />
+      <button id="send" type="button" aria-label="执行">↵</button>
+    </div>
+    <div class="stats" id="stats"><span>Σ <b id="st-total">—</b></span><span>W <b id="st-week">—</b></span></div>
+  </main>
 
+  <div class="data" id="data">
+    <div class="data-head"><span id="data-title">ACCESS LOG</span><button class="data-close" id="data-close" aria-label="关闭">✕</button></div>
+    <ul class="log" id="log"></ul>
+  </div>
+
+  <script src="scripts/stats.js"></script>
   <script>
-    var V = [
-      { no: "01", target: "?v=ue5-tech", primary: true },
-      { no: "02", target: "?v=art-vr" },
-      { no: "03", target: "?v=designer" },
-      { no: "04", target: "odd/" },
-    ];
-    var dir = location.href.replace(/[^/]*(\?.*)?(#.*)?$/, ""); // 本页所在目录
-    var grid = document.getElementById("grid");
+    var dir = location.href.replace(/[^/]*(\?.*)?(#.*)?$/, ""); // 本页目录
+    var ROUTES = { "/s01": "?v=ue5-tech", "/s02": "?v=art-vr", "/s03": "?v=designer", "/s04": "odd/" };
 
-    V.forEach(function (v) {
-      var card = document.createElement("div");
-      card.className = "hub-card" + (v.primary ? " is-primary" : "");
-      card.dataset.target = v.target;
-      var no = document.createElement("span");
-      no.className = "hub-no"; no.textContent = v.no;
-      var copy = document.createElement("button");
-      copy.className = "hub-copy"; copy.type = "button";
-      copy.dataset.target = v.target; copy.setAttribute("aria-label", "复制链接 " + v.no);
-      copy.textContent = "⧉";
-      card.appendChild(no); card.appendChild(copy);
-      grid.appendChild(card);
-    });
+    var cmd = document.getElementById("cmd");
+    var wrap = document.getElementById("wrap");
+    var dataEl = document.getElementById("data");
 
-    grid.addEventListener("click", function (e) {
-      var copy = e.target.closest(".hub-copy");
-      if (copy) {
-        e.stopPropagation();
-        var url = dir + copy.dataset.target;
-        var ok = function () { copy.classList.add("done"); copy.textContent = "✓";
-          setTimeout(function () { copy.classList.remove("done"); copy.textContent = "⧉"; }, 1400); };
-        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(ok, ok);
-        else { var t = document.createElement("textarea"); t.value = url; document.body.appendChild(t); t.select();
-          try { document.execCommand("copy"); } catch (_) {} document.body.removeChild(t); ok(); }
-        return;
-      }
-      var card = e.target.closest(".hub-card");
-      if (card) location.href = dir + card.dataset.target;
-    });
+    function run() {
+      var v = cmd.value.trim().toLowerCase();
+      if (ROUTES[v]) { location.href = dir + ROUTES[v]; return; }
+      if (v === "/sdata") { cmd.value = ""; showData(); return; }
+      // 无效指令：抖动提示（无文字）
+      wrap.classList.remove("shake"); void wrap.offsetWidth; wrap.classList.add("shake");
+    }
+    cmd.addEventListener("keydown", function (e) { if (e.key === "Enter") run(); });
+    document.getElementById("send").addEventListener("click", run);
+    document.getElementById("data-close").addEventListener("click", function () { dataEl.classList.remove("show"); cmd.focus(); });
+
+    function fmt(iso) {
+      var d = new Date(iso);
+      if (isNaN(d)) return iso;
+      var p = function (n) { return n < 10 ? "0" + n : n; };
+      return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " + p(d.getHours()) + ":" + p(d.getMinutes());
+    }
+
+    function showData() {
+      dataEl.classList.add("show");
+      var log = document.getElementById("log");
+      log.innerHTML = '<li class="log-empty">加载中…</li>';
+      if (!window.Stats || !window.Stats._ready()) { log.innerHTML = '<li class="log-empty">统计未配置：部署 Worker 后在 scripts/stats.js 填 URL</li>'; return; }
+      window.Stats.data().then(function (d) {
+        renderStats(d);
+        if (!d.log || !d.log.length) { log.innerHTML = '<li class="log-empty">暂无访问记录</li>'; return; }
+        log.innerHTML = "";
+        d.log.slice().reverse().forEach(function (iso, i) {
+          var li = document.createElement("li");
+          var idx = document.createElement("span"); idx.className = "i"; idx.textContent = (d.log.length - i);
+          var t = document.createElement("span"); t.textContent = fmt(iso);
+          li.appendChild(idx); li.appendChild(t); log.appendChild(li);
+        });
+      }).catch(function () { log.innerHTML = '<li class="log-empty">读取失败</li>'; });
+    }
+
+    function renderStats(d) {
+      document.getElementById("st-total").textContent = d.total != null ? d.total : "—";
+      document.getElementById("st-week").textContent = d.thisWeek != null ? d.thisWeek : "—";
+    }
+
+    // 载入时取底端两数字
+    if (window.Stats && window.Stats._ready()) {
+      window.Stats.data().then(renderStats).catch(function () {});
+    }
   </script>
 </body>
 </html>

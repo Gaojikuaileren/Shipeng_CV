@@ -9,6 +9,7 @@
       console.error("[cv] base data missing — 检查 data/base.js 是否已加载");
       return;
     }
+    if (window.Stats) window.Stats.ping(); // 记录一次访问（无 IP / cookie）
     window.Identity.init();
     window.I18n.init(window.RESUME_BASE.meta);
 
