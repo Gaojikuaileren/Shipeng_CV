@@ -3,119 +3,79 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>简历控制台</title>
+  <title>·</title>
   <meta name="robots" content="noindex, nofollow" />
   <meta name="color-scheme" content="light" />
   <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%232f5043"/><text x="50" y="74" font-size="60" fill="white" font-family="sans-serif" text-anchor="middle">S</text></svg>' />
 
   <link rel="stylesheet" href="styles/fonts.css" />
   <link rel="stylesheet" href="styles/tokens.css" />
-  <link rel="stylesheet" href="styles/base.css" />
   <style>
-    body { background: var(--paper-2); }
-    .hub { max-width: 900px; margin: 0 auto; padding: clamp(32px, 6vw, 72px) clamp(20px, 5vw, 40px); }
-    .hub-head { margin-bottom: var(--s5); }
-    .hub-head h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); font-weight: 700; letter-spacing: -.02em; }
-    .hub-head p { color: var(--ink-soft); margin-top: var(--s2); font-size: var(--fs-small); }
-    .hub-fullmode { display: inline-block; margin-top: var(--s3); font-size: var(--fs-small);
-      color: var(--ink-soft); border: 1px dashed var(--ink-faint); padding: 3px var(--s3); cursor: pointer; background: none; font-family: inherit; }
-    .hub-fullmode:hover { color: var(--ink); border-color: var(--ink); }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: var(--paper-2);
+      font-family: var(--font-sans); display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .hub-grid { width: 100%; max-width: 680px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 520px) { .hub-grid { grid-template-columns: 1fr; gap: 14px; } }
 
-    .hub-grid { display: grid; grid-template-columns: 1fr; gap: var(--s3); }
-    @media (min-width: 680px) { .hub-grid { grid-template-columns: 1fr 1fr; } }
+    .hub-card { position: relative; aspect-ratio: 3 / 2; background: #fff; border: 1px solid var(--line);
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      box-shadow: inset 5px 0 0 transparent; transition: border-color .15s, box-shadow .15s, transform .15s; }
+    .hub-card:hover { border-color: var(--ink); box-shadow: inset 5px 0 0 var(--accent); transform: translateY(-3px); }
+    .hub-card.is-primary { box-shadow: inset 5px 0 0 var(--accent); }
+    .hub-no { font-family: var(--font-mono); font-size: clamp(3rem, 11vw, 5rem); font-weight: 700;
+      color: var(--ink); letter-spacing: -.03em; line-height: 1; }
 
-    .hub-card { position: relative; background: var(--paper); border: 1px solid var(--line);
-      padding: var(--s4); cursor: pointer; display: flex; flex-direction: column; gap: 6px;
-      box-shadow: inset 4px 0 0 transparent; transition: border-color .15s, transform .15s, box-shadow .15s; }
-    .hub-card:hover { border-color: var(--ink); box-shadow: inset 4px 0 0 var(--accent); transform: translateY(-2px); }
-    .hub-card.is-primary { box-shadow: inset 4px 0 0 var(--accent); }
-    .hub-card-no { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--ink-faint); letter-spacing: .1em; }
-    .hub-card h2 { font-size: 1.15rem; font-weight: 600; }
-    .hub-card-desc { font-size: var(--fs-small); color: var(--ink-faint); flex: 1; line-height: 1.5; }
-    .hub-actions { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); margin-top: var(--s3); }
-    .hub-open { font-size: var(--fs-small); color: var(--accent); font-weight: 600; }
-    .hub-copy { font: inherit; font-size: var(--fs-micro); border: 1px solid var(--line-ink);
-      background: var(--paper); color: var(--ink); padding: 3px var(--s2); cursor: pointer; transition: background .15s, color .15s; }
-    .hub-copy:hover { background: var(--ink); color: var(--paper); }
-
-    .hub-toast { position: fixed; left: 50%; bottom: var(--s5); transform: translate(-50%, 12px);
-      background: var(--ink); color: var(--paper); padding: var(--s2) var(--s4); font-size: var(--fs-small);
-      opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; }
-    .hub-toast.show { opacity: 1; transform: translate(-50%, 0); }
-
-    .hub-foot { margin-top: var(--s6); font-size: var(--fs-micro); color: var(--ink-faint); line-height: 1.7; }
+    .hub-copy { position: absolute; top: 10px; right: 10px; width: 34px; height: 34px;
+      border: 1px solid var(--line); background: #fff; color: var(--ink-soft); cursor: pointer;
+      font-size: 15px; line-height: 1; display: flex; align-items: center; justify-content: center;
+      transition: background .15s, color .15s, border-color .15s; }
+    .hub-copy:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .hub-copy.done { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .hub-copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   </style>
 </head>
 <body>
-  <main class="hub">
-    <header class="hub-head">
-      <h1>简历控制台</h1>
-      <p>选择一个版本预览，或「复制对外链接」发送给对应的人。</p>
-      <button class="hub-fullmode" data-target="?mode=full">🔓 本人完整模式（显示私密字段）</button>
-    </header>
-
-    <div class="hub-grid" id="grid"></div>
-
-    <div class="hub-foot">
-      此页面仅供本人使用，未被任何公开页面链接、且已设 noindex。<br />
-      想更私密：把本文件改成不易猜的文件名（如 <code>x7m2.html</code>）即可。
-    </div>
-  </main>
-
-  <div class="hub-toast" id="toast"></div>
+  <div class="hub-grid" id="grid"></div>
 
   <script>
-    // 各版本（target 为相对路径；打开/复制都基于本页所在目录解析为绝对地址）
-    var VARIANTS = [
-      { no: "01", title: "UE5 技术美术 / 开发", desc: "游戏 · 艺术装置 · VR｜重点：项目 · 作品 · 技能", target: "?v=ue5-tech", primary: true },
-      { no: "02", title: "媒体艺术自由职业", desc: "名片身份 · 找客户与合作｜重点：项目 · 作品 · 联系", target: "?v=art-vr" },
-      { no: "03", title: "设计师", desc: "网页 / 平面 / 产品 / 交互｜重点：工作 · 教育", target: "?v=designer" },
-      { no: "04", title: "通用版", desc: "全板块完整展示（无参数默认页）", target: "" },
-      { no: "05", title: "兼职简历", desc: "彻底独立页 · 仅打工经历 / 语言 / 联系", target: "odd/" },
+    var V = [
+      { no: "01", target: "?v=ue5-tech", primary: true },
+      { no: "02", target: "?v=art-vr" },
+      { no: "03", target: "?v=designer" },
+      { no: "04", target: "odd/" },
     ];
-
     var dir = location.href.replace(/[^/]*(\?.*)?(#.*)?$/, ""); // 本页所在目录
-    function full(t) { return dir + t; }
-
     var grid = document.getElementById("grid");
-    VARIANTS.forEach(function (v) {
+
+    V.forEach(function (v) {
       var card = document.createElement("div");
       card.className = "hub-card" + (v.primary ? " is-primary" : "");
       card.dataset.target = v.target;
-      card.innerHTML =
-        '<span class="hub-card-no">' + v.no + (v.primary ? " · 主推" : "") + "</span>" +
-        "<h2></h2><p class=\"hub-card-desc\"></p>" +
-        '<div class="hub-actions"><span class="hub-open">打开预览 →</span>' +
-        '<button class="hub-copy" type="button">⧉ 复制对外链接</button></div>';
-      card.querySelector("h2").textContent = v.title;
-      card.querySelector(".hub-card-desc").textContent = v.desc;
-      card.querySelector(".hub-copy").dataset.target = v.target;
+      var no = document.createElement("span");
+      no.className = "hub-no"; no.textContent = v.no;
+      var copy = document.createElement("button");
+      copy.className = "hub-copy"; copy.type = "button";
+      copy.dataset.target = v.target; copy.setAttribute("aria-label", "复制链接 " + v.no);
+      copy.textContent = "⧉";
+      card.appendChild(no); card.appendChild(copy);
       grid.appendChild(card);
     });
 
-    // 点卡片 → 打开预览；点复制按钮 → 复制对外链接（阻止冒泡）
     grid.addEventListener("click", function (e) {
       var copy = e.target.closest(".hub-copy");
       if (copy) {
         e.stopPropagation();
-        var url = full(copy.dataset.target);
-        if (navigator.clipboard) navigator.clipboard.writeText(url).then(function () { toast("已复制：" + url); }, function () { toast(url); });
-        else toast(url);
+        var url = dir + copy.dataset.target;
+        var ok = function () { copy.classList.add("done"); copy.textContent = "✓";
+          setTimeout(function () { copy.classList.remove("done"); copy.textContent = "⧉"; }, 1400); };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(ok, ok);
+        else { var t = document.createElement("textarea"); t.value = url; document.body.appendChild(t); t.select();
+          try { document.execCommand("copy"); } catch (_) {} document.body.removeChild(t); ok(); }
         return;
       }
       var card = e.target.closest(".hub-card");
-      if (card) location.href = full(card.dataset.target);
+      if (card) location.href = dir + card.dataset.target;
     });
-
-    document.querySelector(".hub-fullmode").addEventListener("click", function () {
-      location.href = full(this.dataset.target);
-    });
-
-    var toastEl = document.getElementById("toast"), toastT;
-    function toast(msg) {
-      toastEl.textContent = msg; toastEl.classList.add("show");
-      clearTimeout(toastT); toastT = setTimeout(function () { toastEl.classList.remove("show"); }, 2200);
-    }
   </script>
 </body>
 </html>

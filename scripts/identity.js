@@ -15,7 +15,7 @@ window.Identity = {
     const p = new URLSearchParams(location.search);
 
     // 变体：清洗，只允许 [a-z0-9-]，防路径穿越
-    this.variant = this._sanitize(p.get("v")) || "default";
+    this.variant = this._sanitize(p.get("v")) || "ue5-tech";
 
     // 本人模式：?mode=full（骨架阶段先不加 PIN，TODO 见下）
     const urlFull = p.get("mode") === "full";

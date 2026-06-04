@@ -26,12 +26,12 @@ window.DataLoader = {
     script.src = `data/variants/${id}.js`;
     script.onload = () => cb(window.RESUME_VARIANT || {});
     script.onerror = () => {
-      // 变体不存在 → 回退 default；default 也失败就用空变体（纯 base）
-      if (id !== "default") {
-        console.warn(`[cv] variant "${id}" not found → fallback default`);
-        this._inject("default", cb);
+      // 变体不存在 → 回退 ue5-tech（主推默认）；它也失败就用空变体（纯 base）
+      if (id !== "ue5-tech") {
+        console.warn(`[cv] variant "${id}" not found → fallback ue5-tech`);
+        this._inject("ue5-tech", cb);
       } else {
-        console.warn("[cv] default variant missing → using base only");
+        console.warn("[cv] fallback variant missing → using base only");
         cb({});
       }
     };
@@ -55,7 +55,7 @@ window.DataLoader = {
       oddjobs: base.oddjobs ? this._flag(base.oddjobs, v) : [],
       languages: base.languages.slice(),
       education: base.education.slice(),
-      contact: this._flag(base.contact, v),        // 支持按 id hide 特定邮箱
+      contact: this._order(this._flag(base.contact, v), (v.order || {}).contact), // hideItems 隐藏 + order.contact 排序
       // 板块级控制（显示/顺序/重点）→ render
       sections: v.sections || { order: [], hide: [], emphasize: [] },
     };

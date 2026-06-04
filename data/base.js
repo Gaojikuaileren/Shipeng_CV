@@ -373,14 +373,14 @@ window.RESUME_BASE = {
      web → 部署后替换为实际域名 URL。
   ————————————————————————————————————————————— */
   contact: [
-    { id: "email-pro",       type: "email",   label: "Email",    value: "shipengouyang@gmail.com",                 visibility: "private", protected: true },
-    { id: "email-freelance", type: "email",   label: "Email",    value: "freeketchup@icloud.com",                  visibility: "private", protected: true },
-    { id: "phone",           type: "phone",   label: "Tel",      value: "+49 176 64161464",                        visibility: "private", protected: true },
-    { id: "linkedin",        type: "social",  label: "LinkedIn", value: "https://linkedin.com/in/shipeng-ouyang/", visibility: "public" },
-    { id: "instagram",       type: "social",  label: "Instagram",value: "https://instagram.com/s.gjklr/",          visibility: "public" },
-    { id: "vimeo",           type: "social",  label: "Vimeo",    value: "https://vimeo.com/user169301773",         visibility: "public" },
-    { id: "web",             type: "website", label: "Portfolio", value: "https://gaojikuaileren.github.io/Shipeng_CV/", visibility: "public" },
-    // GitHub 仅在 ue5-tech / art-vr 变体显示；default / designer / odd 通过 hide 隐藏
-    { id: "github",          type: "social",  label: "GitHub",   value: "https://github.com/Gaojikuaileren",       visibility: "public" },
+    { id: "email-pro",       type: "email",   label: "Email",     value: "shipengouyang@gmail.com",                 visibility: "private", protected: true },
+    { id: "email-freelance", type: "email",   label: "Email",     value: "freeketchup@icloud.com",                  visibility: "private", protected: true },
+    { id: "phone",           type: "phone",   label: "Tel",       value: "+49 176 64161464",                        visibility: "private", protected: true },
+    // 链接默认顺序：Portfolio → LinkedIn → GitHub → Instagram
+    { id: "web",             type: "website", label: "Portfolio", value: "https://www.spoy-profile.com/",           visibility: "public" },
+    { id: "linkedin",        type: "social",  label: "LinkedIn",  value: "https://linkedin.com/in/shipeng-ouyang/", visibility: "public" },
+    // GitHub 仅 ue5-tech / art-vr 显示（designer / odd 通过 hideItems 隐藏）；ue5-tech 用 order.contact 提到链接最前
+    { id: "github",          type: "social",  label: "GitHub",    value: "https://github.com/Gaojikuaileren",       visibility: "public" },
+    { id: "instagram",       type: "social",  label: "Instagram", value: "https://instagram.com/s.gjklr/",          visibility: "public" },
   ],
 };

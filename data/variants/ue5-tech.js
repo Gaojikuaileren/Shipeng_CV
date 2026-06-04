@@ -31,5 +31,6 @@ window.RESUME_VARIANT = {
   // emphasizeItems → 项目条目重点色
   emphasizeItems: ["prj-room", "prj-grau"],
   hideItems: ["email-freelance"],
-  order: {},
+  // GitHub 提到链接最前（email/phone 仍在前）
+  order: { contact: ["email-pro", "phone", "github"] },
 };
