@@ -38,6 +38,10 @@
   -webkit-touch-callout: none; -webkit-user-drag: none; }
 /* 自由职业兔子：大一号 */
 body.v-art-vr .cv-photo { max-width: 320px; }
+/* 手机端真人照适当缩小（自由职业兔子保持大）*/
+@media (max-width: 759px) {
+  body:not(.v-art-vr) .cv-photo { max-width: 220px; }
+}
 
 .cv-info { display: grid; grid-template-columns: auto 1fr; gap: var(--s1) var(--s3); margin-bottom: var(--s4); font-size: var(--fs-small); }
 .cv-info dt { color: var(--ink-faint); }
