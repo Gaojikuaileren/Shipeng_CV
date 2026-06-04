@@ -117,6 +117,7 @@
       const q = qrcode(0, "M"); q.addData(cardUrl(data)); q.make();
       const img = new Image();
       img.onload = () => { const s = px(17); ctx.drawImage(img, cw - s - px(8), ch - s - px(7), s, s); cv.toBlob(save); };
+      img.onerror = () => cv.toBlob(save); // QR 解码失败也照常导出名片（仅无二维码）
       img.src = q.createDataURL(6, 0);
     } else cv.toBlob(save);
   }

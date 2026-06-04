@@ -26,7 +26,7 @@
         var root = document.getElementById("cv-root");
         if (root) root.innerHTML = '<p style="padding:2rem;color:#565656">内容加载出错，请刷新页面。<br>If this persists, please reload.</p>';
       }
-    });
+    }).catch((e) => console.error("[cv] data load failed", e));
 
     window.I18n.onChange(() => {
       try {

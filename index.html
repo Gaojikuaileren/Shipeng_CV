@@ -37,6 +37,7 @@
       if (!VALID[v] && !full && !saved) {
         window.__BLANK__ = true;
         document.documentElement.className += " blank";
+        document.title = "·"; // 标签页标题也不暴露姓名 / CV
       }
     })();
   </script>

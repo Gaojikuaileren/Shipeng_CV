@@ -15,7 +15,6 @@
         const v = attrs[k];
         if (v == null || v === false) continue;
         if (k === "class") node.className = v;
-        else if (k === "html") node.innerHTML = v;
         else if (k.slice(0, 2) === "on" && typeof v === "function")
           node.addEventListener(k.slice(2).toLowerCase(), v);
         else node.setAttribute(k, v);
@@ -157,6 +156,10 @@
         valNode = revealNode(c.value, c.type === "email" ? "email" : c.type === "phone" ? "tel" : "text");
       else if (privateHidden)
         valNode = revealNode(c.value, "text");
+      else if (c.type === "email")
+        valNode = h("a", { class: "cv-link", href: "mailto:" + c.value }, c.value);
+      else if (c.type === "phone")
+        valNode = h("a", { class: "cv-link", href: "tel:" + c.value.replace(/\s+/g, "") }, c.value);
       else
         valNode = h("a", { class: "cv-link", href: c.value, target: "_blank", rel: "noopener" },
           c.value.replace(/^https?:\/\//, ""));
