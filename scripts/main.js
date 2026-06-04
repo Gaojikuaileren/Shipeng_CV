@@ -5,6 +5,7 @@
   "use strict";
 
   function boot() {
+    if (window.__BLANK__) return; // 裸入口占位（head 拦截脚本已处理显示），不渲染、不统计
     if (!window.RESUME_BASE) {
       console.error("[cv] base data missing — 检查 data/base.js 是否已加载");
       return;

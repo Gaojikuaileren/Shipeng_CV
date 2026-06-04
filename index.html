@@ -25,6 +25,27 @@
   <link rel="stylesheet" href="styles/base.css" />
   <link rel="stylesheet" href="styles/screen.css" />
   <link rel="stylesheet" href="styles/print.css" />
+
+  <!-- 裸入口拦截：无有效 ?v= 且非本人模式 → 占位（同步执行，须在 body 渲染前判定，防工具栏闪现暴露内容）-->
+  <script>
+    (function () {
+      var p = new URLSearchParams(location.search);
+      var v = (p.get("v") || "").replace(/[^a-z0-9-]/gi, "");
+      var VALID = { "ue5-tech": 1, "art-vr": 1, "designer": 1 };
+      var full = p.get("mode") === "full";
+      var saved = false; try { saved = localStorage.getItem("cv-mode") === "full"; } catch (e) {}
+      if (!VALID[v] && !full && !saved) {
+        window.__BLANK__ = true;
+        document.documentElement.className += " blank";
+      }
+    })();
+  </script>
+  <style>
+    /* 占位页：裸入口只见一个居中的点，不暴露任何内容 */
+    html.blank body > * { display: none !important; }
+    html.blank body::after { content: "·"; position: fixed; inset: 0; display: flex;
+      align-items: center; justify-content: center; color: #141414; font: 1.6rem sans-serif; }
+  </style>
 </head>
 <body>
   <!-- 顶部工具栏（打印时隐藏）-->
