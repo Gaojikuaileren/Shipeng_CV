@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" role="img" aria-label="Portrait placeholder">
+  <rect width="400" height="500" fill="#ededed"/>
+  <circle cx="200" cy="195" r="68" fill="#cfcfcf"/>
+  <path d="M96 430a104 104 0 0 1 208 0z" fill="#cfcfcf"/>
+  <text x="200" y="478" text-anchor="middle" font-family="-apple-system,Segoe UI,sans-serif" font-size="16" letter-spacing="3" fill="#9a9a9a">PORTRAIT</text>
+</svg>

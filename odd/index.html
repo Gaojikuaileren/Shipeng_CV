@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Shipeng Ouyang — Part-time</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="color-scheme" content="light" />
+  <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23141414"/><text x="50" y="74" font-size="64" fill="white" font-family="sans-serif" text-anchor="middle">S</text></svg>' />
+
+  <link rel="stylesheet" href="../styles/fonts.css" />
+  <link rel="stylesheet" href="../styles/tokens.css" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="../styles/screen.css" />
+  <link rel="stylesheet" href="../styles/print.css" />
+</head>
+<body>
+  <nav class="cv-toolbar no-print">
+    <div class="cv-toolbar-side"></div>
+    <div class="cv-toolbar-side">
+      <div class="lang-switch" id="lang-switch"></div>
+      <button class="tool-btn" id="btn-copy" type="button"><span class="btn-ico">⧉</span> <span class="btn-label">Copy</span></button>
+      <button class="tool-btn tool-btn--primary" id="btn-pdf" type="button"><span class="btn-ico">↓</span> <span class="btn-label">PDF</span></button>
+    </div>
+  </nav>
+
+  <main id="cv-root" class="cv-root"></main>
+
+  <!-- 独立数据（不引用主站 base.js，彻底隔离）-->
+  <script src="./data.js"></script>
+  <script src="../scripts/i18n-ui.js"></script>
+  <script src="../scripts/i18n.js"></script>
+  <script src="../scripts/identity.js"></script>
+  <script src="../scripts/render.js"></script>
+  <script src="../scripts/export/pdf.js"></script>
+  <script src="../scripts/export/text.js"></script>
+  <script>
+    // 兼职页极简启动：直接用本页 data.js 的 RESUME_BASE，不走变体系统
+    document.addEventListener("DOMContentLoaded", function () {
+      if (!window.RESUME_BASE) return;
+      window.Identity.init();
+      window.I18n.init(RESUME_BASE.meta);
+      window.toast = window.toast || function (m) { console.log(m); };
+      var data = Object.assign({ sections: {
+        order: ["intro", "oddjobs", "languages", "education"],
+        hide: ["skills", "toolset", "moreWorks", "projects", "work", "portfolio"],
+        emphasize: []
+      } }, RESUME_BASE);
+
+      function boot() { window.Render.all(data); }
+      boot();
+      window.I18n.onChange(boot);
+
+      var box = document.getElementById("lang-switch");
+      RESUME_BASE.meta.langs.forEach(function (lng) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "lang-btn" + (lng === I18n.current ? " active" : "");
+        b.dataset.lang = lng;
+        b.textContent = RESUME_BASE.meta.langLabels[lng] || lng;
+        b.addEventListener("click", function () { I18n.set(lng); });
+        box.appendChild(b);
+      });
+      I18n.onChange(function () {
+        document.querySelectorAll(".lang-btn").forEach(function (b) {
+          b.classList.toggle("active", b.dataset.lang === I18n.current);
+        });
+      });
+
+      var pdf = document.getElementById("btn-pdf");
+      if (pdf) pdf.addEventListener("click", function () { window.Exporter.resumePDF(); });
+      var copy = document.getElementById("btn-copy");
+      if (copy) copy.addEventListener("click", function () { window.Exporter.copySummary(data); });
+    });
+  </script>
+</body>
+</html>

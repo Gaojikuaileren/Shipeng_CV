@@ -1,0 +1,127 @@
+/* ============================================================
+   screen.css — 简历主体布局（移动优先 → 桌面增强）
+   ============================================================ */
+.cv-root { max-width: var(--maxw); margin: 0 auto; padding: var(--s5) clamp(24px, 5vw, 80px) var(--s7); }
+
+/* —— Header —— */
+.cv-head { margin-bottom: var(--s5); }
+.cv-greeting {
+  display: inline-block; font-size: var(--fs-small); letter-spacing: .04em;
+  color: var(--accent); border: var(--hair) solid var(--accent);
+  padding: 2px var(--s2); margin-bottom: var(--s3);
+}
+.cv-name { font-size: var(--fs-name); line-height: var(--lh-tight); letter-spacing: -.02em; font-weight: 700; }
+.cv-title { font-size: var(--fs-title); color: var(--ink-soft); margin-top: var(--s2); }
+
+/* —— Grid —— */
+.cv-grid { display: grid; grid-template-columns: 1fr; gap: var(--s5); }
+@media (min-width: 760px) {
+  .cv-grid { grid-template-columns: var(--aside-w) 1fr; gap: var(--s6); align-items: start; }
+  .cv-aside { position: sticky; top: 72px; }
+  .cv-photo img { max-width: none; } /* 桌面侧栏填满 */
+}
+
+/* —— Section 通用 —— */
+.cv-block { margin-bottom: var(--s5); }
+.cv-sec-title {
+  font-size: var(--fs-micro); text-transform: uppercase; letter-spacing: .16em;
+  color: var(--ink-faint); font-weight: 600;
+  padding-bottom: var(--s2); border-bottom: var(--hair) solid var(--line); margin-bottom: var(--s3);
+}
+
+/* —— Aside —— */
+.cv-photo { margin-bottom: var(--s4); }
+.cv-photo img { width: 100%; max-width: 180px; aspect-ratio: 4 / 5; object-fit: cover; background: var(--paper-2); filter: grayscale(1); }
+
+.cv-info { display: grid; grid-template-columns: auto 1fr; gap: var(--s1) var(--s3); margin-bottom: var(--s4); font-size: var(--fs-small); }
+.cv-info dt { color: var(--ink-faint); }
+.cv-info dd { color: var(--ink); }
+
+.cv-skills { display: flex; flex-direction: column; gap: var(--s2); }
+.cv-skill { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); font-size: var(--fs-small); }
+.cv-skill.is-emph { box-shadow: inset 2px 0 0 var(--accent); padding-left: var(--s2); }
+.cv-skill.is-emph .cv-skill-name { font-weight: 700; }
+.cv-level { display: inline-flex; gap: 3px; }
+.cv-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--line); }
+.cv-dot.on { background: var(--ink); }
+
+.cv-langs { display: flex; flex-direction: column; gap: var(--s2); font-size: var(--fs-small); }
+.cv-lang { display: flex; justify-content: space-between; }
+.cv-lang-level { color: var(--ink-faint); }
+
+.cv-contact { display: flex; flex-direction: column; gap: var(--s2); font-size: var(--fs-small); }
+.cv-contact-row { display: flex; gap: var(--s2); align-items: baseline; }
+.cv-contact-label { color: var(--ink-faint); min-width: 64px; }
+.cv-link { color: var(--ink); box-shadow: inset 0 -1px 0 var(--line); }
+.cv-link:hover { box-shadow: inset 0 -1px 0 var(--accent); color: var(--accent); }
+
+/* —— Main —— */
+.cv-intro p { font-size: var(--fs-lead); line-height: 1.5; max-width: 60ch; }
+
+.cv-item { padding: var(--s4) 0; border-top: var(--hair) solid var(--line); }
+.cv-item.is-emph { box-shadow: inset 3px 0 0 var(--accent); padding-left: var(--s3); }
+.cv-item-head { display: flex; flex-direction: column; gap: 2px; margin-bottom: var(--s2); }
+.cv-period { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--ink-faint); }
+.cv-item-title { font-size: 1.05rem; font-weight: 600; }
+.cv-at { color: var(--ink-faint); font-weight: 400; }
+.cv-item-body { color: var(--ink-soft); max-width: 64ch; }
+
+.cv-tags { display: flex; flex-wrap: wrap; gap: var(--s1); margin-top: var(--s3); }
+.cv-tags li { font-size: var(--fs-micro); font-family: var(--font-mono); color: var(--ink-soft); border: var(--hair) solid var(--line); padding: 1px var(--s2); }
+
+.cv-portfolio { display: grid; grid-template-columns: 1fr; gap: var(--s2); }
+.cv-work-link { display: flex; flex-direction: column; gap: 2px; padding: var(--s3); border: var(--hair) solid var(--line); transition: border-color .15s, transform .15s; }
+.cv-work-link:hover { border-color: var(--ink); transform: translateX(2px); }
+.cv-work-title { font-weight: 600; }
+.cv-work-note { font-size: var(--fs-small); color: var(--ink-faint); }
+.cv-badge { font-size: var(--fs-micro); color: var(--accent); font-weight: 700; }
+.cv-work.is-emph .cv-work-link { border-color: var(--accent); }
+
+/* profile 容器（照片＋情报）*/
+.cv-profile { margin-bottom: var(--s4); }
+
+/* —— 完整工具集（紧凑竖排，主区）——————————————— */
+.cv-toolset { display: flex; flex-direction: column; gap: var(--s2); }
+.cv-tset-row { display: flex; flex-direction: column; gap: 4px; }
+.cv-tset-label { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: .10em;
+  text-transform: uppercase; color: var(--ink-faint); }
+.cv-tset-tags { display: flex; flex-wrap: wrap; gap: 3px 5px; }
+.cv-tset-tag { font-size: 0.78rem; font-family: var(--font-mono);
+  color: var(--ink-soft); border: var(--hair) solid var(--line); padding: 0 5px; line-height: 1.7; }
+.cv-tset-tag.is-emph { color: var(--ink); border-color: var(--accent); font-weight: 600; }
+
+/* —— 地图链接 ——————————————————————————————————— */
+.cv-map-link { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--ink-faint);
+  margin-left: 4px; text-decoration: none; }
+.cv-map-link:hover { color: var(--accent); }
+
+/* —— 经历条目：context / type ————————————————— */
+.cv-item-ctx { font-size: var(--fs-small); color: var(--ink-faint); font-weight: 400; }
+.cv-item-type { font-size: var(--fs-small); color: var(--ink-soft); font-style: italic;
+  margin-bottom: var(--s1); }
+
+/* —— 作品集：屏幕版 ——————————————————————————— */
+.cv-work-meta { display: flex; flex-wrap: wrap; gap: 2px var(--s3); font-size: var(--fs-small); color: var(--ink-faint); }
+.cv-work-type { font-style: italic; }
+
+/* —— 次要作品列表 ——————————————————————————————— */
+.cv-moreworks { display: flex; flex-direction: column; gap: var(--s2); }
+.cv-mw-item { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--s3); font-size: var(--fs-small); }
+.cv-mw-year { font-family: var(--font-mono); color: var(--ink-faint); min-width: 40px; flex-shrink: 0; }
+.cv-mw-title { font-weight: 600; }
+.cv-mw-type { color: var(--ink-soft); }
+.cv-mw-tags { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--ink-faint); }
+
+/* 板块重点（变体 sections.emphasize）：标题用强调色 */
+.is-emph-section > .cv-sec-title { color: var(--accent); border-color: var(--accent); }
+
+/* 作品集打印块（QR＋作品目录）——屏幕隐藏，print.css 打印时显示 */
+.cv-portfolio-print { display: none; }
+
+/* 工具集/更多作品 横跨版 & 页尾——仅 PDF/打印显示 */
+.cv-toolset-print { display: none; }
+.cv-moreworks-print { display: none; }
+.cv-print-footer { display: none; }
+
+/* 名片：屏幕隐藏（仅导出/打印名片时显示）*/
+#cv-card { display: none; }

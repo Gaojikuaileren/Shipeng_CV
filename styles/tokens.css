@@ -1,0 +1,44 @@
+/* ============================================================
+   tokens.css — 设计变量：瑞士极简的"调色盘与节奏"
+   想换强调色 / 字体 / 间距，集中改这里即可。
+   ============================================================ */
+:root {
+  /* —— 字体栈（系统字体，零外部请求，规避 Google Fonts 的 GDPR 风险）——
+     未来若要更统一的观感，可自托管 Inter + Noto Sans CJK 替换这一行。 */
+  /* 拉丁恒用自托管 Hanken Grotesk；CJK 按语言在 base.css 里切优先级（默认中文） */
+  --font-sans:
+    "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial,
+    "PingFang SC", "Source Han Sans SC", "Noto Sans SC",
+    "Microsoft YaHei", "Yu Gothic UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+
+  /* —— 颜色：黑白灰 + 一个克制强调色 —— */
+  --ink:       #141414;
+  --ink-soft:  #565656;
+  --ink-faint: #8c8c8c;
+  --line:      #e6e6e6;
+  --line-ink:  #141414;
+  --paper:     #ffffff;
+  --paper-2:   #fafafa;
+  --accent:    #2f5043;   /* 深云杉绿（德系手工极简）；想微调改这里 */
+
+  /* —— 间距（8px 节奏）—— */
+  --s1: 4px;  --s2: 8px;  --s3: 16px; --s4: 24px;
+  --s5: 40px; --s6: 64px; --s7: 96px;
+
+  /* —— 排版尺度 —— */
+  --fs-name:  clamp(2rem, 6vw, 3.25rem);
+  --fs-title: clamp(1rem, 2.4vw, 1.3rem);
+  --fs-lead:  clamp(1.05rem, 2vw, 1.2rem);
+  --fs-body:  1rem;
+  --fs-small: 0.86rem;
+  --fs-micro: 0.74rem;
+
+  --lh-tight: 1.18;
+  --lh-body:  1.6;
+
+  /* —— 网格 —— */
+  --maxw:    1080px;
+  --aside-w: 300px;
+  --hair:    1px;
+}

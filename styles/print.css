@@ -1,0 +1,82 @@
+/* ============================================================
+   print.css — 打印 / PDF（屏幕版与打印版是两套排版）
+   简历：A4；名片：85×55mm（Chrome 命名页，其它浏览器回退 A4）。
+   ============================================================ */
+
+/* 名片命名页（放在 @media 外）*/
+@page cardpage { size: 85mm 55mm; margin: 0; }
+
+@media print {
+  /* 通用：去掉屏幕装饰 */
+  .cv-toolbar, .cv-toast, .card-modal { display: none !important; }
+  body { background: #fff; color: #000; }
+  .cv-link { box-shadow: none !important; color: #000; }
+  .cv-map-link { display: none !important; } /* 打印版不显示地图链接 */
+
+  /* ——— A4 简历（默认打印模式）——— */
+  @page { size: A4; margin: 16mm 13mm 12mm; } /* 顶部 16mm 更舒展 */
+  body:not(.printing-card) #cv-card { display: none; }
+
+  .cv-root { max-width: none; margin: 0; padding: 0; }
+  .cv-name { font-size: 23pt; }
+  .cv-title { font-size: 11.5pt; }
+  .cv-grid { grid-template-columns: 34% 1fr; gap: 8mm; }
+  /* —— 打印密度收紧：避免临界内容溢出到第二页 —— */
+  .cv-head { margin-bottom: 3mm; }
+  .cv-block { margin-bottom: 3.5mm; }
+  .cv-sec-title { margin-bottom: 2mm; padding-bottom: 1.5mm; }
+
+  /* 更多作品 + 工具集：PDF 里隐藏 main 内窄版，改横跨整页、排最后（更多作品在前）*/
+  .cv-main [data-sec="moreWorks"], .cv-main [data-sec="toolset"] { display: none !important; }
+  /* 横跨块是 .cv-root 下的普通全宽 block（不在 grid 内），打印跨页正常 */
+  .cv-moreworks-print { display: block !important; margin-top: 3.5mm; }
+  .cv-moreworks-print .cv-moreworks { columns: 2; column-gap: 10mm; }
+  .cv-moreworks-print .cv-mw-item { break-inside: avoid; }
+  .cv-toolset-print { display: block !important; margin-top: 3.5mm; }
+  .cv-toolset-print .cv-toolset { gap: 1.5mm; }
+  .cv-toolset-print .cv-tset-row { flex-direction: row; align-items: baseline; gap: 3mm; break-inside: avoid; }
+  .cv-toolset-print .cv-tset-label { min-width: 30mm; flex-shrink: 0; }
+  .cv-toolset-print .cv-tset-tags { flex: 1; }
+
+  /* 页尾联系方式：仅最后一页末尾（文档流，不每页重复）*/
+  body:not(.printing-card) .cv-print-footer {
+    display: block !important; margin-top: 6mm; padding-top: 2mm;
+    border-top: 0.4pt solid #bbb; font-size: 8.5pt; color: #444;
+    text-align: center; letter-spacing: .02em; break-inside: avoid;
+  }
+  .cv-aside { position: static !important; }
+  .cv-photo img { filter: none; }
+  .cv-intro p { font-size: 10.5pt; line-height: 1.45; }
+  .cv-item { padding-top: 2mm; padding-bottom: 2mm; } /* 不清左右 padding，保留 is-emph 左竖线间距 */
+  .cv-item.is-emph { padding-left: 4mm; } /* 绿条与内容的间距 */
+  .cv-item-body, .cv-item-title, .cv-info, .cv-skill, .cv-lang, .cv-contact-row { font-size: 9.5pt; }
+  /* 避免板块/条目被跨页切断 */
+  .cv-block, .cv-item, .cv-work { break-inside: avoid; }
+  .cv-sec-title { break-after: avoid; }
+
+  /* 设计师专项：省略教育方向描述 + 条目更紧凑，让工作经历+教育进第一页 */
+  body.v-designer [data-sec="education"] .cv-item-body { display: none; }
+  body.v-designer .cv-item { padding-top: 1.5mm; padding-bottom: 1.5mm; } /* 只上下，保留 is-emph 左间距 */
+  body.v-designer .cv-intro p { font-size: 10pt; }
+
+  /* 作品集打印态：超链接列表隐藏，显示「单 QR + 有序目录」 */
+  body:not(.printing-card) .cv-portfolio { display: none !important; }
+  body:not(.printing-card) .cv-portfolio-print {
+    display: flex !important; align-items: flex-start; gap: 6mm; margin-top: 2mm; }
+  .cv-pprint-qr svg { width: 28mm; height: 28mm; display: block; flex-shrink: 0; }
+  .cv-pprint-list { margin: 0; padding-left: 4mm; font-size: 9pt; line-height: 1.75; }
+  .cv-pi-title { font-weight: 600; }
+  .cv-pi-type { color: #666; }
+  .cv-pi-period { color: #888; font-size: 8.5pt; }
+
+  /* ——— 名片模式 ——— */
+  body.printing-card .cv-root { display: none !important; }
+  body.printing-card #cv-card { display: block !important; page: cardpage; }
+  body.printing-card .cv-card-inner {
+    box-sizing: border-box; width: 85mm; height: 55mm; padding: 6mm;
+    display: flex; flex-direction: column; justify-content: space-between; color: #000;
+  }
+  body.printing-card .cv-card-name { font-size: 14pt; font-weight: 700; }
+  body.printing-card .cv-card-title { font-size: 8pt; color: #333; margin-top: 1mm; }
+  body.printing-card .cv-card-lines { font-size: 7.5pt; line-height: 1.5; margin-top: auto; }
+}

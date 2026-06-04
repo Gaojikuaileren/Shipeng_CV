@@ -1,0 +1,4 @@
+# 简历靠分发链接传播，不靠搜索引擎收录。
+# 默认禁止所有合规爬虫索引（恶意爬虫无视 robots，另有 noindex meta + 字段防采集）。
+User-agent: *
+Disallow: /
