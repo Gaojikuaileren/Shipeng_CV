@@ -1,0 +1,8 @@
+name = "cv-stats"
+main = "cv-stats-worker.js"
+compatibility_date = "2026-01-01"
+account_id = "a74ca490a8e8c72086f754e944cc8f33"
+
+[[kv_namespaces]]
+binding = "CV_STATS"
+id = "2706c7de214f4398b61572c35ee1b670"

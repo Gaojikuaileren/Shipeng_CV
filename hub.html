@@ -24,26 +24,52 @@
     #send { border: none; background: var(--ink); color: #fff; padding: 0 18px; cursor: pointer; font-size: 1.1rem; }
     #send:hover { background: var(--accent); }
 
-    /* 底端两数字 */
+    /* 底端两数字（合计） */
     .stats { font-family: var(--font-mono); font-size: .82rem; color: var(--ink-faint); letter-spacing: .05em;
       display: flex; gap: 20px; }
     .stats b { color: var(--ink); font-weight: 600; }
 
+    /* 清零 / 操作反馈（顶部浮现，自动消失） */
+    .flash { position: fixed; top: 22px; left: 50%; transform: translateX(-50%);
+      font-family: var(--font-mono); font-size: .78rem; color: var(--accent); background: #fff;
+      border: 1px solid var(--accent); padding: 7px 16px; letter-spacing: .04em;
+      opacity: 0; pointer-events: none; transition: opacity .25s; }
+    .flash.show { opacity: 1; }
+
     /* /sdata 数据视图 */
     .data { width: 100%; max-width: 460px; margin-top: 10px; display: none; }
     .data.show { display: block; }
-    .data-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;
+    .data-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px;
       font-family: var(--font-mono); font-size: .72rem; color: var(--ink-faint); letter-spacing: .08em; }
     .data-close { border: none; background: none; color: var(--ink-faint); cursor: pointer; font-size: 1rem; }
     .data-close:hover { color: var(--ink); }
-    .log { list-style: none; margin: 0; padding: 0; max-height: 50vh; overflow: auto; border-top: 1px solid var(--line); }
-    .log li { font-family: var(--font-mono); font-size: .76rem; color: var(--ink-soft);
-      padding: 5px 2px; border-bottom: 1px solid var(--line); display: flex; gap: 12px; }
-    .log .i { color: var(--ink-faint); min-width: 30px; text-align: right; }
+
+    /* 分职业表格 */
+    .stat-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono);
+      font-size: .84rem; margin-bottom: 20px; }
+    .stat-table th { font-weight: 500; color: var(--ink-faint); text-align: right; padding: 0 0 8px;
+      font-size: .7rem; letter-spacing: .06em; border-bottom: 1px solid var(--line); }
+    .stat-table th:first-child { text-align: left; }
+    .stat-table td { padding: 7px 0; text-align: right; color: var(--ink); border-bottom: 1px solid var(--line);
+      font-variant-numeric: tabular-nums; }
+    .stat-table td.n { text-align: left; color: var(--ink-soft); }
+    .stat-table tr.sum td { border-top: 1px solid var(--line-ink); border-bottom: none; padding-top: 9px; font-weight: 600; }
+    .stat-table tr.sum td.n { color: var(--ink); }
+
+    /* 访问时间线 */
+    .log-title { font-family: var(--font-mono); font-size: .7rem; color: var(--ink-faint); letter-spacing: .08em; margin-bottom: 6px; }
+    .log { list-style: none; margin: 0; padding: 0; max-height: 34vh; overflow: auto; border-top: 1px solid var(--line); }
+    .log li { font-family: var(--font-mono); font-size: .74rem; color: var(--ink-soft);
+      padding: 5px 2px; border-bottom: 1px solid var(--line); display: flex; gap: 10px; align-items: baseline; }
+    .log .i { color: var(--ink-faint); min-width: 26px; text-align: right; }
+    .log .who { color: var(--accent); min-width: 52px; font-size: .68rem; }
+    .log .t { color: var(--ink-soft); }
     .log-empty { font-family: var(--font-mono); font-size: .76rem; color: var(--ink-faint); padding: 12px 2px; }
   </style>
 </head>
 <body>
+  <div class="flash" id="flash"></div>
+
   <main class="console">
     <div class="cmd-wrap" id="wrap">
       <input id="cmd" placeholder="" autocomplete="off" autofocus />
@@ -53,7 +79,9 @@
   </main>
 
   <div class="data" id="data">
-    <div class="data-head"><span id="data-title">ACCESS LOG</span><button class="data-close" id="data-close" aria-label="关闭">✕</button></div>
+    <div class="data-head"><span id="data-title">ACCESS</span><button class="data-close" id="data-close" aria-label="关闭">✕</button></div>
+    <table class="stat-table" id="stat-table"></table>
+    <div class="log-title">最近访问</div>
     <ul class="log" id="log"></ul>
   </div>
 
@@ -61,15 +89,27 @@
   <script>
     var dir = location.href.replace(/[^/]*(\?.*)?(#.*)?$/, ""); // 本页目录
     var ROUTES = { "/s01": "?v=ue5-tech", "/s02": "?v=art-vr", "/s03": "?v=designer", "/s04": "odd/" };
+    var NAMES = { "ue5-tech": "游戏开发", "art-vr": "媒体艺术", "designer": "设计师", "odd": "兼职" };
+    var ORDER = ["ue5-tech", "art-vr", "designer", "odd"];
+    var CLEAN = { "/clean01": "ue5-tech", "/clean02": "art-vr", "/clean03": "designer", "/clean04": "odd", "/cleanall": "all" };
 
     var cmd = document.getElementById("cmd");
     var wrap = document.getElementById("wrap");
     var dataEl = document.getElementById("data");
+    var flashEl = document.getElementById("flash");
+
+    function flash(msg) {
+      flashEl.textContent = msg;
+      flashEl.classList.add("show");
+      clearTimeout(flashEl._t);
+      flashEl._t = setTimeout(function () { flashEl.classList.remove("show"); }, 2200);
+    }
 
     function run() {
       var v = cmd.value.trim().toLowerCase();
       if (ROUTES[v]) { location.href = dir + ROUTES[v]; return; }
       if (v === "/sdata") { cmd.value = ""; showData(); return; }
+      if (CLEAN[v]) { cmd.value = ""; doClean(CLEAN[v]); return; }
       // 无效指令：抖动提示（无文字）
       wrap.classList.remove("shake"); void wrap.offsetWidth; wrap.classList.add("shake");
     }
@@ -81,30 +121,73 @@
       var d = new Date(iso);
       if (isNaN(d)) return iso;
       var p = function (n) { return n < 10 ? "0" + n : n; };
-      return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " + p(d.getHours()) + ":" + p(d.getMinutes());
+      return (d.getMonth() + 1) + "-" + p(d.getDate()) + " " + p(d.getHours()) + ":" + p(d.getMinutes());
     }
 
     function showData() {
       dataEl.classList.add("show");
+      var table = document.getElementById("stat-table");
       var log = document.getElementById("log");
+      table.innerHTML = "";
       log.innerHTML = '<li class="log-empty">加载中…</li>';
-      if (!window.Stats || !window.Stats._ready()) { log.innerHTML = '<li class="log-empty">统计未配置：部署 Worker 后在 scripts/stats.js 填 URL</li>'; return; }
+      if (!window.Stats || !window.Stats._ready()) { log.innerHTML = '<li class="log-empty">统计未配置</li>'; return; }
       window.Stats.data().then(function (d) {
-        renderStats(d);
-        if (!d.log || !d.log.length) { log.innerHTML = '<li class="log-empty">暂无访问记录</li>'; return; }
-        log.innerHTML = "";
-        d.log.slice().reverse().forEach(function (iso, i) {
-          var li = document.createElement("li");
-          var idx = document.createElement("span"); idx.className = "i"; idx.textContent = (d.log.length - i);
-          var t = document.createElement("span"); t.textContent = fmt(iso);
-          li.appendChild(idx); li.appendChild(t); log.appendChild(li);
-        });
+        renderStats(d); renderTable(d); renderLog(d);
       }).catch(function () { log.innerHTML = '<li class="log-empty">读取失败</li>'; });
+    }
+
+    function renderTable(d) {
+      var table = document.getElementById("stat-table");
+      var vs = d.variants || {};
+      var head = '<thead><tr><th></th><th>访问</th><th>PDF</th><th>本周</th></tr></thead>';
+      var body = '<tbody>';
+      ORDER.forEach(function (id) {
+        var x = vs[id] || { visits: 0, pdf: 0, thisWeek: 0 };
+        body += '<tr><td class="n">' + NAMES[id] + '</td><td>' + (x.visits||0) + '</td><td>' + (x.pdf||0) + '</td><td>' + (x.thisWeek||0) + '</td></tr>';
+      });
+      body += '<tr class="sum"><td class="n">合计</td><td>' + (d.total||0) + '</td><td>' + (d.totalPdf||0) + '</td><td>' + (d.thisWeek||0) + '</td></tr>';
+      body += '</tbody>';
+      table.innerHTML = head + body;
+    }
+
+    function renderLog(d) {
+      var log = document.getElementById("log");
+      var vs = d.variants || {};
+      var all = [];
+      ORDER.forEach(function (id) {
+        ((vs[id] && vs[id].log) || []).forEach(function (iso) { all.push({ iso: iso, who: NAMES[id] }); });
+      });
+      all.sort(function (a, b) { return a.iso < b.iso ? 1 : (a.iso > b.iso ? -1 : 0); }); // 新→旧
+      if (!all.length) { log.innerHTML = '<li class="log-empty">暂无访问记录</li>'; return; }
+      log.innerHTML = "";
+      all.forEach(function (item, i) {
+        var li = document.createElement("li");
+        var idx = document.createElement("span"); idx.className = "i"; idx.textContent = (all.length - i);
+        var who = document.createElement("span"); who.className = "who"; who.textContent = item.who;
+        var t = document.createElement("span"); t.className = "t"; t.textContent = fmt(item.iso);
+        li.appendChild(idx); li.appendChild(who); li.appendChild(t); log.appendChild(li);
+      });
     }
 
     function renderStats(d) {
       document.getElementById("st-total").textContent = d.total != null ? d.total : "—";
       document.getElementById("st-week").textContent = d.thisWeek != null ? d.thisWeek : "—";
+    }
+
+    function doClean(v) {
+      if (!window.Stats || !window.Stats._ready()) { flash("统计未配置"); return; }
+      var label = v === "all" ? "全部" : NAMES[v];
+      window.Stats.reset(v).then(function (r) {
+        if (r && r.ok) {
+          flash(label + " 已清零");
+          window.Stats.data().then(function (d) {
+            renderStats(d);
+            if (dataEl.classList.contains("show")) { renderTable(d); renderLog(d); }
+          }).catch(function () {});
+        } else {
+          flash("清零失败" + (r && r.error ? "：" + r.error : ""));
+        }
+      }).catch(function () { flash("清零失败"); });
     }
 
     // 载入时取底端两数字

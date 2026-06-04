@@ -39,7 +39,7 @@
     // 兼职页极简启动：直接用本页 data.js 的 RESUME_BASE，不走变体系统
     document.addEventListener("DOMContentLoaded", function () {
       if (!window.RESUME_BASE) return;
-      if (window.Stats) window.Stats.ping();
+      if (window.Stats) window.Stats.ping("odd");
       window.Identity.init();
       window.I18n.init(RESUME_BASE.meta);
       window.toast = window.toast || function (m) { console.log(m); };
@@ -70,7 +70,7 @@
       });
 
       var pdf = document.getElementById("btn-pdf");
-      if (pdf) pdf.addEventListener("click", function () { window.Exporter.resumePDF(); });
+      if (pdf) pdf.addEventListener("click", function () { if (window.Stats) window.Stats.pdfHit("odd"); window.Exporter.resumePDF(); });
       var copy = document.getElementById("btn-copy");
       if (copy) copy.addEventListener("click", function () { window.Exporter.copySummary(data); });
     });

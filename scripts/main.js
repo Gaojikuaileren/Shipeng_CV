@@ -9,9 +9,9 @@
       console.error("[cv] base data missing — 检查 data/base.js 是否已加载");
       return;
     }
-    if (window.Stats) window.Stats.ping(); // 记录一次访问（无 IP / cookie）
     window.Identity.init();
     window.I18n.init(window.RESUME_BASE.meta);
+    if (window.Stats) window.Stats.ping(window.Identity.variant); // 记录一次访问（按职业，无 IP / cookie）
 
     window.DataLoader.load(window.Identity.variant).then((data) => {
       try {
@@ -37,7 +37,10 @@
 
   function bindUI(data) {
     document.body.classList.add("v-" + window.Identity.variant); // 供 print.css 做变体专项排版
-    on("#btn-pdf", () => window.Exporter && window.Exporter.resumePDF());
+    on("#btn-pdf", () => {
+      if (window.Stats) window.Stats.pdfHit(window.Identity.variant);
+      window.Exporter && window.Exporter.resumePDF();
+    });
     on("#btn-card", () => window.Exporter && window.Exporter.card(data));
     on("#btn-copy", () => window.Exporter && window.Exporter.copySummary(data));
 
