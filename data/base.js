@@ -34,7 +34,7 @@ window.RESUME_BASE = {
       en: "Media Arts Developer · UE5 / VR / Interactive Installation",
       de: "Medienkünstler & Entwickler · UE5 / VR / Interaktive Installation",
     },
-    photo: "assets/photo/placeholder.svg",
+    photo: "assets/photo/FotoCV.jpg",
     photoAlt: { zh: "照片", ja: "顔写真", en: "Portrait", de: "Porträt" },
     fields: [
       { key: "location",

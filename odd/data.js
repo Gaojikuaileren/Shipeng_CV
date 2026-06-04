@@ -13,7 +13,7 @@ window.RESUME_BASE = {
       en: "Mini-Job & Part-time | Service · Warehouse · Kitchen Aid · General",
       de: "Mini-Job & Teilzeit | Service · Lager · Küchenhilfe · Aushilfe",
     },
-    photo: "../assets/photo/placeholder.svg",
+    photo: "../assets/photo/FotoCV.jpg",
     photoAlt: { zh: "照片", ja: "顔写真", en: "Portrait", de: "Porträt" },
     fields: [
       { key: "location", label: { zh: "所在地", ja: "所在地", en: "Location", de: "Standort" },
