@@ -17,7 +17,7 @@ window.RESUME_VARIANT = {
   greeting: null, // 发给特定客户时可以改这里，加定制问候
   sections: {
     order: ["intro", "projects", "portfolio", "education"],
-    hide: ["work", "toolset", "moreWorks", "email-pro"],
+    hide: ["work", "toolset", "moreWorks"],
     emphasize: ["projects", "portfolio", "contact"],
   },
   sidebar: ["cap-ue5", "cap-vr", "cap-isys", "cap-shader", "cap-3d", "cap-coding"],

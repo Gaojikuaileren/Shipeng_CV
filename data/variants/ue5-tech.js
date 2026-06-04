@@ -16,7 +16,7 @@ window.RESUME_VARIANT = {
   greeting: null,
   sections: {
     order: ["intro", "projects", "portfolio", "toolset", "moreWorks", "work", "education"],
-    hide: ["email-freelance"],
+    hide: [],
     emphasize: ["projects", "portfolio"],
   },
   // sidebar → 侧边栏核心能力（按此顺序显示）

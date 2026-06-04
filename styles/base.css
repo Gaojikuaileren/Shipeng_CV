@@ -18,6 +18,7 @@ h1, h2, h3, p, ul, dl, dd { margin: 0; }
 ul { list-style: none; padding: 0; }
 a { color: inherit; text-decoration: none; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+::selection { background: var(--accent); color: #fff; } /* 选中文本用品牌深绿 */
 
 /* —— 多语言字体与排版统一 —— */
 html { font-synthesis: none; } /* 有真 500/600/700，禁止合成假粗体 */
@@ -70,6 +71,12 @@ html[lang="zh"] body, html[lang="ja"] body { line-height: 1.72; }
 @media (max-width: 520px) {
   .tool-btn .btn-label { display: none; }
   .tool-btn { padding: var(--s2); }
+}
+
+/* 尊重用户「减弱动效」偏好（无障碍 / 省电）*/
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .001ms !important; animation-duration: .001ms !important; }
+  .cv-work-link:hover, .card-modal-panel { transform: none !important; }
 }
 
 /* —— 名片弹窗 —— */

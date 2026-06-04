@@ -24,14 +24,22 @@
 
 ## 数据流
 ```
-base.js（静态加载，提供 RESUME_BASE）
+base.js（RESUME_BASE：profile/intro/capabilities/tools/projects/work/moreWorks/languages/education/contact）
    ＋
-variants/<v>.js（按 ?v= 动态注入，提供 RESUME_VARIANT）
-   ↓ data-loader 合并（headline/intro 覆盖、emphasize 高亮、order 排序、hide 过滤、promote 置顶）
-   ↓ render 用 I18n.t() 取当前语言渲染
+variants/<v>.js（按 ?v= 动态注入，RESUME_VARIANT）
+   ↓ data-loader 合并：
+       · headline/intro/greeting 覆盖
+       · sidebar → 从 capabilities 选侧边栏能力（按数组序）
+       · highlightTools → 标记工具集高亮+排前
+       · sections{order,hide,emphasize} → 板块级控制
+       · emphasizeItems/hideItems → 条目级（项目/工作/联系 id）
+       · 无效 id → console.warn 提示
+   ↓ render 用 I18n.t() 取当前语言、DocumentFragment 一次性渲染
    ↓ #cv-root（屏幕） / #cv-card（名片）
 ```
 语言优先级：`?lang=` > localStorage > 浏览器语言 > `meta.defaultLang`。
+
+**技能两结构（解耦）**：`capabilities`（核心能力，侧边栏，四语带熟练度，变体 `sidebar` 选）＋ `tools`（具体软件，工具集，变体 `highlightTools` 高亮）。加能力/软件互不影响。
 
 ## 分发式身份（核心设计）
 **身份不靠"检测"，靠"分发"**——你给谁什么链接/暗号，就决定了他是谁：
@@ -53,16 +61,25 @@ variants/<v>.js（按 ?v= 动态注入，提供 RESUME_VARIANT）
 原则：**公网仓库里不允许出现真正敏感信息**。`visibility:"private"` 只能用于"默认不展示但不敏感"的字段（如出生年份、备注）；绝不能放住址、证件、签证、真实报价策略等。
 前端 PIN / ?mode=full 只是显示开关，不是安全机制。真正私密材料走单独 PDF 或邮件附件。
 
-## 待办 / 未来接口
-- [ ] **灌真实内容**：替换 `data/base.js` 占位（你给一种语言母本，补齐四语）
-- [ ] 名片 PNG 导出：`scripts/export/card.js` 的 TODO（方案A：SVG `<foreignObject>` → canvas，无依赖）
-- [ ] 本人模式入口：`?mode=full` 现可用；若加 PIN 仅作"防手滑"，不作安全承诺
-- [ ] 公开名片页：可被搜到的极简页（与 noindex 简历分开），用于自由职业获客
+## 进展 / 待办
+
+**已完成**（2026-06-04 已部署上线 `gaojikuaileren.github.io/Shipeng_CV/`）：
+- [x] 真实内容灌入；4 职业变体（ue5-tech/art-vr/designer/default）＋ 兼职独立页 `odd/`
+- [x] 名片 modal（分享 + canvas 离线绘 PNG）
+- [x] 自托管 Hanken 字体；技能系统重构成 `capabilities` / `tools`
+- [x] 私人控制台 `hub.html`（四选一 + 复制链接，替代"职位→链接生成器"）
+- [x] 性能/健壮/a11y/分享元信息/文档 多轮优化
+
+**未来接口（先不做）**：
+- [ ] 公开名片页：可被搜到的极简页（与 noindex 简历分开），自由职业获客用
 - [ ] 自定义域名（如 `shipeng.dev`），GitHub Pages 支持绑定
 - [ ] PWA「添加到主屏幕」
-- [ ] 艺术性小交互：`scripts/interactions/` 已留注册接口（可双端/单端开关、自动尊重 `prefers-reduced-motion`、用 transform/opacity 走 GPU 合成，无需专门硬件加速）
-- [ ] 自托管字体（Inter + Noto Sans CJK），跨设备观感更统一
-- [ ] 职位 → 链接 对照生成器（群发省事），`tools/` 下
+- [ ] 艺术性小交互：`scripts/interactions/` 已留注册接口（可按端开关、尊重 reduced-motion）
+- [ ] CJK 自托管字体（Noto Sans CJK），跨设备观感更统一
+
+**内容尾巴**：
+- [ ] 日语用词校对（如 art-vr「沉浸型」→「没入型」）
+- [ ] 真实 Vimeo 各作品链接（现指向主页）、真实照片（现占位 SVG）
 
 ## 关键约束（别踩）
 - 勿引 Google Fonts CDN（德国 GDPR）。

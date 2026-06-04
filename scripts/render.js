@@ -67,20 +67,22 @@
 
   /* —— Header ——————————————————————————————— */
   function renderHeader(d) {
+    const p = d.profile || {};
     const head = h("header", { class: "cv-head" });
     if (d.greeting) append(head, h("p", { class: "cv-greeting" }, t(d.greeting)));
-    append(head, h("h1", { class: "cv-name" }, t(d.profile.name)));
-    append(head, h("p", { class: "cv-title" }, t(d.profile.title)));
+    append(head, h("h1", { class: "cv-name" }, t(p.name)));
+    append(head, h("p", { class: "cv-title" }, t(p.title)));
     return head;
   }
 
   /* —— Profile（照片 + 情报）——————————————— */
   function renderProfile(d) {
+    const p = d.profile || {};
     const box = h("div", { class: "cv-profile" });
     append(box, h("div", { class: "cv-photo" },
-      h("img", { src: d.profile.photo, alt: t(d.profile.photoAlt), loading: "lazy" })));
+      h("img", { src: p.photo || "assets/photo/placeholder.svg", alt: t(p.photoAlt), loading: "lazy", decoding: "async" })));
     const info = h("dl", { class: "cv-info" });
-    d.profile.fields.forEach((f) => {
+    (p.fields || []).forEach((f) => {
       const hidden = f.visibility === "private" && !window.Identity.isFull();
       append(info, h("dt", null, t(f.label)));
       append(info, h("dd", null, hidden ? revealNode(t(f.value), "text") : t(f.value)));
@@ -309,8 +311,9 @@
         .filter((k) => MAIN_DEFAULT.includes(k) && !hide.has(k));
       const orderAside = ASIDE_DEFAULT.filter((k) => !hide.has(k));
 
-      root.textContent = "";
-      append(root, renderHeader(d));
+      // 全部构建在 fragment 上，最后一次性插入 → 单次 reflow
+      const frag = document.createDocumentFragment();
+      append(frag, renderHeader(d));
       const grid = h("div", { class: "cv-grid" });
       const aside = h("aside", { class: "cv-aside" });
       if (!hide.has("profile")) append(aside, renderProfile(d));
@@ -327,21 +330,24 @@
       });
       append(grid, aside);
       append(grid, main);
-      append(root, grid);
+      append(frag, grid);
 
       // 打印专用：横跨整页排最后 —— 放在 grid 外（普通全宽 block，避免 CSS Grid 打印跨页 bug）
       // 先「更多作品」后「工具集」（屏幕隐藏）
       if (orderMain.indexOf("moreWorks") !== -1 && !hide.has("moreWorks")) {
         const pm = renderMoreWorks(d);
-        if (pm) append(root, h("div", { class: "cv-moreworks-print" }, pm));
+        if (pm) append(frag, h("div", { class: "cv-moreworks-print" }, pm));
       }
       if (orderMain.indexOf("toolset") !== -1 && !hide.has("toolset")) {
         const pt = renderToolset(d);
-        if (pt) append(root, h("div", { class: "cv-toolset-print" }, pt));
+        if (pt) append(frag, h("div", { class: "cv-toolset-print" }, pt));
       }
 
       // 打印专用：页尾联系方式（仅最后一页末尾）
-      append(root, renderPrintFooter(d));
+      append(frag, renderPrintFooter(d));
+
+      root.textContent = "";
+      root.appendChild(frag);
 
       const cardBox = document.getElementById("cv-card");
       if (cardBox) { cardBox.textContent = ""; append(cardBox, renderCard(d)); }
@@ -350,6 +356,9 @@
         root.querySelectorAll(".cv-reveal").forEach((b) => b.click());
 
       if (window.QR && window.QR.renderAll) window.QR.renderAll();
+
+      // 标签页 / 分享标题随变体·语言更新
+      document.title = (t(d.profile.name) || "CV") + (t(d.profile.title) ? " — " + t(d.profile.title) : "");
     },
   };
 })();

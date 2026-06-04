@@ -13,16 +13,24 @@
     window.I18n.init(window.RESUME_BASE.meta);
 
     window.DataLoader.load(window.Identity.variant).then((data) => {
-      window.__DATA__ = data;
-      window.Render.all(data);
-      buildLangSwitcher();
-      bindUI(data);
-      if (window.Interactions) window.Interactions.init({ data: data, lang: window.I18n.current });
+      try {
+        window.__DATA__ = data;
+        window.Render.all(data);
+        buildLangSwitcher();
+        bindUI(data);
+        if (window.Interactions) window.Interactions.init({ data: data, lang: window.I18n.current });
+      } catch (e) {
+        console.error("[cv] render failed", e);
+        var root = document.getElementById("cv-root");
+        if (root) root.innerHTML = '<p style="padding:2rem;color:#565656">内容加载出错，请刷新页面。<br>If this persists, please reload.</p>';
+      }
     });
 
     window.I18n.onChange(() => {
-      window.Render.all(window.__DATA__);
-      syncLangSwitcher();
+      try {
+        window.Render.all(window.__DATA__);
+        syncLangSwitcher();
+      } catch (e) { console.error("[cv] re-render failed", e); }
     });
   }
 

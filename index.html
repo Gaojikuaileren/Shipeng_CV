@@ -9,8 +9,17 @@
   <meta name="robots" content="noindex, nofollow" />
   <meta name="color-scheme" content="light" />
   <meta name="description" content="CV and portfolio of Shipeng Ouyang — UE5 developer, media artist, VR and virtual production. Based in Düsseldorf." />
+  <!-- 分享预览卡片（IM / 邮件 / 社媒）-->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Shipeng Ouyang — CV / Portfolio" />
+  <meta property="og:description" content="UE5 developer · media artist · VR & interaction design · Düsseldorf" />
+  <meta name="twitter:card" content="summary" />
   <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23141414"/><text x="50" y="74" font-size="64" fill="white" font-family="sans-serif" text-anchor="middle">S</text></svg>' />
 
+  <!-- 预加载关键字重，加速首屏字体渲染 -->
+  <link rel="preload" href="assets/fonts/hanken-latin-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/hanken-latin-600.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/hanken-latin-700.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="styles/fonts.css" />
   <link rel="stylesheet" href="styles/tokens.css" />
   <link rel="stylesheet" href="styles/base.css" />
@@ -19,16 +28,16 @@
 </head>
 <body>
   <!-- 顶部工具栏（打印时隐藏）-->
-  <nav class="cv-toolbar no-print">
+  <nav class="cv-toolbar no-print" aria-label="工具栏 / Toolbar">
     <div class="cv-toolbar-side">
       <span class="full-only" id="variant-badge"></span>
       <button class="tool-btn full-only" id="btn-exit-full" type="button">Exit full</button>
     </div>
     <div class="cv-toolbar-side">
-      <div class="lang-switch" id="lang-switch"></div>
-      <button class="tool-btn" id="btn-copy" type="button"><span class="btn-ico">⧉</span> <span class="btn-label">Copy</span></button>
-      <button class="tool-btn" id="btn-card" type="button"><span class="btn-ico">▭</span> <span class="btn-label">Card</span></button>
-      <button class="tool-btn tool-btn--primary" id="btn-pdf" type="button"><span class="btn-ico">↓</span> <span class="btn-label">PDF</span></button>
+      <div class="lang-switch" id="lang-switch" role="group" aria-label="语言 / Language"></div>
+      <button class="tool-btn" id="btn-copy" type="button" aria-label="复制摘要 / Copy"><span class="btn-ico" aria-hidden="true">⧉</span> <span class="btn-label">Copy</span></button>
+      <button class="tool-btn" id="btn-card" type="button" aria-label="名片 / Business card"><span class="btn-ico" aria-hidden="true">▭</span> <span class="btn-label">Card</span></button>
+      <button class="tool-btn tool-btn--primary" id="btn-pdf" type="button" aria-label="导出 PDF"><span class="btn-ico" aria-hidden="true">↓</span> <span class="btn-label">PDF</span></button>
     </div>
   </nav>
 

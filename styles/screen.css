@@ -10,8 +10,8 @@
   color: var(--accent); border: var(--hair) solid var(--accent);
   padding: 2px var(--s2); margin-bottom: var(--s3);
 }
-.cv-name { font-size: var(--fs-name); line-height: var(--lh-tight); letter-spacing: -.02em; font-weight: 700; }
-.cv-title { font-size: var(--fs-title); color: var(--ink-soft); margin-top: var(--s2); }
+.cv-name { font-size: var(--fs-name); line-height: var(--lh-tight); letter-spacing: -.02em; font-weight: 700; text-wrap: balance; }
+.cv-title { font-size: var(--fs-title); color: var(--ink-soft); margin-top: var(--s2); text-wrap: balance; }
 
 /* —— Grid —— */
 .cv-grid { display: grid; grid-template-columns: 1fr; gap: var(--s5); }
@@ -56,12 +56,12 @@
 .cv-link:hover { box-shadow: inset 0 -1px 0 var(--accent); color: var(--accent); }
 
 /* —— Main —— */
-.cv-intro p { font-size: var(--fs-lead); line-height: 1.5; max-width: 60ch; }
+.cv-intro p { font-size: var(--fs-lead); line-height: 1.5; max-width: 60ch; text-wrap: pretty; }
 
 .cv-item { padding: var(--s4) 0; border-top: var(--hair) solid var(--line); }
 .cv-item.is-emph { box-shadow: inset 3px 0 0 var(--accent); padding-left: var(--s3); }
 .cv-item-head { display: flex; flex-direction: column; gap: 2px; margin-bottom: var(--s2); }
-.cv-period { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--ink-faint); }
+.cv-period { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--ink-faint); font-variant-numeric: tabular-nums; }
 .cv-item-title { font-size: 1.05rem; font-weight: 600; }
 .cv-at { color: var(--ink-faint); font-weight: 400; }
 .cv-item-body { color: var(--ink-soft); max-width: 64ch; }

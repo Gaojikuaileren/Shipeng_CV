@@ -15,7 +15,7 @@
   /* —— 颜色：黑白灰 + 一个克制强调色 —— */
   --ink:       #141414;
   --ink-soft:  #565656;
-  --ink-faint: #8c8c8c;
+  --ink-faint: #6f6f6f;   /* 加深以满足 WCAG AA 对比度（白底小字 ≥4.5:1）*/
   --line:      #e6e6e6;
   --line-ink:  #141414;
   --paper:     #ffffff;

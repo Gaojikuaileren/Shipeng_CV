@@ -16,14 +16,10 @@ window.Exporter.copySummary = function (data) {
   // 1) 姓名
   const name = t(data.profile.name);
 
-  // 2) 当前 DOM 里可见的联系方式（reveal 按钮还未点击的跳过）
+  // 2) 完整联系方式（直接从数据取，含 email/电话明文 —— Copy 是主动操作，给 HR 完整信息）
   const contactLines = [];
-  document.querySelectorAll(".cv-contact-row").forEach((row) => {
-    if (row.querySelector(".cv-reveal")) return; // 未解锁，跳过
-    const label = (row.querySelector(".cv-contact-label") || {}).textContent || "";
-    const link  = row.querySelector("a.cv-link");
-    const val   = link ? link.textContent.trim() : "";
-    if (label.trim() && val) contactLines.push(label.trim() + ":  " + val);
+  (data.contact || []).forEach((c) => {
+    if (c.value) contactLines.push(c.label + ":  " + c.value.replace(/^https?:\/\//, ""));
   });
 
   // 3) 拼接 + HR 模板
