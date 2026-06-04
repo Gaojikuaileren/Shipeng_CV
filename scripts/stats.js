@@ -4,9 +4,8 @@
    URL 未填时一切静默跳过，站点照常工作（部署 Worker 前不报错）。
    ============================================================ */
 window.Stats = {
-  // UPDATE：部署 worker/cv-stats-worker.js 后，把 Worker 网址填这里，然后 git push
-  // 例： URL: "https://cv-stats.你的子域.workers.dev",
-  URL: "",
+  // 已部署：cv-stats Worker（Cloudflare），后端 worker/cv-stats-worker.js
+  URL: "https://cv-stats.shipengouyang.workers.dev",
 
   _ready: function () {
     return /^https?:\/\/.+/.test(this.URL) && !/你的子域|YOUR-/.test(this.URL);
