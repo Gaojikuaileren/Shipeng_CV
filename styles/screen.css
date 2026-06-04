@@ -33,7 +33,8 @@
 .cv-photo { margin-bottom: var(--s4); position: relative; }
 /* 透明伪元素盖住照片：右键 / 拖拽都落在它上面，照片无法被另存或选中（防君子级）*/
 .cv-photo::after { content: ""; position: absolute; inset: 0; }
-.cv-photo img { width: 100%; max-width: 180px; aspect-ratio: 4 / 5; object-fit: cover; background: var(--paper-2); filter: grayscale(1);
+/* 照片框按图片自身比例（不裁切）、彩色显示 */
+.cv-photo img { display: block; width: 100%; max-width: 180px; height: auto; background: var(--paper-2);
   user-select: none; -webkit-user-select: none; -webkit-user-drag: none; }
 
 .cv-info { display: grid; grid-template-columns: auto 1fr; gap: var(--s1) var(--s3); margin-bottom: var(--s4); font-size: var(--fs-small); }

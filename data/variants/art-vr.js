@@ -29,4 +29,5 @@ window.RESUME_VARIANT = {
   emphasizeItems: ["prj-room", "prj-grau"],
   hideItems: ["email-pro"],
   order: {},
+  photo: "assets/photo/usagi.jpg", // 自由职业用艺术化兔子图，非本人证件照
 };

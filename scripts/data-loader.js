@@ -59,8 +59,9 @@ window.DataLoader = {
       // 板块级控制（显示/顺序/重点）→ render
       sections: v.sections || { order: [], hide: [], emphasize: [] },
     };
-    // 变体可覆盖头衔
+    // 变体可覆盖头衔、照片（如 art-vr 用艺术化图替代证件照）
     data.profile.title = v.headline || base.profile.title;
+    data.profile.photo = v.photo || base.profile.photo;
     return data;
   },
 
