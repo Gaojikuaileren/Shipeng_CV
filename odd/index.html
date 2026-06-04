@@ -75,6 +75,11 @@
       if (pdf) pdf.addEventListener("click", function () { if (window.Stats) window.Stats.pdfHit("odd"); window.Exporter.resumePDF(); });
       var copy = document.getElementById("btn-copy");
       if (copy) copy.addEventListener("click", function () { window.Exporter.copySummary(data); });
+
+      // 照片防护：禁用右键菜单（配合 CSS 禁选中 / 拖拽 / 长按）
+      document.addEventListener("contextmenu", function (e) {
+        if (e.target && e.target.closest && e.target.closest(".cv-photo")) e.preventDefault();
+      });
     });
   </script>
 </body>

@@ -12,6 +12,7 @@ body {
   background: var(--paper);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  touch-action: manipulation; /* 禁手机端双击放大（保留双指缩放与滚动）*/
 }
 img { max-width: 100%; display: block; }
 h1, h2, h3, p, ul, dl, dd { margin: 0; }

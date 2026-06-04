@@ -98,5 +98,10 @@
     el._t = setTimeout(() => el.classList.remove("show"), 1800);
   };
 
+  // 照片防护：禁用右键菜单（配合 CSS 的禁选中 / 拖拽 / 长按，防止照片被取走）
+  document.addEventListener("contextmenu", function (e) {
+    if (e.target && e.target.closest && e.target.closest(".cv-photo")) e.preventDefault();
+  });
+
   document.addEventListener("DOMContentLoaded", boot);
 })();

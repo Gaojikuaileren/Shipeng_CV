@@ -18,7 +18,6 @@
 @media (min-width: 760px) {
   .cv-grid { grid-template-columns: var(--aside-w) 1fr; gap: var(--s6); align-items: start; }
   .cv-aside { position: sticky; top: 72px; }
-  .cv-photo img { max-width: none; } /* 桌面侧栏填满 */
 }
 
 /* —— Section 通用 —— */
@@ -30,12 +29,15 @@
 }
 
 /* —— Aside —— */
-.cv-photo { margin-bottom: var(--s4); position: relative; }
-/* 透明伪元素盖住照片：右键 / 拖拽都落在它上面，照片无法被另存或选中（防君子级）*/
-.cv-photo::after { content: ""; position: absolute; inset: 0; }
-/* 照片框按图片自身比例（不裁切）、彩色显示 */
-.cv-photo img { display: block; width: 100%; max-width: 180px; height: auto; background: var(--paper-2);
-  user-select: none; -webkit-user-select: none; -webkit-user-drag: none; }
+.cv-photo { margin-bottom: var(--s4); max-width: var(--aside-w); }
+/* 照片：彩色、按自身比例（不裁）、填满容器；外阴影往左下拉伸（本人照与兔子都有）*/
+.cv-photo img { display: block; width: 100%; height: auto; background: var(--paper-2);
+  box-shadow: -10px 16px 32px rgba(20, 20, 20, 0.22);
+  /* 禁止选中 / 拖拽 / 手机长按菜单 / 一切指针交互（防取图）*/
+  pointer-events: none; user-select: none; -webkit-user-select: none;
+  -webkit-touch-callout: none; -webkit-user-drag: none; }
+/* 自由职业兔子：大一号 */
+body.v-art-vr .cv-photo { max-width: 320px; }
 
 .cv-info { display: grid; grid-template-columns: auto 1fr; gap: var(--s1) var(--s3); margin-bottom: var(--s4); font-size: var(--fs-small); }
 .cv-info dt { color: var(--ink-faint); }

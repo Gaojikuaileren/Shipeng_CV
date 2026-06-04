@@ -45,7 +45,8 @@
     text-align: center; letter-spacing: .02em; break-inside: avoid;
   }
   .cv-aside { position: static !important; }
-  .cv-photo img { filter: none; }
+  .cv-photo { max-width: 48mm !important; } /* PDF 照片用小尺寸（只有网页端放大）*/
+  .cv-photo img { filter: none; box-shadow: none; } /* PDF 不要外阴影 */
   .cv-intro p { font-size: 10.5pt; line-height: 1.45; }
   .cv-item { padding-top: 2mm; padding-bottom: 2mm; } /* 不清左右 padding，保留 is-emph 左竖线间距 */
   .cv-item.is-emph { padding-left: 4mm; } /* 绿条与内容的间距 */
