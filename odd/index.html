@@ -37,6 +37,7 @@
   <script src="../scripts/render.js"></script>
   <script src="../scripts/export/pdf.js"></script>
   <script src="../scripts/export/text.js"></script>
+  <script src="../scripts/pdf-hint.js"></script>
   <script>
     // 兼职页极简启动：直接用本页 data.js 的 RESUME_BASE，不走变体系统
     document.addEventListener("DOMContentLoaded", function () {
@@ -80,6 +81,8 @@
       document.addEventListener("contextmenu", function (e) {
         if (e.target && e.target.closest && e.target.closest(".cv-photo")) e.preventDefault();
       });
+
+      if (window.PdfHint) window.PdfHint.show();
     });
   </script>
 </body>

@@ -9,6 +9,16 @@
 @media print {
   /* 通用：去掉屏幕装饰 */
   .cv-toolbar, .cv-toast, .card-modal { display: none !important; }
+  /* 动效层打印还原：内容完整、无噪点 / 模糊 / 视差 */
+  body::after { display: none !important; }
+  html.motion-on .cv-tset-tag { transform: none !important; }
+  .cv-photo { transform: none !important; }            /* 兔子放大还原 */
+  .pdf-hint { display: none !important; }              /* 引导气泡不进 PDF */
+  .peel-corner { display: none !important; }           /* 掀角本身不进 PDF */
+  /* 掀开后才有 .steam-reveal → PDF 显示为普通链接行；没掀开则无此元素、不显示 */
+  .steam-reveal { background: none !important; color: #000 !important; box-shadow: none !important;
+    opacity: 1 !important; transform: none !important; padding: 0 !important; margin-top: var(--s2) !important; }
+  .steam-reveal .steam-val { color: #555 !important; }
   body { background: #fff; color: #000; }
   .cv-link { box-shadow: none !important; color: #000; }
   .cv-map-link { display: none !important; } /* 打印版不显示地图链接 */

@@ -1,0 +1,59 @@
+/* ============================================================
+   motion.css — 动效增强层（渐进增强，可整层移除而不影响内容）
+   · 胶片噪点：全屏氛围，静态常显，打印去除
+   · 工具集浮动 / 兔子放大 / 联系方式彩蛋：仅 html.motion-on（JS 检测够格才加）
+   · transform/opacity only → GPU 合成；打工页 odd 不引本文件 → 永远纯静态
+   ============================================================ */
+
+/* —— 胶片噪点（全屏，加浓到可见；不挡交互；打印在 print.css 去除）—— */
+body::after {
+  content: "";
+  position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='nz'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23nz)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  opacity: 0.13;
+  mix-blend-mode: multiply;
+}
+
+/* —— 工具集浮动：JS 物理实时设 transform（浮动时 JS 关过渡）；
+   指针移开靠这条把每个标签缓缓收回原位 —— */
+.motion-on .cv-tset-tag {
+  transition: transform .5s cubic-bezier(.2, .7, .2, 1);
+}
+
+/* —— 游戏开发彩蛋：联系方式左下角往右上掀起 → 点击撕开露出下层 Steam 框 —— */
+.peel-corner {
+  position: absolute; left: 0; bottom: 0; z-index: 5;
+  width: 28px; height: 28px; padding: 0; border: none; cursor: pointer; background: none;
+  opacity: 0; transition: opacity .9s ease;            /* 柔和出现，不突兀 */
+}
+.peel-corner.up { opacity: 1; }
+/* 翻起的三角：斜边从左下到右上，露出下层深色 + 翻折投影 */
+.peel-corner::before {
+  content: ""; position: absolute; left: 0; bottom: 0;
+  border-style: solid; border-width: 0 0 28px 28px;
+  border-color: transparent transparent transparent #1c1c1c;
+  filter: drop-shadow(2px -2px 2px rgba(0, 0, 0, .3));
+  transition: border-width .2s ease, border-left-color .2s ease;
+}
+.peel-corner:hover::before { border-width: 0 0 34px 34px; border-left-color: #050505; }
+.peel-corner.torn { opacity: 0; pointer-events: none; }  /* 撕开后角隐藏，只剩框 */
+
+/* 撕开后露出的框：非纯黑 + 内阴影（像掀开表层后看到的下面一层）*/
+.steam-reveal {
+  display: flex; flex-direction: column; gap: 2px;
+  margin-top: var(--s3); padding: var(--s3);
+  background: #1b1b1b; color: #eaeaea; text-decoration: none;
+  box-shadow: inset 0 3px 10px rgba(0, 0, 0, .65), inset 0 0 0 1px rgba(255, 255, 255, .05);
+  opacity: 0; transform: scaleY(.25); transform-origin: bottom left;
+  transition: opacity .5s ease, transform .55s cubic-bezier(.2, .8, .3, 1);
+}
+.steam-reveal.show { opacity: 1; transform: scaleY(1); }
+.steam-reveal:hover { background: #222; }
+.steam-reveal .steam-label { font-size: var(--fs-small); font-weight: 600; letter-spacing: .04em; }
+.steam-reveal .steam-val { font-size: var(--fs-micro); color: #9a9a9a; font-family: var(--font-mono); }
+
+/* —— 减弱动效：去噪点（JS 已不加 motion-on，交互不会启动）—— */
+@media (prefers-reduced-motion: reduce) {
+  body::after { display: none; }
+}

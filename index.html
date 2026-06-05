@@ -26,6 +26,7 @@
   <link rel="stylesheet" href="styles/tokens.css" />
   <link rel="stylesheet" href="styles/base.css" />
   <link rel="stylesheet" href="styles/screen.css" />
+  <link rel="stylesheet" href="styles/motion.css" />
   <link rel="stylesheet" href="styles/print.css" />
 
   <!-- 裸入口拦截：无有效 ?v= 且非本人模式 → 占位（同步执行，须在 body 渲染前判定，防工具栏闪现暴露内容）-->
@@ -105,6 +106,9 @@
 
   <!-- 交互层（预留）-->
   <script src="scripts/interactions/index.js"></script>
+
+  <!-- 引导气泡（指向 PDF 按钮）-->
+  <script src="scripts/pdf-hint.js"></script>
 
   <!-- 入口（最后）-->
   <script src="scripts/main.js"></script>

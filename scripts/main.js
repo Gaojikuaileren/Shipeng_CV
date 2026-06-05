@@ -21,6 +21,7 @@
         buildLangSwitcher();
         bindUI(data);
         if (window.Interactions) window.Interactions.init({ data: data, lang: window.I18n.current });
+        if (window.PdfHint) window.PdfHint.show();
       } catch (e) {
         console.error("[cv] render failed", e);
         var root = document.getElementById("cv-root");
