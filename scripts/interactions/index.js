@@ -94,16 +94,21 @@ window.Interactions.register({
     const p = new URLSearchParams(location.search);
     const secs = parseInt(p.get("grow"), 10);        // 测试用：?grow=60 → 1 分钟看完整过程
     const DURATION = (secs > 0 ? secs : 1200) * 1000; // 默认 1200s = 20 分钟
-    const base = photo.getBoundingClientRect().width || 320;
-    const maxS = Math.max(window.innerWidth, window.innerHeight) / base * 1.25; // 占满屏幕
+    const rect = photo.getBoundingClientRect();
+    const base = rect.width || 320;
+    const maxS = Math.max(window.innerWidth, window.innerHeight) / base * 1.2;  // 占满屏幕
+    const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;      // 兔子初始中心
     photo.style.transformOrigin = "center center";
     photo.style.position = "relative";
     photo.style.zIndex = "600";
     const t0 = performance.now();
     (function tick(now) {
       const t = Math.min(1, (now - t0) / DURATION);
-      const s = 1 + (maxS - 1) * Math.pow(t, 2.4);   // 开始慢、越来越快
-      photo.style.transform = "scale(" + s.toFixed(3) + ")";
+      const ease = Math.pow(t, 2.4);                  // 开始慢、越来越快
+      const s = 1 + (maxS - 1) * ease;
+      const dx = (window.innerWidth / 2 - cx) * ease; // 同时往屏幕中心移 → 最终居中放大
+      const dy = (window.innerHeight / 2 - cy) * ease;
+      photo.style.transform = "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) scale(" + s.toFixed(3) + ")";
       if (t < 1) requestAnimationFrame(tick);
     })(t0);
   },
@@ -130,6 +135,7 @@ window.Interactions.register({
     }
     function peel(contact) {
       if (contact.querySelector(".peel-corner")) return;
+      contact.style.paddingBottom = "44px";   // 在下方腾出空白放角，不挡联系方式
       const corner = document.createElement("button");
       corner.className = "peel-corner"; corner.type = "button";
       corner.setAttribute("aria-label", "解锁隐藏联系方式");
@@ -138,6 +144,7 @@ window.Interactions.register({
       corner.addEventListener("click", function () {
         if (contact.querySelector(".steam-reveal")) return;
         corner.classList.add("torn");
+        contact.style.paddingBottom = "";        // 撕开后收回空白
         const a = document.createElement("a");
         a.className = "steam-reveal";
         a.href = "https://steamcommunity.com/id/gjklr/";
