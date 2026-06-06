@@ -377,7 +377,7 @@ window.RESUME_BASE = {
     { id: "email-freelance", type: "email",   label: "Email",     value: "freeketchup@icloud.com",                  visibility: "private", protected: true },
     { id: "phone",           type: "phone",   label: "Tel",       value: "+49 176 64161464",                        visibility: "private", protected: true },
     // 链接默认顺序：Portfolio → LinkedIn → GitHub → Instagram
-    { id: "web",             type: "website", label: "Portfolio", value: "https://www.spoy-profile.com/",           visibility: "public" },
+    { id: "web",             type: "website", label: "Portfolio", value: "https://s-gjklr.work/",                   visibility: "public" },
     { id: "linkedin",        type: "social",  label: "LinkedIn",  value: "https://linkedin.com/in/shipeng-ouyang/", visibility: "public" },
     // GitHub 仅 ue5-tech / art-vr 显示（designer / odd 通过 hideItems 隐藏）；ue5-tech 用 order.contact 提到链接最前
     { id: "github",          type: "social",  label: "GitHub",    value: "https://github.com/Gaojikuaileren",       visibility: "public" },
