@@ -5,7 +5,7 @@
    ============================================================ */
 window.Stats = {
   // 已部署：cv-stats Worker（Cloudflare），后端 worker/cv-stats-worker.js
-  URL: "https://cv-stats.shipengouyang.workers.dev",
+  URL: "https://cv-stats.weur-apps.workers.dev",
 
   // 清零密钥（与 worker 一致）。hub.html 在公开仓库会暴露，仅挡随手乱扫；
   // 清零只把统计数字归零，不泄露任何数据，危害很低。
