@@ -17,7 +17,7 @@ window.RESUME_BASE = {
     photoAlt: { zh: "照片", ja: "顔写真", en: "Portrait", de: "Porträt" },
     fields: [
       { key: "location", label: { zh: "所在地", ja: "所在地", en: "Location", de: "Standort" },
-        value: { zh: "杜塞尔多夫，德国", ja: "デュッセルドルフ、ドイツ", en: "Düsseldorf, Germany", de: "Düsseldorf, Deutschland" }, visibility: "public" },
+        value: { zh: "德国 科隆", ja: "ドイツ・ケルン", en: "Cologne, Germany", de: "Köln, Deutschland" }, visibility: "public" },
       { key: "status", label: { zh: "状态", ja: "ステータス", en: "Status", de: "Status" },
         value: { zh: "可立即上岗 · 兼职", ja: "即日可 · アルバイト", en: "Available now · Part-time", de: "Sofort verfügbar · Teilzeit" }, visibility: "public" },
     ],

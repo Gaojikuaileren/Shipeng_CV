@@ -39,7 +39,7 @@ window.RESUME_BASE = {
     fields: [
       { key: "location",
         label: { zh: "所在地", ja: "所在地", en: "Location", de: "Standort" },
-        value: { zh: "杜塞尔多夫，德国", ja: "デュッセルドルフ、ドイツ", en: "Düsseldorf, Germany", de: "Düsseldorf, Deutschland" },
+        value: { zh: "德国 科隆", ja: "ドイツ・ケルン", en: "Cologne, Germany", de: "Köln, Deutschland" },
         visibility: "public" },
       { key: "status",
         label: { zh: "状态", ja: "ステータス", en: "Status", de: "Status" },
@@ -50,10 +50,10 @@ window.RESUME_BASE = {
 
   /* —— 自我介绍（变体可覆盖）—————————————————— */
   intro: {
-    zh: "科隆媒体艺术学院（KHM）媒体艺术系毕业，湖北工业大学产品设计学士。以虚幻引擎为核心工具，开发实时交互系统、VR/MR 体验与数字艺术装置——在艺术感知与技术精准之间工作。现驻杜塞尔多夫，承接德国本地与远程项目。",
-    ja: "ケルン・メディア芸術大学（KHM）メディアアーツ卒業、湖北工業大学プロダクトデザイン学士。Unreal Engine を軸にリアルタイムインタラクティブシステム、VR/MR 体験、デジタルアートインスタレーションを開発。デュッセルドルフ在住、ドイツ国内およびリモートでフリーランス活動中。",
-    en: "Media Arts graduate of KHM Cologne and Product Design alumnus of Hubei University of Technology. I develop real-time interactive systems, VR/MR experiences and digital art installations using Unreal Engine — at the intersection of artistic sensibility and technical precision. Based in Düsseldorf, available for projects across Germany and remote.",
-    de: "Diplom-Absolvent der Kunsthochschule für Medien Köln (KHM) und Bachelor in Produktdesign (Hubei University of Technology). Ich entwickle Echtzeit-Interaktionssysteme, VR/MR-Erlebnisse und digitale Kunstinstallationen mit Unreal Engine — an der Schnittstelle von künstlerischer Sensibilität und technischer Präzision. Ansässig in Düsseldorf, freiberuflich in Deutschland und remote.",
+    zh: "科隆媒体艺术学院（KHM）媒体艺术系毕业，湖北工业大学产品设计学士。以虚幻引擎为核心工具，开发实时交互系统、VR/MR 体验与数字艺术装置——在艺术感知与技术精准之间工作。现驻科隆，承接德国本地与远程项目。",
+    ja: "ケルン・メディア芸術大学（KHM）メディアアーツ卒業、湖北工業大学プロダクトデザイン学士。Unreal Engine を軸にリアルタイムインタラクティブシステム、VR/MR 体験、デジタルアートインスタレーションを開発。ケルン在住、ドイツ国内およびリモートでフリーランス活動中。",
+    en: "Media Arts graduate of KHM Cologne and Product Design alumnus of Hubei University of Technology. I develop real-time interactive systems, VR/MR experiences and digital art installations using Unreal Engine — at the intersection of artistic sensibility and technical precision. Based in Cologne, available for projects across Germany and remote.",
+    de: "Diplom-Absolvent der Kunsthochschule für Medien Köln (KHM) und Bachelor in Produktdesign (Hubei University of Technology). Ich entwickle Echtzeit-Interaktionssysteme, VR/MR-Erlebnisse und digitale Kunstinstallationen mit Unreal Engine — an der Schnittstelle von künstlerischer Sensibilität und technischer Präzision. Ansässig in Köln, freiberuflich in Deutschland und remote.",
   },
 
   /* ============================================================
