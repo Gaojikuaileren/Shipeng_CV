@@ -266,10 +266,10 @@ window.RESUME_BASE = {
       id: "work-portfolio",
       period: "2019 – 2020",
       role: {
-        zh: "作品集辅导教师",
-        ja: "ポートフォリオ指導教師",
-        en: "Portfolio Instructor",
-        de: "Portfolio-Dozent",
+        zh: "作品集辅导教师（远程）",
+        ja: "ポートフォリオ指導教師（リモート）",
+        en: "Portfolio Instructor (remote)",
+        de: "Portfolio-Dozent (remote)",
       },
       org: {
         zh: "高凡留学 Godfery Education（杭州）",
