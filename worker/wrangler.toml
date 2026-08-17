@@ -3,6 +3,15 @@ main = "cv-stats-worker.js"
 compatibility_date = "2026-01-01"
 account_id = "7c8e92f537fc4bcc1056ef12e6b70669"
 
-[[kv_namespaces]]
-binding = "CV_STATS"
-id = "f9f3464f85d14b64abdb885d87254b91"
+# 计数存在 Durable Object 里（强一致 + 请求排队），不再用 KV：
+# KV 最终一致 + 读改写 = 并发访问会互相覆盖，计数会变少。
+[[durable_objects.bindings]]
+name = "CV_STATS_DO"
+class_name = "Stats"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Stats"]
+
+# 老的 KV namespace 没有删除，历史数据还在里面（需要时手动取）：
+#   wrangler kv key get stats --namespace-id f9f3464f85d14b64abdb885d87254b91 --remote

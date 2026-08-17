@@ -74,8 +74,14 @@ variants/<v>.js（按 ?v= 动态注入，RESUME_VARIANT）
       CV ＋ Cooperation Profile 双用途（投职位 ＋ 直接发德国 Beschaffungs-/Einkaufsagentur 谈合作）。
       新增可复用机制：`collab` 板块、`itemOverrides`、`onlyTools`、`sectionTitles`、`profileFields`、
       `contactNote`、`hideSkillLevels`、`sections.order` 兼管侧边栏顺序。
-      ⚠️ 待办：`worker/cv-stats-worker.js` 的 `VARIANTS` 已加 china-biz，但**需 `wrangler deploy`** 才生效
-      （未部署前 `/hit?v=china-biz` 返回 400，前端静默、页面不受影响，只是这一版访问不计数）。
+- [x] 2026-08-17 统计后端从 KV 换成 Durable Object（`worker/`，已部署）：
+      老设计把五个职业的数字放在**一个 KV key** 里，每次 +1 都「读整个 JSON → 改 → 写回」。
+      KV 读是最终一致的，密集访问时会读到旧快照再写回，把别人的 +1 覆盖掉 —— 实测线上
+      ue5-tech 从 4 掉到 1。现在读写都进同名 DO 实例（全球唯一），写操作用
+      `blockConcurrencyWhile` 串行化，读-改-写不再交错。
+      对外端点与 JSON 结构完全不变 → `hub.html` / `scripts/stats.js` 无需改动。
+      计数从 DO 重新开始（0 基线）；老 KV 数据未删除，需要时：
+      `wrangler kv key get stats --namespace-id f9f3464f85d14b64abdb885d87254b91 --remote`
 - [x] 名片 modal（分享 + canvas 离线绘 PNG）
 - [x] 自托管 Hanken 字体；技能系统重构成 `capabilities` / `tools`
 - [x] 私人控制台 `hub.html`（四选一 + 复制链接，替代"职位→链接生成器"）

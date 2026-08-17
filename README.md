@@ -54,7 +54,7 @@ node tools/serve.js
 4. 新变体还要在两处登记，否则不生效：
    - `index.html` 顶部 `VALID = { … }`（裸入口拦截白名单，漏了会显示占位点）
    - `hub.html` 的 `ROUTES` / `NAMES` / `ORDER` / `CLEAN`，以及 `worker/cv-stats-worker.js` 的 `VARIANTS`
-     （Worker 改完要 `wrangler deploy` 才会统计新变体）
+     （Worker 改完要在 `worker/` 目录跑 `wrangler deploy` 才会统计新变体）
 
 无参数 `/` = 占位点（不暴露内容）；变体不存在自动回退 `ue5-tech`。
 **写错 id 会在浏览器控制台 `console.warn` 提示**，方便排查笔误。
