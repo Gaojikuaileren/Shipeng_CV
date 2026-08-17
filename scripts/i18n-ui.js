@@ -16,6 +16,8 @@ window.UI_TEXT = {
     portfolio: { zh: "作品集",    ja: "作品集",        en: "Selected Work",   de: "Ausgewählte Arbeiten" },
     education: { zh: "教育经历",   ja: "学歴",          en: "Education",       de: "Ausbildung" },
     oddjobs:   { zh: "工作经历",   ja: "アルバイト経験", en: "Work Experience", de: "Arbeitserfahrung" },
+    /* collab = 通用「能力板块」标题；变体可用 sectionTitles.collab 换成更具体的说法 */
+    collab:    { zh: "我能带来什么", ja: "提供できること", en: "What I Bring",   de: "Was ich einbringe" },
   },
 
   /* 行内小文案 */

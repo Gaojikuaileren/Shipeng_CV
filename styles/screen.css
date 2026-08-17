@@ -100,6 +100,30 @@ body.v-art-vr .cv-photo { max-width: 320px; }
   color: var(--ink-soft); border: var(--hair) solid var(--line); padding: 0 5px; line-height: 1.7; }
 .cv-tset-tag.is-emph { color: var(--ink); border-color: var(--accent); font-weight: 600; }
 
+/* —— 能力板块（collab，可复用）：多列并置的能力块 ————————————
+   移动端单列堆叠；≥760px 与主区宽度自适应分列。瑞士极简：细线 + 破折号列表。 */
+.cv-collab { display: grid; grid-template-columns: 1fr; gap: var(--s4); }
+@media (min-width: 760px) {
+  .cv-collab { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--s4) var(--s3); }
+}
+.cv-cb { border-top: var(--hair) solid var(--line); padding-top: var(--s2); }
+.cv-cb-title { font-size: var(--fs-small); font-weight: 700; letter-spacing: .01em; margin-bottom: var(--s1); }
+.cv-cb-note { font-size: var(--fs-micro); line-height: 1.5; color: var(--ink-faint);
+  margin-bottom: var(--s2); hyphens: auto; overflow-wrap: break-word; }
+.cv-cb-list { display: flex; flex-direction: column; gap: 3px; font-size: var(--fs-small); color: var(--ink-soft); }
+.cv-cb-list li { position: relative; padding-left: var(--s3); hyphens: auto; overflow-wrap: break-word; }
+.cv-cb-list li::before { content: "—"; position: absolute; left: 0; color: var(--ink-faint); }
+/* 板块被 emphasize 时，能力块顶线也用强调色 */
+.is-emph-section .cv-cb { border-top-color: var(--accent); }
+
+/* —— 联系方式下方的一句话 CTA（求职 ＋ 合作双身份）—————————— */
+.cv-contact-note { margin-top: var(--s3); padding-top: var(--s2);
+  border-top: var(--hair) solid var(--line); font-size: var(--fs-micro); line-height: 1.5;
+  color: var(--ink-soft); hyphens: auto; overflow-wrap: break-word; }
+
+/* 核心能力不打点数时（hideSkillLevels）：名字左对齐即可，不留右侧空档 */
+.cv-skills--plain .cv-skill { justify-content: flex-start; }
+
 /* —— 地图链接 ——————————————————————————————————— */
 .cv-map-link { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--ink-faint);
   margin-left: 4px; text-decoration: none; }

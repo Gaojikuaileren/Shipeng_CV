@@ -34,7 +34,7 @@
     (function () {
       var p = new URLSearchParams(location.search);
       var v = (p.get("v") || "").replace(/[^a-z0-9-]/gi, "");
-      var VALID = { "ue5-tech": 1, "art-vr": 1, "designer": 1 };
+      var VALID = { "ue5-tech": 1, "art-vr": 1, "designer": 1, "china-biz": 1 };
       var full = p.get("mode") === "full";
       var saved = false; try { saved = localStorage.getItem("cv-mode") === "full"; } catch (e) {}
       if (!VALID[v] && !full && !saved) {

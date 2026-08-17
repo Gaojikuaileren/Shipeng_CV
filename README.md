@@ -38,12 +38,25 @@ node tools/serve.js
 2. 改里面（字段都可选）：
    - `headline` 岗位头衔、`intro` 岗位自我介绍、`greeting` 给特定公司的一句话（顶部显示，加分）
    - `sidebar` 侧边栏显示哪些核心能力（`cap-` id，按数组顺序排）
+   - `hideSkillLevels: true` 侧边栏只列能力名、不打 5 点熟练度（没有年限背书的能力别自称专家）
    - `highlightTools` 工具集里高亮＋排前的软件（`t-` id）
-   - `sections` 板块级控制 `{ order, hide, emphasize }`（板块名 projects/work/toolset/portfolio…）
-   - `emphasizeItems` / `hideItems` 条目级（id 如 `prj-` / `work-` / `email-`）
+   - `onlyTools` 只显示这些软件（白名单；不写＝显示全部）
+   - `sections` 板块级控制 `{ order, hide, emphasize }`（板块名 projects/work/toolset/collab/portfolio…）
+     · `order` 里也可以放侧边栏板块名（skills / languages / contact）来调侧边栏顺序
+   - `emphasizeItems` / `hideItems` 条目级（id 如 `prj-` / `work-` / `edu-` / `email-`）
+   - `itemOverrides` **同一段真实经历换叙述侧重**：`{ "work-freelance": { role, summary, tags } }`
+     日期 / 公司 / 学校 / 学历名仍来自 `base.js` → 各变体事实不会分叉
+   - `profileFields` 覆盖照片下方的情报行（如把「状态」换成「可接受：正式雇佣 · 项目合作」）
+   - `sectionTitles` 覆盖板块标题（如 toolset → "Technical & Creative Background"）
+   - `collab` 能力板块数据 `[{ id, title, note, items:[…] }]`（给了才渲染；用于「我能带来什么」这类板块）
+   - `contactNote` 联系方式下方一句话 CTA（如求职 ＋ 合作双身份）
 3. 把链接 `你的域名/?v=你起的名字` 发给对应招聘方。
+4. 新变体还要在两处登记，否则不生效：
+   - `index.html` 顶部 `VALID = { … }`（裸入口拦截白名单，漏了会显示占位点）
+   - `hub.html` 的 `ROUTES` / `NAMES` / `ORDER` / `CLEAN`，以及 `worker/cv-stats-worker.js` 的 `VARIANTS`
+     （Worker 改完要 `wrangler deploy` 才会统计新变体）
 
-无参数 `/` = 默认通用版；变体不存在自动回退默认。
+无参数 `/` = 占位点（不暴露内容）；变体不存在自动回退 `ue5-tech`。
 **写错 id 会在浏览器控制台 `console.warn` 提示**，方便排查笔误。
 
 ---
@@ -81,7 +94,9 @@ node tools/serve.js
 
 - 站点：`https://gaojikuaileren.github.io/Shipeng_CV/`
 - 仓库：`github.com/Gaojikuaileren/Shipeng_CV`（main 分支根目录，GitHub Pages）
-- **私人控制台**：`/hub.html` —— 四选一打开各职业版 ＋ 一键复制对外链接（未被任何公开页链接，只给你自己用）
+- **私人控制台**：`/hub.html` —— 指令式（未被任何公开页链接，只给你自己用）
+  · `/s01` 游戏开发　`/s02` 媒体艺术　`/s03` 设计师　`/s04` 兼职　`/s05` 中德商务
+  · `/sdata` 看分职业访问统计；`/clean01`–`/clean05`、`/cleanall` 清零
 
 **改完内容重新部署**：`git add -A && git commit -m "..." && git push`，1–2 分钟自动重建。
 
@@ -101,7 +116,7 @@ Shipeng_CV/
 │   └── data.js           兼职数据（独立，不引用主 base）
 ├── data/
 │   ├── base.js           核心内容（capabilities/tools/projects/work/…，四语）
-│   └── variants/         职位变体（default / ue5-tech / art-vr / designer）
+│   └── variants/         职位变体（ue5-tech / art-vr / designer / china-biz）
 ├── styles/
 │   ├── fonts.css         自托管 Hanken Grotesk @font-face
 │   ├── tokens.css        设计变量（颜色/字体/间距）← 想换风格先改这里

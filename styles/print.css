@@ -65,6 +65,21 @@
   .cv-block, .cv-item, .cv-work { break-inside: avoid; }
   .cv-sec-title { break-after: avoid; }
 
+  /* —— 能力板块（collab）打印态：主区列宽有限，改成「块名 + 行内 · 分隔」的紧凑排版 —— */
+  .cv-collab { grid-template-columns: 1fr; gap: 2.5mm; }
+  .cv-cb { border-top: 0.4pt solid #ccc; padding-top: 1.2mm; break-inside: avoid; }
+  .cv-cb-title { font-size: 9.5pt; margin-bottom: 0.6mm; }
+  .cv-cb-note { font-size: 8pt; color: #555; margin-bottom: 0.8mm; }
+  .cv-cb-list { display: block; font-size: 9pt; line-height: 1.5; }
+  .cv-cb-list li { display: inline; padding-left: 0; }
+  .cv-cb-list li::before { content: none; }
+  .cv-cb-list li:not(:last-child)::after { content: " · "; color: #999; }
+  .cv-contact-note { font-size: 8.5pt; color: #444; border-top: 0.4pt solid #ccc; }
+
+  /* 中德商务专项：条目稍紧凑，让 介绍+协作+工作经历 稳定进第一页 */
+  body.v-china-biz .cv-item { padding-top: 1.5mm; padding-bottom: 1.5mm; }
+  body.v-china-biz .cv-intro p { font-size: 10pt; }
+
   /* 设计师专项：省略教育方向描述 + 条目更紧凑，让工作经历+教育进第一页 */
   body.v-designer [data-sec="education"] .cv-item-body { display: none; }
   body.v-designer .cv-item { padding-top: 1.5mm; padding-bottom: 1.5mm; } /* 只上下，保留 is-emph 左间距 */

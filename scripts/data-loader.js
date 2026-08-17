@@ -47,31 +47,43 @@ window.DataLoader = {
       intro: v.intro || base.intro,
       // 侧边栏核心能力（变体 sidebar 选择+排序，缺省用 defaultSidebar）
       sidebar: this._pickCaps(base.capabilities || [], v.sidebar || base.defaultSidebar || []),
-      // 工具集（全部 tools；highlightTools 命中的标 _hl）
-      tools: this._flagTools(base.tools || [], v.highlightTools || []),
+      // hideSkillLevels: true → 侧边栏只列能力名，不显示 5 点熟练度（适合没有年限背书的商务类能力）
+      hideSkillLevels: !!v.hideSkillLevels,
+      // 工具集（onlyTools 给出白名单时只留这些；highlightTools 命中的标 _hl）
+      tools: this._flagTools(base.tools || [], v.highlightTools || [], v.onlyTools),
       projects: this._order(this._flag(base.projects, v), order.projects),
       work: this._order(this._flag(base.work, v), order.work),
       moreWorks: base.moreWorks ? this._flag(base.moreWorks, v) : [],
       oddjobs: base.oddjobs ? this._flag(base.oddjobs, v) : [],
       languages: base.languages.slice(),
-      education: base.education.slice(),
+      education: this._flag(base.education, v),
       contact: this._order(this._flag(base.contact, v), (v.order || {}).contact), // hideItems 隐藏 + order.contact 排序
+      // 能力板块（可复用 section）：变体给数据才渲染，没给则该板块不存在
+      collab: v.collab || base.collab || null,
+      // 联系板块下方的一句话 CTA（如「求职 ＋ 项目合作」双身份）
+      contactNote: v.contactNote || null,
+      // 板块标题覆盖（{ 板块名: {zh,ja,en,de} }）；未覆盖的仍用 i18n-ui 里的通用标题
+      sectionTitles: v.sectionTitles || null,
       // 板块级控制（显示/顺序/重点）→ render
       sections: v.sections || { order: [], hide: [], emphasize: [] },
     };
-    // 变体可覆盖头衔、照片（如 art-vr 用艺术化图替代证件照）
+    // 变体可覆盖头衔、照片（如 art-vr 用艺术化图替代证件照）、以及照片下方的情报行
     data.profile.title = v.headline || base.profile.title;
     data.profile.photo = v.photo || base.profile.photo;
+    if (v.profileFields) data.profile.fields = v.profileFields;
     return data;
   },
 
-  // 过滤 hideItems；emphasizeItems → _emph（条目级：项目/工作/作品/联系方式）
+  // 过滤 hideItems；emphasizeItems → _emph（条目级：项目/工作/作品/教育/联系方式）
+  // itemOverrides[id] → 就地覆盖该条目的字段（role/summary/tags/detail…）：
+  //   同一段真实经历，不同变体换侧重叙述。日期/公司/学历这些事实仍来自 base，不会分叉。
   _flag(items, v) {
     const hide = new Set(v.hideItems || []);
     const emph = new Set(v.emphasizeItems || []);
+    const ov = v.itemOverrides || {};
     return items
       .filter((it) => !hide.has(it.id))
-      .map((it) => Object.assign({}, it, { _emph: emph.has(it.id) }));
+      .map((it) => Object.assign({}, it, ov[it.id] || null, { _emph: emph.has(it.id) }));
   },
 
   // 侧边栏：按变体 sidebar 的 id 顺序，从 capabilities 取出对应能力
@@ -80,10 +92,14 @@ window.DataLoader = {
     return ids.map((id) => map.get(id)).filter(Boolean);
   },
 
-  // 工具集：全部 tools，highlightTools 命中的标 _hl
-  _flagTools(tools, hlIds) {
+  // 工具集：默认全部 tools；onlyTools 给了白名单则只留白名单内的（按 base 原顺序）。
+  // highlightTools 命中的标 _hl（render 里组内排前 + 高亮）。
+  _flagTools(tools, hlIds, onlyIds) {
     const hl = new Set(hlIds);
-    return tools.map((tt) => Object.assign({}, tt, { _hl: hl.has(tt.id) }));
+    const only = onlyIds && onlyIds.length ? new Set(onlyIds) : null;
+    return tools
+      .filter((tt) => !only || only.has(tt.id))
+      .map((tt) => Object.assign({}, tt, { _hl: hl.has(tt.id) }));
   },
 
   // 按 order 指定的 id 顺序排，未列出的接在后面
@@ -102,12 +118,14 @@ window.DataLoader = {
   _validate(base, v) {
     const has = (arr, id) => (arr || []).some((x) => x.id === id);
     const itemPool = [].concat(base.projects || [], base.work || [], base.moreWorks || [], base.education || [], base.contact || []);
-    const SECTIONS = ["profile", "skills", "toolset", "languages", "contact", "intro", "projects", "work", "oddjobs", "moreWorks", "portfolio", "education"];
+    const SECTIONS = ["profile", "skills", "toolset", "languages", "contact", "intro", "collab", "projects", "work", "oddjobs", "moreWorks", "portfolio", "education"];
     const bad = [];
     (v.sidebar || []).forEach((id) => { if (!has(base.capabilities, id)) bad.push("sidebar → " + id); });
     (v.highlightTools || []).forEach((id) => { if (!has(base.tools, id)) bad.push("highlightTools → " + id); });
+    (v.onlyTools || []).forEach((id) => { if (!has(base.tools, id)) bad.push("onlyTools → " + id); });
     (v.emphasizeItems || []).forEach((id) => { if (!has(itemPool, id)) bad.push("emphasizeItems → " + id); });
     (v.hideItems || []).forEach((id) => { if (!has(itemPool, id)) bad.push("hideItems → " + id); });
+    Object.keys(v.itemOverrides || {}).forEach((id) => { if (!has(itemPool, id)) bad.push("itemOverrides → " + id); });
     const s = v.sections || {};
     [].concat(s.order || [], s.hide || [], s.emphasize || []).forEach((k) => { if (SECTIONS.indexOf(k) === -1) bad.push("sections → " + k); });
     if (bad.length) console.warn('[cv] 变体 "' + (v.id || "?") + '" 引用了无效 id：\n  ' + bad.join("\n  "));

@@ -8,7 +8,7 @@
      POST /reset?v=职业&k=密钥 → 清零该职业（v=all 清全部）
      GET  /data          → 返回各职业明细 + 汇总，本周数由时间戳现算
 
-   合法职业：ue5-tech / art-vr / designer / odd
+   合法职业：ue5-tech / art-vr / designer / odd / china-biz
 
    —— 部署（wrangler）——
      worker/ 目录下：wrangler deploy
@@ -21,7 +21,7 @@ const ALLOW_ORIGINS = [
 ];
 
 // 合法职业白名单（防止任意字符串污染 KV）
-const VARIANTS = ["ue5-tech", "art-vr", "designer", "odd"];
+const VARIANTS = ["ue5-tech", "art-vr", "designer", "odd", "china-biz"];
 
 // 清零密钥：hub.html 在公开仓库会暴露，仅用于挡随手乱扫的爬虫。
 // 清零只把统计数字归零，不泄露任何数据，危害很低。

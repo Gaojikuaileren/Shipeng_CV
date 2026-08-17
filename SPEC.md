@@ -28,11 +28,14 @@ base.js（RESUME_BASE：profile/intro/capabilities/tools/projects/work/moreWorks
    ＋
 variants/<v>.js（按 ?v= 动态注入，RESUME_VARIANT）
    ↓ data-loader 合并：
-       · headline/intro/greeting 覆盖
-       · sidebar → 从 capabilities 选侧边栏能力（按数组序）
-       · highlightTools → 标记工具集高亮+排前
-       · sections{order,hide,emphasize} → 板块级控制
-       · emphasizeItems/hideItems → 条目级（项目/工作/联系 id）
+       · headline/intro/greeting/photo/profileFields 覆盖
+       · sidebar → 从 capabilities 选侧边栏能力（按数组序）；hideSkillLevels → 不打点数
+       · highlightTools → 标记工具集高亮+排前；onlyTools → 工具集白名单
+       · sections{order,hide,emphasize} → 板块级控制（order 也可排侧边栏板块）
+       · sectionTitles → 板块标题按变体语境改写
+       · emphasizeItems/hideItems → 条目级（项目/工作/教育/联系 id）
+       · itemOverrides → 条目字段就地覆盖（同一段经历换叙述侧重，事实字段仍来自 base）
+       · collab/contactNote → 可选板块数据（给了才渲染）
        · 无效 id → console.warn 提示
    ↓ render 用 I18n.t() 取当前语言、DocumentFragment 一次性渲染
    ↓ #cv-root（屏幕） / #cv-card（名片）
@@ -40,6 +43,8 @@ variants/<v>.js（按 ?v= 动态注入，RESUME_VARIANT）
 语言优先级：`?lang=` > localStorage > 浏览器语言 > `meta.defaultLang`。
 
 **技能两结构（解耦）**：`capabilities`（核心能力，侧边栏，四语带熟练度，变体 `sidebar` 选）＋ `tools`（具体软件，工具集，变体 `highlightTools` 高亮）。加能力/软件互不影响。
+
+**变体只换叙述，不换事实**（`itemOverrides` 的设计意图）：同一段真实经历，不同职业变体可以换侧重讲法（如自由职业在 UE5 版讲实时系统、在中德商务版讲需求澄清与项目协调），但日期 / 公司 / 学校 / 学历名 / 语言等级一律只写在 `base.js`。这样多版本被同一个人对照看时不会出现互相矛盾的履历。**新变体一律用重新解释，不许新增不存在的经历。**
 
 ## 分发式身份（核心设计）
 **身份不靠"检测"，靠"分发"**——你给谁什么链接/暗号，就决定了他是谁：
@@ -64,7 +69,13 @@ variants/<v>.js（按 ?v= 动态注入，RESUME_VARIANT）
 ## 进展 / 待办
 
 **已完成**（2026-06-04 已部署上线 `gaojikuaileren.github.io/Shipeng_CV/`）：
-- [x] 真实内容灌入；4 职业变体（ue5-tech/art-vr/designer/default）＋ 兼职独立页 `odd/`
+- [x] 真实内容灌入；4 职业变体（ue5-tech/art-vr/designer/china-biz）＋ 兼职独立页 `odd/`
+- [x] 2026-08-17 第五变体 `china-biz`（中德商务开发 / 采购对接 / 项目协调，`?v=china-biz`，hub `/s05`）：
+      CV ＋ Cooperation Profile 双用途（投职位 ＋ 直接发德国 Beschaffungs-/Einkaufsagentur 谈合作）。
+      新增可复用机制：`collab` 板块、`itemOverrides`、`onlyTools`、`sectionTitles`、`profileFields`、
+      `contactNote`、`hideSkillLevels`、`sections.order` 兼管侧边栏顺序。
+      ⚠️ 待办：`worker/cv-stats-worker.js` 的 `VARIANTS` 已加 china-biz，但**需 `wrangler deploy`** 才生效
+      （未部署前 `/hit?v=china-biz` 返回 400，前端静默、页面不受影响，只是这一版访问不计数）。
 - [x] 名片 modal（分享 + canvas 离线绘 PNG）
 - [x] 自托管 Hanken 字体；技能系统重构成 `capabilities` / `tools`
 - [x] 私人控制台 `hub.html`（四选一 + 复制链接，替代"职位→链接生成器"）

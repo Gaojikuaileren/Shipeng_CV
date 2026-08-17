@@ -82,6 +82,14 @@ window.RESUME_BASE = {
     { id: "cap-webgfx",  level: 5, name: { zh: "网页 / 平面设计", ja: "Web / グラフィックデザイン", en: "Web & Graphic Design", de: "Web- & Grafikdesign" } },
     { id: "cap-gfx",     level: 5, name: { zh: "图形 / 图像编辑", ja: "グラフィック / 画像編集", en: "Graphic & Image Editing", de: "Grafik- & Bildbearbeitung" } },
     { id: "cap-proddes", level: 4, name: { zh: "产品设计", ja: "プロダクトデザイン", en: "Product Design", de: "Produktdesign" } },
+    /* —— 商务 / 项目 / 跨文化能力（china-biz 变体用；该变体 hideSkillLevels:true 不显示点数）—— */
+    { id: "cap-xcult",   level: 5, name: { zh: "跨文化沟通（中德）", ja: "異文化コミュニケーション（中独）", en: "Cross-cultural Communication (CN–DE)", de: "Interkulturelle Kommunikation (CN–DE)" } },
+    { id: "cap-client",  level: 4, name: { zh: "客户沟通", ja: "クライアント対応", en: "Client Communication", de: "Kundenkommunikation" } },
+    { id: "cap-req",     level: 4, name: { zh: "需求梳理与澄清", ja: "要件のヒアリングと整理", en: "Requirement Analysis", de: "Anforderungsanalyse" } },
+    { id: "cap-research",level: 4, name: { zh: "产品与市场调研", ja: "製品・市場リサーチ", en: "Product & Market Research", de: "Produkt- & Marktrecherche" } },
+    { id: "cap-coord",   level: 4, name: { zh: "项目协调", ja: "プロジェクト調整", en: "Project Coordination", de: "Projektkoordination" } },
+    { id: "cap-techprod",level: 4, name: { zh: "技术与产品理解", ja: "技術・製品の理解", en: "Technical Product Understanding", de: "Technisches Produktverständnis" } },
+    { id: "cap-viscom",  level: 5, name: { zh: "视觉与呈现沟通", ja: "ビジュアル・コミュニケーション", en: "Visual Communication", de: "Visuelle Kommunikation" } },
   ],
 
   tools: [

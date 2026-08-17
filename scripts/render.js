@@ -56,7 +56,12 @@
     btn.replaceWith(out);
   }
 
-  function secTitle(key) { return h("h2", { class: "cv-sec-title" }, t(SECTION[key])); }
+  /* 板块标题：变体可用 sectionTitles 覆盖（如 toolset → "Technical & Creative Background"）。
+     TITLES 在 Render.all() 开头按当前数据设定，供本文件内所有 sectionBlock 复用。 */
+  let TITLES = null;
+  function secTitle(key) {
+    return h("h2", { class: "cv-sec-title" }, t((TITLES && TITLES[key]) || SECTION[key]));
+  }
   function sectionBlock(key) {
     const sec = h("section", { class: "cv-block", "data-sec": key });
     append(sec, secTitle(key));
@@ -97,14 +102,33 @@
     return wrap;
   }
   // 侧边栏核心能力（d.sidebar = 已按变体顺序取好的 capability 对象列表）
+  // d.hideSkillLevels → 只列能力名，不打点数（商务类能力不宜自称「5 星专家」）
   function renderSkills(d) {
     const caps = d.sidebar || [];
     if (!caps.length) return null;
+    const plain = !!d.hideSkillLevels;
     return sectionBlock("skills",
-      h("ul", { class: "cv-skills" },
+      h("ul", { class: "cv-skills" + (plain ? " cv-skills--plain" : "") },
         caps.map((c) => h("li", { class: "cv-skill is-emph" },
           h("span", { class: "cv-skill-name" }, t(c.name)),
-          renderLevel(c.level)))));
+          plain ? null : renderLevel(c.level)))));
+  }
+
+  /* —— 能力板块（可复用）——————————————————————
+     d.collab = [{ id, title, note?, items:[…] }, …]（多语字段）
+     变体给数据才渲染；不给 → 该板块不存在（其它变体零影响）。
+     用途示例：china-biz 的「中德协作：德国端 / 中国端网络 / 技术与产品理解」。
+  ———————————————————————————————————————————— */
+  function renderCollab(d) {
+    const blocks = d.collab || [];
+    if (!blocks.length) return null;
+    return sectionBlock("collab",
+      h("div", { class: "cv-collab" },
+        blocks.map((b) =>
+          h("div", { class: "cv-cb" },
+            h("h3", { class: "cv-cb-title" }, t(b.title)),
+            b.note ? h("p", { class: "cv-cb-note" }, t(b.note)) : null,
+            h("ul", { class: "cv-cb-list" }, (b.items || []).map((it) => h("li", null, t(it))))))));
   }
 
   /* —— 主区：工具集（d.tools 全部软件，按组；高亮项组内排前）*/
@@ -166,7 +190,9 @@
       append(ul, h("li", { class: "cv-contact-row" },
         h("span", { class: "cv-contact-label" }, c.label), valNode));
     });
-    return sectionBlock("contact", ul);
+    // d.contactNote → 联系方式下方一句话（如「求职 ＋ 项目合作」双身份）；变体不给则不显示
+    return sectionBlock("contact", ul,
+      d.contactNote ? h("p", { class: "cv-contact-note" }, t(d.contactNote)) : null);
   }
 
   /* —— 经历条目（projects / work / oddjobs 共用）*/
@@ -294,13 +320,13 @@
   const RENDER = {
     skills: renderSkills, toolset: renderToolset,
     languages: renderLanguages, contact: renderContact,
-    intro: renderIntro, projects: renderProjects,
+    intro: renderIntro, collab: renderCollab, projects: renderProjects,
     work: renderWork, oddjobs: renderOddjobs,
     moreWorks: renderMoreWorks, portfolio: renderPortfolio,
     education: renderEducation,
   };
   const ASIDE_DEFAULT = ["skills", "languages", "contact"];
-  const MAIN_DEFAULT  = ["intro", "projects", "work", "oddjobs", "toolset", "moreWorks", "portfolio", "education"];
+  const MAIN_DEFAULT  = ["intro", "collab", "projects", "work", "oddjobs", "toolset", "moreWorks", "portfolio", "education"];
 
   /* —— 对外接口 ————————————————————————————— */
   window.Render = {
@@ -308,11 +334,18 @@
       const root = document.getElementById("cv-root");
       if (!root) return;
       const sec = d.sections || {};
+      TITLES = d.sectionTitles || null;
       const hide = new Set(sec.hide || []);
       const emph = new Set(sec.emphasize || []);
-      const orderMain = (sec.order && sec.order.length ? sec.order : MAIN_DEFAULT)
+      const ord = (sec.order && sec.order.length) ? sec.order : [];
+      const orderMain = (ord.length ? ord : MAIN_DEFAULT)
         .filter((k) => MAIN_DEFAULT.includes(k) && !hide.has(k));
-      const orderAside = ASIDE_DEFAULT.filter((k) => !hide.has(k));
+      // 侧边栏顺序也可由 sections.order 指定（如把 languages 提到最前）；
+      // 没在 order 里列出的侧边栏板块按默认顺序接在后面 → 老变体行为不变。
+      const orderAside = ord
+        .filter((k) => ASIDE_DEFAULT.includes(k))
+        .concat(ASIDE_DEFAULT.filter((k) => ord.indexOf(k) === -1))
+        .filter((k) => !hide.has(k));
 
       // 全部构建在 fragment 上，最后一次性插入 → 单次 reflow
       const frag = document.createDocumentFragment();
