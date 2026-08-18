@@ -27,7 +27,8 @@
   <link rel="stylesheet" href="styles/base.css" />
   <link rel="stylesheet" href="styles/screen.css" />
   <link rel="stylesheet" href="styles/motion.css" />
-  <link rel="stylesheet" href="styles/print.css" />
+  <!-- 打印样式对屏幕毫无用处，media="print" 让它不再阻塞首屏渲染 -->
+  <link rel="stylesheet" href="styles/print.css" media="print" />
 
   <!-- 变体注册表（短链 ↔ 内部 ID）。必须排在下面那段之前：裸入口判定要用它解析 ?v= -->
   <script src="scripts/variants.js"></script>
@@ -95,7 +96,7 @@
   <div id="cv-card" aria-hidden="true"></div>
 
   <!-- 名片弹窗（点 Card 打开）-->
-  <div id="card-modal" class="card-modal no-print" hidden>
+  <div id="card-modal" class="card-modal no-print" role="dialog" aria-modal="true" hidden>
     <div class="card-modal-backdrop" data-close></div>
     <div class="card-modal-panel">
       <div class="card-modal-bar">
@@ -109,31 +110,31 @@
   </div>
 
   <!-- 数据（base 静态加载；variant 由 data-loader 按 ?v= 动态注入）-->
-  <script src="data/base.js"></script>
+  <script src="data/base.js" defer></script>
 
   <!-- 核心 -->
-  <script src="scripts/stats.js"></script>
-  <script src="scripts/i18n-ui.js"></script>
-  <script src="scripts/i18n.js"></script>
-  <script src="scripts/identity.js"></script>
-  <script src="scripts/data-loader.js"></script>
-  <script src="scripts/duration.js"></script>
-  <script src="scripts/render.js"></script>
+  <script src="scripts/stats.js" defer></script>
+  <script src="scripts/i18n-ui.js" defer></script>
+  <script src="scripts/i18n.js" defer></script>
+  <script src="scripts/identity.js" defer></script>
+  <script src="scripts/data-loader.js" defer></script>
+  <script src="scripts/duration.js" defer></script>
+  <script src="scripts/render.js" defer></script>
 
   <!-- 导出层 -->
-  <script src="scripts/lib/qrcode.js"></script>
-  <script src="scripts/export/qr.js"></script>
-  <script src="scripts/export/pdf.js"></script>
-  <script src="scripts/export/card.js"></script>
-  <script src="scripts/export/text.js"></script>
+  <script src="scripts/lib/qrcode.js" defer></script>
+  <script src="scripts/export/qr.js" defer></script>
+  <script src="scripts/export/pdf.js" defer></script>
+  <script src="scripts/export/card.js" defer></script>
+  <script src="scripts/export/text.js" defer></script>
 
   <!-- 交互层（预留）-->
-  <script src="scripts/interactions/index.js"></script>
+  <script src="scripts/interactions/index.js" defer></script>
 
   <!-- 引导气泡（指向 PDF 按钮）-->
-  <script src="scripts/pdf-hint.js"></script>
+  <script src="scripts/pdf-hint.js" defer></script>
 
   <!-- 入口（最后）-->
-  <script src="scripts/main.js"></script>
+  <script src="scripts/main.js" defer></script>
 </body>
 </html>

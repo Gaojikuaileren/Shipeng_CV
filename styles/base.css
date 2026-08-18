@@ -70,6 +70,13 @@ html[lang="zh"] .cv-root, html[lang="ja"] .cv-root { line-height: 1.72; }
 .tool-btn--primary { background: var(--ink); color: var(--paper); }
 .tool-btn--primary:hover { background: var(--accent); border-color: var(--accent); }
 
+/* 触控设备：工具栏按钮给到 44px —— 项目自己定的标准，原来只有 24.5–34px */
+@media (pointer: coarse) {
+  .tool-btn { min-height: 44px; }
+  .lang-btn { min-height: 44px; min-width: 44px;
+    display: inline-flex; align-items: center; justify-content: center; }
+}
+
 /* 窄屏：导出按钮只留图标，省空间 */
 @media (max-width: 520px) {
   .tool-btn .btn-label { display: none; }

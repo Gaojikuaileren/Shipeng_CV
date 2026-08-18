@@ -7,6 +7,7 @@
   "use strict";
   const t = (f) => window.I18n.t(f);
   let bound = false;
+  let lastFocus = null;
 
   window.Exporter = window.Exporter || {};
   window.Exporter.card = function (data) {
@@ -14,9 +15,13 @@
     if (!modal) return;
     modal._data = data;
     buildPreview(data);
+    lastFocus = document.activeElement; // 关闭后把焦点还回去
     modal.hidden = false;
     requestAnimationFrame(() => modal.classList.add("open"));
     bindOnce();
+    // 打开后焦点必须进到弹窗里，否则键盘用户还停在背景上，Tab 一路走的是被遮住的内容
+    const first = modal.querySelector("[data-share]") || modal.querySelector("[data-close]");
+    if (first) first.focus();
   };
 
   // 名片放的联系：网站 / 邮箱 / Vimeo（最多 3 条）
@@ -74,12 +79,26 @@
     if (shareBtn) shareBtn.textContent = canNativeShare ? "⤴ Share" : "⎘ Copy Link";
     modal.querySelector("[data-share]").addEventListener("click", () => share(modal._data));
     modal.querySelector("[data-download]").addEventListener("click", () => downloadPNG(modal._data));
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+    document.addEventListener("keydown", (e) => {
+      const m = document.getElementById("card-modal");
+      if (!m || m.hidden) return;           // 弹窗没开就别抢键盘
+      if (e.key === "Escape") { close(); return; }
+      if (e.key !== "Tab") return;
+      // 焦点圈住：aria-modal 只是告诉辅助技术「后面的别读」，它挡不住 Tab 键
+      const f = [].slice.call(m.querySelectorAll("button, [href], input, [tabindex]:not([tabindex='-1'])"))
+        .filter((el) => !el.hidden && el.offsetParent !== null);
+      if (!f.length) return;
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
   }
   function close() {
     const m = document.getElementById("card-modal");
     m.classList.remove("open");
     setTimeout(() => (m.hidden = true), 200);
+    if (lastFocus && lastFocus.focus) lastFocus.focus(); // 焦点还给点开它的那个按钮
+    lastFocus = null;
   }
 
   function share(data) {

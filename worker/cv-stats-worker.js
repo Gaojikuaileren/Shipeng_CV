@@ -3,8 +3,9 @@
    只记录「访问次数 / PDF 导出次数 / 时间戳」，绝不记录 IP / cookie / 任何个人数据。
 
    端点（对外不变，hub.html / scripts/stats.js 无需改动）：
-     POST /hit?v=职业    → 该职业访问 +1，追加时间戳（每职业最多存 100 条）
+     POST /hit?v=职业    → 该职业访问 +1，追加时间戳（每职业最多存 100 条）＋ 本周计数 +1
      POST /pdf?v=职业    → 该职业 PDF 导出 +1
+     POST /works?v=职业  → 该职业的作品页被打开 +1（纸质 PDF 上的二维码被扫）
      POST /reset?v=职业&k=密钥 → 清零该职业（v=all 清全部）
      GET  /data          → 返回各职业明细 + 汇总，本周数由时间戳现算
 
@@ -44,7 +45,17 @@ const KEY = "stats";
 // 每职业最多保留的时间戳条数
 const LOG_MAX = 100;
 
-function emptyBucket() { return { v: 0, p: 0, log: [] }; }
+// v 访问数 / p PDF 导出数 / w 作品页打开数 / log 最近时间戳 / wk 按 ISO 周计数
+function emptyBucket() { return { v: 0, p: 0, w: 0, log: [], wk: {} }; }
+
+// wk 只留最近 8 周：够画一条趋势，又不会无限长
+const WK_KEEP = 8;
+function bumpWeek(b, now) {
+  const k = isoWeek(now);
+  b.wk[k] = (b.wk[k] || 0) + 1;
+  const keys = Object.keys(b.wk).sort();
+  while (keys.length > WK_KEEP) delete b.wk[keys.shift()];
+}
 
 // 补齐缺失职业 / 修正坏类型（新增职业时老数据也能平滑接上）
 function loadAll(raw) {
@@ -54,7 +65,9 @@ function loadAll(raw) {
     if (!data[id] || typeof data[id] !== "object") data[id] = emptyBucket();
     if (typeof data[id].v !== "number") data[id].v = 0;
     if (typeof data[id].p !== "number") data[id].p = 0;
+    if (typeof data[id].w !== "number") data[id].w = 0;
     if (!Array.isArray(data[id].log)) data[id].log = [];
+    if (!data[id].wk || typeof data[id].wk !== "object") data[id].wk = {};
   }
   return data;
 }
@@ -77,10 +90,18 @@ export class Stats {
     // —— 记录一次访问 ——
     if (path === "/hit") {
       await this._mutate((data) => {
+        const now = new Date();
         data[v].v += 1;
-        data[v].log.push(new Date().toISOString());
+        bumpWeek(data[v], now); // 「本周」独立计数，不再从 log 现算
+        data[v].log.push(now.toISOString());
         if (data[v].log.length > LOG_MAX) data[v].log = data[v].log.slice(-LOG_MAX);
       });
+      return this._json({ ok: true });
+    }
+
+    // —— 记录一次作品页打开（PDF 上的二维码被扫进来）——
+    if (path === "/works") {
+      await this._mutate((data) => { data[v].w += 1; });
       return this._json({ ok: true });
     }
 
@@ -103,17 +124,24 @@ export class Stats {
     if (path === "/data") {
       const data = loadAll(await this.ctx.storage.get(KEY));
       const week = isoWeek(new Date());
-      const out = { variants: {}, total: 0, thisWeek: 0, totalPdf: 0 };
+      const out = { variants: {}, total: 0, thisWeek: 0, totalPdf: 0, totalWorks: 0 };
       for (let i = 0; i < VARIANTS.length; i++) {
         const id = VARIANTS[i];
         const b = data[id];
-        let wkCount = 0;
-        for (let j = 0; j < b.log.length; j++) {
-          if (isoWeek(new Date(b.log[j])) === week) wkCount++;
+        /* 「本周」以前是从 log 现算的 —— 而 log 每个变体只留 100 条，
+           线上五个变体早就全部撞顶，W 恒等于 500，这个数字一直是假的。
+           现在读独立的周计数器；老数据没有 wk 字段就退回按 log 算（不会更差）。 */
+        let wkCount = b.wk[week];
+        if (typeof wkCount !== "number") {
+          wkCount = 0;
+          for (let j = 0; j < b.log.length; j++) {
+            if (isoWeek(new Date(b.log[j])) === week) wkCount++;
+          }
         }
-        out.variants[id] = { visits: b.v, pdf: b.p, thisWeek: wkCount, log: b.log };
+        out.variants[id] = { visits: b.v, pdf: b.p, works: b.w, thisWeek: wkCount, log: b.log };
         out.total += b.v;
         out.totalPdf += b.p;
+        out.totalWorks += b.w;
         out.thisWeek += wkCount;
       }
       return this._json(out);
@@ -150,6 +178,7 @@ export default {
     const allow = ALLOW_ORIGINS.indexOf(origin) !== -1 ? origin : ALLOW_ORIGINS[0];
     const headers = {
       "Access-Control-Allow-Origin": allow,
+      Vary: "Origin", // 响应随 Origin 变化，缺了它中间缓存会把 A 站的头发给 B 站
       "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
       "Content-Type": "application/json; charset=utf-8",
@@ -164,7 +193,7 @@ export default {
 
     const path = url.pathname;
     const v = url.searchParams.get("v") || "";
-    const isWrite = path === "/hit" || path === "/pdf";
+    const isWrite = path === "/hit" || path === "/pdf" || path === "/works";
 
     // —— 校验：方法 / 职业白名单 / 清零密钥 ——
     if (isWrite) {

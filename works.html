@@ -31,6 +31,7 @@
 
   <!-- 数据：与简历同一份 base + 同一套变体机制，绝不在这里另抄一份链接 -->
   <script src="scripts/variants.js"></script>
+  <script src="scripts/stats.js"></script>
   <script src="data/base.js"></script>
   <script src="scripts/i18n-ui.js"></script>
   <script src="scripts/i18n.js"></script>
@@ -68,6 +69,11 @@
       }
 
       var DATA = null;
+
+      /* 打一次点：这一页只有一个入口 —— 纸质 PDF 上那个二维码。
+         它是「HR 真的拿着纸在看」的唯一信号，值得单独计数（/works，不混进简历访问数）。
+         本机开发不打点的逻辑在 stats.js 里统一处理。 */
+      if (window.Stats) window.Stats.worksHit(variant);
 
       /* —— 极简元素构建器（render.js 的 h() 关在 IIFE 里，取不到，这里自备一个）—— */
       function el(tag, cls, text) {

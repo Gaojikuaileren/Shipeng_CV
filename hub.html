@@ -110,9 +110,10 @@
 
     function run() {
       var v = cmd.value.trim().toLowerCase();
-      if (ROUTES[v]) { location.href = dir + ROUTES[v]; return; }
+      // 查表走 hasOwnProperty：裸对象会把 constructor / __proto__ 这类原型键也认成命令
+      if (Object.prototype.hasOwnProperty.call(ROUTES, v)) { location.href = dir + ROUTES[v]; return; }
       if (v === "/sdata") { cmd.value = ""; showData(); return; }
-      if (CLEAN[v]) { cmd.value = ""; doClean(CLEAN[v]); return; }
+      if (Object.prototype.hasOwnProperty.call(CLEAN, v)) { cmd.value = ""; doClean(CLEAN[v]); return; }
       // 无效指令：抖动提示（无文字）
       wrap.classList.remove("shake"); void wrap.offsetWidth; wrap.classList.add("shake");
     }
@@ -142,13 +143,13 @@
     function renderTable(d) {
       var table = document.getElementById("stat-table");
       var vs = d.variants || {};
-      var head = '<thead><tr><th></th><th>访问</th><th>PDF</th><th>本周</th></tr></thead>';
+      var head = '<thead><tr><th></th><th>访问</th><th>PDF</th><th>扫码</th><th>本周</th></tr></thead>';
       var body = '<tbody>';
       ORDER.forEach(function (id) {
-        var x = vs[id] || { visits: 0, pdf: 0, thisWeek: 0 };
-        body += '<tr><td class="n">' + NAMES[id] + '</td><td>' + (x.visits||0) + '</td><td>' + (x.pdf||0) + '</td><td>' + (x.thisWeek||0) + '</td></tr>';
+        var x = vs[id] || { visits: 0, pdf: 0, works: 0, thisWeek: 0 };
+        body += '<tr><td class="n">' + NAMES[id] + '</td><td>' + (x.visits||0) + '</td><td>' + (x.pdf||0) + '</td><td>' + (x.works||0) + '</td><td>' + (x.thisWeek||0) + '</td></tr>';
       });
-      body += '<tr class="sum"><td class="n">合计</td><td>' + (d.total||0) + '</td><td>' + (d.totalPdf||0) + '</td><td>' + (d.thisWeek||0) + '</td></tr>';
+      body += '<tr class="sum"><td class="n">合计</td><td>' + (d.total||0) + '</td><td>' + (d.totalPdf||0) + '</td><td>' + (d.totalWorks||0) + '</td><td>' + (d.thisWeek||0) + '</td></tr>';
       body += '</tbody>';
       table.innerHTML = head + body;
     }

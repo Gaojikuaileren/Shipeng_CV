@@ -41,6 +41,12 @@ window.Stats = {
     this._post("/hit?v=" + encodeURIComponent(variant));
   },
 
+  // 记录一次「作品页被打开」（纸质 PDF 上的二维码被扫进来）
+  worksHit: function (variant) {
+    if (!variant) return;
+    this._post("/works?v=" + encodeURIComponent(variant));
+  },
+
   // 记录一次 PDF 导出（按职业）
   pdfHit: function (variant) {
     if (!variant) return;

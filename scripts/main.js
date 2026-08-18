@@ -20,6 +20,7 @@
         window.Render.all(data);
         buildLangSwitcher();
         bindUI(data);
+        syncAria();
         if (window.Interactions) window.Interactions.init({ data: data, lang: window.I18n.current });
         if (window.PdfHint) window.PdfHint.show();
       } catch (e) {
@@ -57,6 +58,7 @@
 
         window.Render.all(window.__DATA__);
         syncLangSwitcher();
+        syncAria();
 
         TOGGLES.forEach((sel, i) => {
           if (!wasOpen[i]) return;
@@ -70,6 +72,20 @@
         else window.scrollTo(0, y); // 没找到锚点（页面还在最顶上）就退回按像素还原
       } catch (e) { console.error("[cv] re-render failed", e); }
     });
+  }
+
+  /* 控件的可访问名跟着语言走（原来写死在 index.html 里）。
+     每次渲染都重设一遍 —— 切语言会重跑，标签也就跟着变。 */
+  function syncAria() {
+    const A = window.UI_TEXT.aria, tt = (f) => window.I18n.t(f);
+    const set = (sel, txt) => { const el = document.querySelector(sel); if (el) el.setAttribute("aria-label", txt); };
+    set(".cv-toolbar", tt(A.toolbar));
+    set("#lang-switch", tt(A.langGroup));
+    set("#btn-copy", tt(A.copy));
+    set("#btn-card", tt(A.card));
+    set("#btn-pdf", tt(A.pdf));
+    set("#card-modal", tt(A.cardDialog));
+    set("#card-modal [data-close]", tt(A.close));
   }
 
   function bindUI(data) {
@@ -126,6 +142,10 @@
     if (!el) {
       el = document.createElement("div");
       el.className = "cv-toast";
+      // 复制/下载的成败反馈对屏幕阅读器本来完全不存在 —— 补一个 live region。
+      // polite 而不是 assertive：这是结果通知，不该打断正在读的内容。
+      el.setAttribute("role", "status");
+      el.setAttribute("aria-live", "polite");
       document.body.appendChild(el);
     }
     el.textContent = msg;

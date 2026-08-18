@@ -138,7 +138,7 @@
   .cv-cb-list { display: block; font-size: 9pt; line-height: 1.5; }
   .cv-cb-list li { display: inline; padding-left: 0; }
   .cv-cb-list li::before { content: none; }
-  .cv-cb-list li:not(:last-child)::after { content: " · "; color: #999; }
+  .cv-cb-list li:not(:last-child)::after { content: " · "; color: #777; } /* #999 只有 2.8:1 */
   .cv-contact-note { font-size: 8.5pt; color: #444; border-top: 0.4pt solid #ccc; }
 
   /* UE5+AI 专项：本变体内容最多（15 条更多作品 ＋ 完整工具集 ＋ 4 件作品 ＋ 二维码说明行），
@@ -239,7 +239,7 @@
   .cv-pprint-list { margin: 0; padding-left: 4mm; font-size: 9pt; line-height: 1.75; }
   .cv-pi-title { font-weight: 600; }
   .cv-pi-type { color: #666; }
-  .cv-pi-period { color: #888; font-size: 8.5pt; }
+  .cv-pi-period { color: #666; font-size: 8.5pt; } /* #888 只有 3.5:1，低于 AA */
   /* 非视频条目（商店 / 网站）才印出裸网址。两种情形都需要它：
      没开 worksPage 时，那唯一的 QR 指向 Vimeo，根本够不着这些地址；
      开了 worksPage 时，QR 虽然覆盖了全部链接，但手上只有纸、没有扫码设备的人仍要能照着敲。 */

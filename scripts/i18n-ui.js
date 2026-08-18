@@ -53,6 +53,18 @@ window.UI_TEXT = {
     collapse: { zh: "收起",           ja: "折りたたむ",           en: "Show fewer",       de: "Weniger anzeigen" },
   },
 
+  /* 工具栏等控件的可访问名。原来写死在 index.html 里（中文/双语），
+     全站其它 UI 都是四语，唯独这些标签不跟着语言走。 */
+  aria: {
+    toolbar: { zh: "工具栏", ja: "ツールバー", en: "Toolbar", de: "Werkzeugleiste" },
+    langGroup: { zh: "语言", ja: "言語", en: "Language", de: "Sprache" },
+    copy: { zh: "复制摘要", ja: "概要をコピー", en: "Copy summary", de: "Zusammenfassung kopieren" },
+    card: { zh: "名片", ja: "名刺", en: "Business card", de: "Visitenkarte" },
+    pdf: { zh: "导出 PDF", ja: "PDF を書き出す", en: "Export PDF", de: "PDF exportieren" },
+    cardDialog: { zh: "名片", ja: "名刺", en: "Business card", de: "Visitenkarte" },
+    close: { zh: "关闭", ja: "閉じる", en: "Close", de: "Schließen" },
+  },
+
   /* 「更多作品」在 PDF 里的形态：一个指向在线简历的 QR ＋ 一行地址。
      纸上印 15 条点不动的清单没有意义，扫码进去反而能展开、能点。 */
   mwPrint: {
