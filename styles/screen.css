@@ -229,6 +229,9 @@ body.v-china-biz { --aside-w: 324px; }
 /* 工具集/更多作品 横跨版 & 页尾——仅 PDF/打印显示 */
 .cv-toolset-print { display: none; }
 .cv-moreworks-print { display: none; }
+/* 「更多作品」在 PDF 里是一个二维码 —— 网页上当然不该出现（网页本身就是二维码的目的地）。
+   这一条当初漏了，QR 就直接显示在页面上了。新增任何打印镜像块都必须在这张表里登记。 */
+.cv-mwprint-wrap { display: none; }
 /* 变体声明的全宽打印副本（work / education 等）：屏幕端不存在，只在 PDF 里现形 */
 .cv-sec-print { display: none; }
 .cv-print-footer { display: none; }
