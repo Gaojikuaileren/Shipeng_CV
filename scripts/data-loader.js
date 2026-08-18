@@ -131,6 +131,10 @@ window.DataLoader = {
   },
 
   // 按 order 指定的 id 顺序排，未列出的接在后面
+  /* ⚠️ 项目里有两个 order，别混：
+       · sections.order —— 排**板块**（哪些板块出现、按什么顺序），在 render.js 里用；
+       · 顶层 order       —— 排**条目**（{ projects: [...], contact: [...] }），就是这个函数。
+     语义：列出的按给定顺序排在前面，没列出的保持原顺序跟在后面（不是白名单，不会删条目）。 */
   _order(items, orderIds) {
     if (!orderIds || !orderIds.length) return items;
     const map = new Map(items.map((it) => [it.id, it]));

@@ -462,6 +462,9 @@ window.RESUME_BASE = {
   ],
 
   /* —— 语言能力 ————————————————————————————————— */
+  /* ⚠️ languages[].cefr 全站没有任何代码读它（渲染用的是 level）。
+     留着是因为它记录了比 level 更细的口径（中文 level 写「母语」，cefr 才是 C2），
+     但改它不会让页面发生任何变化 —— 要改显示请改 level。 */
   languages: [
     { name: { zh: "中文普通话", ja: "中国語（普通話）", en: "Chinese (Mandarin)", de: "Chinesisch (Mandarin)" }, level: { zh: "母语", ja: "母語", en: "Native", de: "Muttersprache" }, cefr: "C2" },
     { name: { zh: "德语", ja: "ドイツ語", en: "German", de: "Deutsch" },             level: { zh: "B2", ja: "B2", en: "B2", de: "B2" }, cefr: "B2" },

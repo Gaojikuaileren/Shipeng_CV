@@ -43,7 +43,6 @@ window.RESUME_VARIANT = {
   emphasizeItems: ["prj-room", "prj-grau"],
   // 只挡求职邮箱：本变体用接单邮箱。项目与作品集与 01 号 UE 版保持一致，不再逐条挡。
   hideItems: ["email-pro"],
-  order: {},
   /* 作品集里现在有了非视频链接（Verse Wiki 是网站）→ 一个指向 Vimeo 的共用 QR 覆盖不到它，
      跟 01 号一样改指 works.html，那一页按本变体的可见条目列出全部可点链接。 */
   worksPage: true,
