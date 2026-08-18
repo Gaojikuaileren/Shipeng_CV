@@ -124,7 +124,7 @@
     const showLevel = mode === "level" || mode === "both";
     const showSince = mode === "since" || mode === "both";
     const plain = mode === "none"; // 右侧彻底不放东西时才用 --plain（名字左对齐，不留空档）
-    const lang = (window.I18n && window.I18n.current) || "en";
+    const lang = curLang();
     return sectionBlock("skills",
       h("ul", { class: "cv-skills" + (plain ? " cv-skills--plain" : "") },
         caps.map((c) => h("li", { class: "cv-skill is-emph" },
@@ -207,7 +207,7 @@
         valNode = h("a", { class: "cv-link", href: "tel:" + c.value.replace(/\s+/g, "") }, c.value);
       else
         valNode = h("a", { class: "cv-link", href: c.value, target: "_blank", rel: "noopener" },
-          c.value.replace(/^https?:\/\//, ""));
+          urlLabel(c.value));
       append(ul, h("li", { class: "cv-contact-row" },
         h("span", { class: "cv-contact-label" }, c.label), valNode));
     });
@@ -316,24 +316,23 @@
   // 只有 http(s) 撑得起一个「扫得开」的绝对地址。README 的「方式二 直接双击 index.html」
   // 是 file:// 场景：那时 location.href 是本机磁盘路径，编进二维码既扫不出东西，又把私人
   // 目录名（.meine/职业/.简历/…）印在发给雇主的纸上。→ 返回 null，调用方自动退回老行为。
-  function worksUrl(lang) {
+  /* 站内绝对地址：作品页与在线简历只差 path 一段，合成一个。
+     运行时从 location 推、绝不写死域名。file:// 下返回 null —— 那时 location.href 是本机
+     磁盘路径，编进二维码既扫不出东西，又会把私人目录名印在发给雇主的纸上；调用方据此退回老行为。
+     带 lang：PDF 是「某一种语言的一张纸」，扫码的人该落在同一种语言上，而不是他手机浏览器的语言。 */
+  function siteUrl(path, lang) {
     if (location.protocol !== "http:" && location.protocol !== "https:") return null;
     const v = (window.Identity && window.Identity.variant) || "";
-    return new URL(".", location.href).href +
-      "works.html?v=" + encodeURIComponent(window.VARIANTS ? window.VARIANTS.toShort(v) : v) +
-      "&lang=" + encodeURIComponent(lang);
-  }
-  // 在线简历自身的地址（给「更多作品」那个 QR 用）。与 worksUrl 同样的规矩：
-  // 运行时从 location 推、绝不写死域名，file:// 下返回 null 由调用方退回老行为。
-  // 用目录地址而不是 index.html?… —— 少 10 个字符，二维码模块数更少、更好扫。
-  function cvUrl(lang) {
-    if (location.protocol !== "http:" && location.protocol !== "https:") return null;
-    const v = (window.Identity && window.Identity.variant) || "";
-    return new URL(".", location.href).href +
+    return new URL(".", location.href).href + path +
       "?v=" + encodeURIComponent(window.VARIANTS ? window.VARIANTS.toShort(v) : v) +
       "&lang=" + encodeURIComponent(lang);
   }
+  const worksUrl = (lang) => siteUrl("works.html", lang); // 作品链接页
+  const cvUrl    = (lang) => siteUrl("", lang);           // 在线简历自身（目录地址，二维码更短）
+
   // 印在纸上的地址写法：砍掉协议头（谁都知道要加 https），其余一字不改 —— 手抄的人要照着敲
+  // 当前语言：兜底写法原本在四处各抄一遍
+  const curLang = () => (window.I18n && window.I18n.current) || "en";
   function urlLabel(u) { return String(u).replace(/^https?:\/\//, ""); }
   // QR 下方那行可点地址：既是 PDF 里能点的超链接，也是纸上能照抄的地址
   function qrLink(url) { return h("a", { class: "cv-pprint-url-link", href: url }, urlLabel(url)); }
@@ -380,7 +379,7 @@
   function renderPortfolio(d) {
     const works = portfolioItems(d);
     if (!works.length) return null;
-    const lang = (window.I18n && window.I18n.current) || "en";
+    const lang = curLang();
     // worksPage 开着、但当前协议撑不起可扫地址（file://）→ wu 为 null，整块自动回到
     // 「QR 指 Vimeo 主页、不印说明行」的老行为，与本机制加入前一致。
     const wu = d.worksPage ? worksUrl(lang) : null;
@@ -505,7 +504,7 @@
     const lines = h("div", { class: "cv-card-lines" });
     d.contact.filter((c) => c.visibility === "public")
       .forEach((c) => append(lines,
-        h("div", { class: "cv-card-line" }, c.label + " · " + c.value.replace(/^https?:\/\//, ""))));
+        h("div", { class: "cv-card-line" }, c.label + " · " + urlLabel(c.value))));
     append(inner, lines);
     return inner;
   }
@@ -518,28 +517,54 @@
     const parts = [];
     if (phone) parts.push(phone.value);
     if (email) parts.push(email.value);
-    if (insta) parts.push(insta.value.replace(/^https?:\/\//, ""));
+    if (insta) parts.push(urlLabel(insta.value));
     return h("div", { class: "cv-print-footer", "aria-hidden": "true" },
       t(d.profile.name) + "　·　" + parts.join("　·　"));
   }
 
-  /* —— 板块注册 ————————————————————————————— */
-  const RENDER = {
-    skills: renderSkills, toolset: renderToolset,
-    languages: renderLanguages, contact: renderContact,
-    intro: renderIntro, collab: renderCollab, projects: renderProjects,
-    work: renderWork, oddjobs: renderOddjobs,
-    moreWorks: renderMoreWorks, portfolio: renderPortfolio,
-    education: renderEducation,
-  };
-  const ASIDE_DEFAULT = ["skills", "languages", "contact"];
-  const MAIN_DEFAULT  = ["intro", "collab", "projects", "work", "oddjobs", "toolset", "moreWorks", "portfolio", "education"];
+  /* —— 板块注册表：全站唯一真源 ————————————————————————
+     一行一个板块。以前这件事被摊在四份手写清单里（RENDER 表、ASIDE_DEFAULT、
+     MAIN_DEFAULT、data-loader 的 SECTIONS 白名单），漏改任何一份都不报错：
+     漏 MAIN_DEFAULT → 板块神秘消失；漏 SECTIONS → 控制台报假警告。现在都从这里派生。
+
+     where 的语义两栏**相反**（不是笔误，见下面 Render.all 里的两段过滤）：
+       "main"  → 变体一旦写了 sections.order，没列进 order 的主区板块**不渲染**
+       "aside" → 没列进 order 的侧栏板块**自动追加**到末尾
+
+     ⚠️ 本表的书写顺序是有意义的：
+       · aside 三行的先后 = 没把侧栏写全的变体（ue / fl / ds / mn）的实际侧栏顺序，
+         挪一行就会改掉 16 份输出；
+       · main 九行今天只当白名单用（5 个变体都写了完整 order），但别依赖这一点。
+
+     新增一个板块 = 写渲染函数 ＋ 这里加一行 ＋ i18n-ui.js 加四语标题，共 3 处。 */
+  const SECTION_SPECS = [
+    { key: "skills",    where: "aside", render: renderSkills },
+    { key: "languages", where: "aside", render: renderLanguages },
+    { key: "contact",   where: "aside", render: renderContact },
+    { key: "intro",     where: "main",  render: renderIntro },
+    { key: "collab",    where: "main",  render: renderCollab },
+    { key: "projects",  where: "main",  render: renderProjects },
+    { key: "work",      where: "main",  render: renderWork },
+    { key: "oddjobs",   where: "main",  render: renderOddjobs },
+    { key: "toolset",   where: "main",  render: renderToolset },
+    { key: "moreWorks", where: "main",  render: renderMoreWorks },
+    { key: "portfolio", where: "main",  render: renderPortfolio },
+    { key: "education", where: "main",  render: renderEducation },
+  ];
+  const RENDER = {};
+  SECTION_SPECS.forEach((s) => { RENDER[s.key] = s.render; });
+  const pick = (w) => SECTION_SPECS.filter((s) => s.where === w).map((s) => s.key);
+  const ASIDE_DEFAULT = pick("aside");
+  const MAIN_DEFAULT  = pick("main");
 
   /* —— 对外接口 ————————————————————————————— */
   window.Render = {
     // works.html 复用：判断一个条目算不算「有链接的作品」、该配哪个徽标。
     // 导出的是同一个函数，不是抄一份 → 规则永远只有这一处。
     workLink: workLink,
+    // 板块 id 白名单：data-loader 的 _validate 用它校验变体写的 sections.order/hide/emphasize。
+    // profile 不在 SECTION_SPECS 里（它不是板块、没有标题、不参与排序），单独补上。
+    SECTION_KEYS: ["profile"].concat(SECTION_SPECS.map((s) => s.key)),
     all(d) {
       const root = document.getElementById("cv-root");
       if (!root) return;
@@ -605,7 +630,7 @@
       // 打印专用：横跨整页排最后 —— 放在 grid 外（普通全宽 block，避免 CSS Grid 打印跨页 bug）
       // 先「更多作品」后「工具集」（屏幕隐藏）
       if (orderMain.indexOf("moreWorks") !== -1 && !hide.has("moreWorks")) {
-        const cu = cvUrl((window.I18n && window.I18n.current) || "en"); // all() 里没有 lang 局部变量
+        const cu = cvUrl(curLang());
         if (cu && (d.moreWorks || []).length) {
           // 有在线地址 → 整块换成 QR ＋ 地址（省约 75mm，且线上那份永远是最新的）
           append(frag, h("div", { class: "cv-mwprint-wrap" },

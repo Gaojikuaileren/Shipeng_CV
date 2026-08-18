@@ -146,7 +146,11 @@ window.DataLoader = {
   _validate(base, v) {
     const has = (arr, id) => (arr || []).some((x) => x.id === id);
     const itemPool = [].concat(base.projects || [], base.work || [], base.moreWorks || [], base.education || [], base.contact || []);
-    const SECTIONS = ["profile", "skills", "toolset", "languages", "contact", "intro", "collab", "projects", "work", "oddjobs", "moreWorks", "portfolio", "education"];
+    // 板块白名单来自 render.js 的注册表（唯一真源）。_validate 是运行时调用的，
+    // 此时 render.js 早已执行完 —— index.html 与 works.html 里它都排在 data-loader 之后，
+    // 而两处 DataLoader.load 的调用点都在 DOMContentLoaded 之后。兜底是给将来抽掉 render 的场景。
+    const SECTIONS = (window.Render && window.Render.SECTION_KEYS) ||
+      ["profile", "skills", "toolset", "languages", "contact", "intro", "collab", "projects", "work", "oddjobs", "moreWorks", "portfolio", "education"];
     const bad = [];
     (v.sidebar || []).forEach((id) => { if (!has(base.capabilities, id)) bad.push("sidebar → " + id); });
     (v.highlightTools || []).forEach((id) => { if (!has(base.tools, id)) bad.push("highlightTools → " + id); });

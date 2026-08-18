@@ -15,8 +15,8 @@ window.RESUME_VARIANT = {
   },
   greeting: null,
   sections: {
-    order: ["intro", "work", "education", "toolset", "projects"],
-    hide: ["portfolio", "moreWorks"],
+    order: ["intro", "work", "education", "toolset", "projects", "portfolio", "moreWorks"],
+    hide: [],
     emphasize: ["work", "education"],
   },
   // sidebar → 侧边栏核心能力（设计相关，宏观能力描述）
@@ -25,6 +25,10 @@ window.RESUME_VARIANT = {
   /* —— 页面底部通向 UE 开发版的按钮 ——————————————————————
      来看设计版的人里有一部分其实在找能写代码的设计师 —— 与其让他们猜，不如给一个入口。
      只在屏幕上出现；纸上点不了按钮，PDF 里整块隐藏（print.css）。 */
+  /* PDF 里给一个能扫的作品入口：本变体隐藏了作品集板块（简历上不列链接），
+     所以二维码放在侧栏末尾（见 render.js 的 renderAsideQr）。 */
+  worksPage: true,
+
   crossLink: {
     to: "ue",
     label: {

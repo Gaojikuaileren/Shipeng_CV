@@ -113,12 +113,19 @@ html[lang="zh"] .cv-root, html[lang="ja"] .cv-root { line-height: 1.72; }
    一点开换成正常字号的链接，这一行就长高约 2px，整页跟着轻微下移。
    现在只留一条虚线下划线作为「可点」的提示 —— 盒模型与揭示后的文本完全一致，
    宽度仍会变（「🔒 点击显示」比邮箱短），但那只在行内横向变化，不推动纵向排版。 */
+/* 点开前后必须**等高**。这条踩过两次：
+   ① 最早是 .9em 字号 + 上下 1px 边框 + 1px 内边距的小方块 → 点开长高约 2px；
+   ② 改成只留一条 border-bottom 之后仍差 1px —— 实测行高 23.02 → 22.02，
+      而把边框去掉就与点开后完全相同，也就是说那 1px 就是边框本身占的。
+   所以下划线改用 text-decoration：它是绘制层的东西，完全不进盒模型，一毫米都不占。
+   （🔒 那个 ::before 实测对行高零影响，可以放心留着。）*/
 .cv-reveal {
   font: inherit; line-height: inherit; vertical-align: baseline;
-  border: 0; border-bottom: var(--hair) dashed var(--ink-faint);
-  background: none; color: var(--ink-soft); padding: 0; cursor: pointer;
+  border: 0; background: none; color: var(--ink-soft); padding: 0; cursor: pointer;
+  text-decoration: underline dashed; text-underline-offset: .22em;
+  text-decoration-thickness: 1px; text-decoration-color: var(--ink-faint);
 }
-.cv-reveal:hover { border-bottom-style: solid; color: var(--ink); }
+.cv-reveal:hover { text-decoration-style: solid; color: var(--ink); text-decoration-color: currentColor; }
 .cv-reveal::before { content: "🔒 "; }
 
 /* toast */

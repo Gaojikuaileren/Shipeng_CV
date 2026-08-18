@@ -209,6 +209,13 @@
   /* 设计师专项：省略教育方向描述 + 条目更紧凑，让工作经历+教育进第一页 */
   body.v-designer [data-sec="education"] .cv-item-body { display: none; }
 
+  /* designer：把联系方式压到第 2 页，四语统一。
+     实测（Chrome 真导）：不加这条时中/日的联系方式本来就在第 2 页，而英/德挤在第 1 页
+     末尾只剩 2.2mm / 7.5mm —— 既塞不下二维码，四语的 QR 位置也对不齐。
+     第 2 页侧栏四语都有 94–127mm 空位，放得下联系方式 + 二维码。
+     栅格内的强制分页只作用于侧栏那一列，主区分页不受影响（Chrome 对两列独立分片）。 */
+  body.v-designer .cv-aside [data-sec="contact"] { break-before: page; }
+
   /* 跨简历入口：纸上点不了按钮，印一个按钮样式的框只会让人困惑 */
   .cv-crosslink { display: none !important; }
 
