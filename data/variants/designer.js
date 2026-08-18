@@ -45,9 +45,9 @@ window.RESUME_VARIANT = {
     "t-ps", "t-affinity", "t-canva", "t-webflow",
     "t-pr", "t-ae", "t-davinci",
     "t-blender", "t-zbrush", "t-nomad", "t-shapr3d",
-    // AI：只高亮出图/出素材/图生 3D 这几件，与设计流程直接相关。
-    // Claude Code / Codex / llama.cpp 是工程侧工具，仍在清单里（内容全站统一），只是不高亮。
-    "t-comfyui", "t-controlnet", "t-triposplat", "t-birefnet",
+    // AI：出图 / 图生 3D 这几件与设计流程直接相关；Claude Code 同样高亮（本人指定）。
+    // Codex / llama.cpp 仍在清单里（内容全站统一），只是不高亮。
+    "t-comfyui", "t-controlnet", "t-triposplat", "t-claudecode",
   ],
   /* ★ 工具集的**内容**五份简历一律相同（本人要求），只有高亮不同 ——
      这里曾经用 hideTools 挡掉整个 AI 组。会用什么工具是客观事实，不该按投递方向增删；

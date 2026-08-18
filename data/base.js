@@ -149,7 +149,6 @@ window.RESUME_BASE = {
     { id: "t-comfyui",    name: "ComfyUI",                 group: "ai" },
     { id: "t-controlnet", name: "ControlNet",              group: "ai" },
     { id: "t-triposplat", name: "TripoSplat",              group: "ai" },
-    { id: "t-birefnet",   name: "BiRefNet",                group: "ai" },
     { id: "t-llamacpp",   name: "llama.cpp",               group: "ai" },
     // interactive
     { id: "t-osc",        name: "OSC Protocol",            group: "interactive" },
