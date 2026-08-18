@@ -44,13 +44,15 @@ window.RESUME_VARIANT = {
   ],
 
   /* —— 板块顺序：语言前置（本变体的核心职业价值），协作板块紧跟自我介绍 ——
-     项目经历整段不出现：媒体艺术项目与本职位方向无关，写了反而分散注意力。 */
+     项目经历不出现：媒体艺术项目与采购 / 协调方向无关，写了反而分散注意力。
+     工具集（技术与创意背景）不出现：软件清单对本方向没有说服力，
+     真正的说服力在「中德协作」＋「工作经历」两块。 */
   sections: {
     order: [
-      "languages", "skills", "contact",                     // 侧边栏
-      "intro", "collab", "work", "education", "toolset",    // 主区
+      "languages", "skills", "contact",        // 侧边栏
+      "intro", "collab", "work", "education",  // 主区：自我介绍 → 协作 → 工作 → 教育
     ],
-    hide: ["projects", "portfolio", "moreWorks"],   // 这版不是艺术作品集，也不列项目经历
+    hide: ["projects", "portfolio", "moreWorks", "toolset"],
     emphasize: ["collab", "contact"],
   },
 
@@ -71,17 +73,17 @@ window.RESUME_VARIANT = {
       id: "cb-de",
       title: { zh: "德国端", ja: "ドイツ側", en: "Germany-side", de: "Deutschland-Seite" },
       note: {
-        zh: "在德国本地直接沟通（德语 / 英语）。",
-        ja: "ドイツ現地での直接コミュニケーション（ドイツ語・英語）。",
-        en: "Direct communication on site in Cologne, in German and English.",
-        de: "Direkte Kommunikation vor Ort in Köln, auf Deutsch und Englisch.",
+        zh: "自 2018 年常驻德国，在本地直接沟通（德语 / 英语）。",
+        ja: "2018 年よりドイツ在住、現地で直接コミュニケーション（ドイツ語・英語）。",
+        en: "Based in Germany since 2018 — direct communication on site in Cologne, in German and English.",
+        de: "Seit 2018 in Deutschland — direkte Kommunikation vor Ort in Köln, auf Deutsch und Englisch.",
       },
       items: [
-        { zh: "客户与合作方沟通", ja: "顧客・パートナーとの連絡", en: "Client & partner communication", de: "Kunden- und Partnerkommunikation" },
-        { zh: "需求澄清与规格梳理", ja: "要件のヒアリングと仕様整理", en: "Requirement clarification & specification", de: "Anforderungsklärung und Spezifikation" },
+        { zh: "客户与合作方沟通", ja: "顧客・パートナーとの折衝", en: "Client & partner communication", de: "Kunden- und Partnerkommunikation" },
+        { zh: "需求对接与文档梳理", ja: "要件のすり合わせと資料整理", en: "Requirement alignment & documentation", de: "Anforderungsabstimmung und Dokumentation" },
         { zh: "市场与产品调研", ja: "市場・製品リサーチ", en: "Market & product research", de: "Markt- und Produktrecherche" },
-        { zh: "合作方开发与初步接洽", ja: "パートナー開拓と初期コンタクト", en: "Partner development & first contact", de: "Partnerakquise und Erstkontakt" },
-        { zh: "项目协调与过程文档", ja: "プロジェクト調整と記録", en: "Project coordination & documentation", de: "Projektkoordination und Dokumentation" },
+        { zh: "项目协调与管理", ja: "プロジェクトの調整と管理", en: "Project coordination & management", de: "Projektkoordination und -steuerung" },
+        { zh: "网页与可视化沟通", ja: "ウェブ・ビジュアルによる情報伝達", en: "Web & visual communication", de: "Web- und Visualisierungskommunikation" },
       ],
     },
     {
@@ -94,11 +96,11 @@ window.RESUME_VARIANT = {
         de: "In Zusammenarbeit mit einem etablierten Netzwerk in China.",
       },
       items: [
-        { zh: "供应商寻源支持", ja: "サプライヤー探索のサポート", en: "Supplier search support", de: "Unterstützung bei der Lieferantensuche" },
-        { zh: "供应商对接与跟进", ja: "サプライヤーとの調整・フォローアップ", en: "Supplier coordination & follow-up", de: "Lieferantenkoordination und Nachverfolgung" },
-        { zh: "集货并单", ja: "貨物の集約", en: "Consolidation", de: "Konsolidierung von Sendungen" },
-        { zh: "中国端执行落地", ja: "中国側での実務対応", en: "China-side execution", de: "Abwicklung auf chinesischer Seite" },
-        { zh: "跨境物流", ja: "越境物流", en: "Cross-border logistics", de: "Grenzüberschreitende Logistik" },
+        { zh: "供应商资源支持", ja: "サプライヤーリソースの提供", en: "Supplier resource support", de: "Unterstützung mit Lieferantenressourcen" },
+        { zh: "供应商直接对接", ja: "サプライヤーとの直接対応", en: "Direct supplier liaison", de: "Direkter Lieferantenkontakt" },
+        { zh: "集货并单", ja: "貨物の集約・混載", en: "Consolidation of shipments", de: "Konsolidierung von Sendungen" },
+        { zh: "全流程执行落地", ja: "全工程の実行・遂行", en: "End-to-end execution", de: "Durchgängige Abwicklung" },
+        { zh: "跨境物流商直接对接", ja: "越境物流業者との直接対応", en: "Direct liaison with cross-border logistics providers", de: "Direkter Kontakt zu grenzüberschreitenden Logistikdienstleistern" },
       ],
     },
   ],
@@ -110,7 +112,9 @@ window.RESUME_VARIANT = {
   hideSkillLevels: true,
 
   /* —— 工具集：只留对商务 / 产品 / 项目呈现真正有用的（不摆 UE5 工具墙）——
-     base.js 里没有 Office 类工具 → 不凭空添加。 */
+     base.js 里没有 Office 类工具 → 不凭空添加。
+     ⚠️ 当前 sections.hide 含 "toolset" → 本板块不渲染，下面两个数组暂时不生效。
+        保留配置是为了将来想放回来时一行即可（从 hide 里删掉 "toolset"）。 */
   onlyTools: [
     "t-ue5",                                          // 技术背景，不高亮
     "t-arduino", "t-esp32",                           // 硬件理解，不高亮
