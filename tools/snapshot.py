@@ -7,11 +7,22 @@ snapshot.py — 输出回归护栏：证明「改完之后显示没变」
     把板块改成配置驱动、动 print.css）都可能悄悄挪动一个类名或一个分页点，
     而这种变化肉眼要逐份 PDF 翻才看得出来。这个脚本把「看一遍」变成「跑一条命令」。
 
+覆盖面
+    简历   5 变体 × 4 语 = 20 组（DOM ＋ PDF）
+    作品页 3 变体 × 4 语 = 12 组（只 DOM —— 它是屏幕页，导 PDF 没有意义）
+    hub.html 不进护栏：它显示实时访问计数，每次跑都不一样。
+
 两层快照
-    DOM   5 变体 × 4 语，Chrome 渲染完之后 dump 出 #cv-root 的 outerHTML，归一化后取哈希。
-          抓的是屏幕态的结构：类名、元素顺序、属性，任何一处不同都会被抓到。
-    PDF   同样 20 组，headless 导出 A4 PDF，比较**页数**与**每页每个文本块的坐标**（四舍五入到 0.1pt）。
-          不比字节：PDF 里带生成时间与随机 ID，同样的输入两次导出字节流也不相同。
+    DOM   Chrome 渲染完之后 dump 出 #cv-root（作品页是 #wk-root）的 outerHTML，归一化后取哈希。
+          抓的是结构：类名、元素顺序、属性，任何一处不同都会被抓到。
+    PDF   headless 导出 A4，比较**页数**与**每页每个文本块的坐标**（四舍五入到 0.1pt）。
+          不比字节：PDF 里带生成时间，且字体子集会让同样内容产出不同字节。
+
+抓不到什么（别拿它当万能）
+    · 交互之后的状态：折叠展开、切语言恢复 —— 那些代码只在点击时才跑，快照里看不见。
+      实测漏过一次「折叠按钮点了没反应」，只能靠真点一下。
+    · 纯屏幕层的可见性：漏了一条 display:none 会让打印专用块出现在网页上，
+      而它在 DOM 里本来就该存在 —— 快照全绿，页面却是坏的。
 
 用法
     先起本地服务器：  node tools/serve.js
@@ -21,9 +32,10 @@ snapshot.py — 输出回归护栏：证明「改完之后显示没变」
     只跑 DOM（快 10 倍，改 JS/HTML 时够用）：  python tools/snapshot.py check --dom-only
 
 读结果
-    全部一致 → 退出码 0，打印「20/20 一致」。
-    有差异   → 退出码 1，逐条列出哪个变体哪种语言、差在 DOM 还是 PDF、PDF 差在第几页。
-    DOM 变了会同时把归一化后的两份 HTML 写进 tools/.snapshot/diff/，可以直接 diff 看。
+    全部一致 → 退出码 0，打印「n/n 一致」。
+    有差异   → 退出码 1，逐条列出哪个变体哪种语言、差在 DOM 还是 PDF、PDF 差在第几页，
+               并给出可直接执行的 diff 命令。基线那份留在 .snapshot/base/，
+               本次那份在 .snapshot/now/，两边都在，能逐字对。
 
 依赖
     Chrome（Windows 默认路径已内置，可用 --chrome 覆盖）＋ Python。
@@ -52,6 +64,12 @@ PORT = 5180
 VARIANTS = ["ue", "fl", "ds", "cd", "mn"]
 LANGS = ["zh", "ja", "en", "de"]
 
+# 作品页（PDF 二维码扫进来的落地页）也要有基线 —— 它渲染的是同一份数据的另一种排布，
+# 改 render.js 或数据同样会波及它，而它以前完全在护栏之外。
+# 只覆盖开了 worksPage 的变体：别的变体 PDF 里根本没有指向它的二维码。
+# hub.html 不进护栏：它显示实时访问计数，每次跑都不一样，没法比。
+WORKS_VARIANTS = ["ue", "fl", "ds"]
+
 CHROME_DEFAULT = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 
 
@@ -60,7 +78,23 @@ def url_for(v, lang):
     # mn 指向独立页面 odd/；index.html 上的 ?v=mn 会整页跳过去，直接抓目标地址更稳
     if v == "mn":
         return "%s/odd/?lang=%s" % (base, lang)
+    if v.startswith("works-"):
+        return "%s/works.html?v=%s&lang=%s" % (base, v[6:], lang)
     return "%s/index.html?v=%s&lang=%s" % (base, v, lang)
+
+
+def all_combos(only):
+    """[(key, variant, lang)]。作品页只抓 DOM —— 它是屏幕页，导 PDF 没有意义。"""
+    out = []
+    for v in VARIANTS:
+        if not only or v in only:
+            for lang in LANGS:
+                out.append(("%s-%s" % (v, lang), v, lang))
+    for v in WORKS_VARIANTS:
+        if not only or v in only:
+            for lang in LANGS:
+                out.append(("works-%s-%s" % (v, lang), "works-" + v, lang))
+    return out
 
 
 def server_up():
@@ -86,7 +120,8 @@ VOLATILE = [
 
 
 def normalize_dom(html):
-    m = re.search(r'<main id="cv-root".*?</main>', html, re.S)
+    # 简历是 #cv-root，作品页是 #wk-root；两个都截不到就整页比（至少不会假绿）
+    m = re.search(r'<main id="cv-root".*?</main>', html, re.S) or         re.search(r'<main id="wk-root".*?</main>', html, re.S)
     if m:
         html = m.group(0)
     for pat, rep in VOLATILE:
@@ -95,10 +130,16 @@ def normalize_dom(html):
     return html.strip()
 
 
+# 独立 profile：不带这个，headless 会去抢用户正在使用的那个 Chrome 单例 ——
+# 表现是脚本卡住或拿到一张空页面，排查起来毫无头绪。目录在 .snapshot 下，随快照一起被忽略。
+PROFILE = os.path.join(SNAP, "_chrome")
+BASE_FLAGS = ["--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run",
+              "--user-data-dir=" + PROFILE, "--virtual-time-budget=7000"]
+
+
 def dump_dom(chrome, url):
     out = subprocess.run(
-        [chrome, "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run",
-         "--virtual-time-budget=7000", "--dump-dom", url],
+        [chrome] + BASE_FLAGS + ["--dump-dom", url],
         capture_output=True, timeout=120,
     )
     return out.stdout.decode("utf-8", "replace")
@@ -108,8 +149,7 @@ def dump_dom(chrome, url):
 
 def pdf_fingerprint(chrome, url, tmp):
     subprocess.run(
-        [chrome, "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run",
-         "--virtual-time-budget=7000", "--no-pdf-header-footer", "--print-to-pdf=" + tmp, url],
+        [chrome] + BASE_FLAGS + ["--no-pdf-header-footer", "--print-to-pdf=" + tmp, url],
         capture_output=True, timeout=180,
     )
     import fitz
@@ -134,19 +174,22 @@ def digest(obj):
 
 # ── 主流程 ───────────────────────────────────────────────────────────────────
 
-def collect(chrome, only, dom_only, have_fitz):
-    os.makedirs(SNAP, exist_ok=True)
+def collect(chrome, only, dom_only, have_fitz, outdir):
+    """outdir：归一化后的 DOM 落到哪个目录。baseline → base/，check → now/。
+    两边都留一份，差异出现时才有得 diff —— 以前 check 会把基线那份直接覆盖掉，
+    文件头上写的 diff/ 目录从来就没存在过。"""
+    os.makedirs(outdir, exist_ok=True)
     tmp = os.path.join(SNAP, "_tmp.pdf")
     data = {}
-    combos = [(v, l) for v in VARIANTS for l in LANGS if not only or v in only]
-    for i, (v, lang) in enumerate(combos, 1):
-        key = "%s-%s" % (v, lang)
+    combos = all_combos(only)
+    for i, (key, v, lang) in enumerate(combos, 1):
         url = url_for(v, lang)
-        sys.stdout.write("  [%2d/%d] %-6s " % (i, len(combos), key))
+        sys.stdout.write("  [%2d/%d] %-13s " % (i, len(combos), key))
         sys.stdout.flush()
         dom = normalize_dom(dump_dom(chrome, url))
         rec = {"dom": digest(dom), "domLen": len(dom)}
-        if not dom_only and have_fitz:
+        # 作品页是屏幕页，导 PDF 没有意义
+        if not dom_only and have_fitz and not key.startswith("works-"):
             n, pages = pdf_fingerprint(chrome, url, tmp)
             rec["pdfPages"] = n
             rec["pdf"] = digest(pages)
@@ -155,7 +198,7 @@ def collect(chrome, only, dom_only, have_fitz):
         else:
             sys.stdout.write("dom=%s\n" % rec["dom"])
         data[key] = rec
-        with open(os.path.join(SNAP, "dom-%s.html" % key), "w", encoding="utf-8") as f:
+        with open(os.path.join(outdir, key + ".html"), "w", encoding="utf-8") as f:
             f.write(dom)
     if os.path.exists(tmp):
         os.remove(tmp)
@@ -185,7 +228,8 @@ def main():
 
     only = set(args.only.split(",")) if args.only else None
     print("采集中（%s）…" % ("仅 DOM" if args.dom_only or not have_fitz else "DOM + PDF"))
-    data = collect(args.chrome, only, args.dom_only, have_fitz)
+    outdir = os.path.join(SNAP, "base" if args.mode == "baseline" else "now")
+    data = collect(args.chrome, only, args.dom_only, have_fitz, outdir)
 
     path = os.path.join(SNAP, "baseline.json")
     if args.mode == "baseline":
@@ -221,8 +265,10 @@ def main():
     print("发现 %d 处差异：" % len(diffs))
     for d in diffs:
         print("  · " + d)
-    print("\nDOM 的差异可以直接看：tools/.snapshot/dom-<变体>-<语言>.html（本次采集的），")
-    print("跟 git stash 前的那一份对比即可。")
+    print()
+    print("DOM 差异逐字对比（基线 vs 本次）：")
+    print("  diff tools/.snapshot/base/<组名>.html tools/.snapshot/now/<组名>.html")
+    print("组名就是上面每条前面那个，例如 ds-zh、works-ue-de。")
     return 1
 
 
