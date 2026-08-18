@@ -31,9 +31,9 @@
   .cv-name { font-size: 23pt; }
   .cv-title { font-size: 11.5pt; }
   .cv-grid { grid-template-columns: 34% 1fr; gap: 8mm; }
-  /* china-biz：打印布局不走 --aside-w 而走这里的百分比。德语 Verfügbarkeit 在 34%
-     时容器仅 162px、需要 201px → 折行；42% 得 222px（40% 只余 6px，偏险）。 */
-  body.v-china-biz .cv-grid { grid-template-columns: 42% 1fr; }
+  /* ★ 打印侧栏也是五份一律 34%（本人要求）。曾为 china-biz 放宽到 42%，
+     理由同屏幕端的 324px：德语 Verfügbarkeit 在 34% 只有 162px、需要 201px。
+     现在让它折行 —— 宽度一致优先于少一次折行。 */
   /* —— 打印密度收紧：避免临界内容溢出到第二页 —— */
   .cv-head { margin-bottom: 3mm; }
   .cv-block { margin-bottom: 3.5mm; }

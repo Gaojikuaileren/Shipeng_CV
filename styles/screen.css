@@ -74,9 +74,9 @@ body.v-art-vr .cv-photo img { aspect-ratio: 1 / 1; }
 }
 
 .cv-info { display: grid; grid-template-columns: auto 1fr; gap: var(--s1) var(--s3); margin-bottom: var(--s4); font-size: var(--fs-small); }
-/* china-biz：德语 Verfügbarkeit 一行放不下（标签 84 + 间距 16 + 值 219 = 319 > 300）。
-   放宽侧栏而不是删字 —— 变体作用域，其它四版仍是 300px。 */
-body.v-china-biz { --aside-w: 324px; }
+/* ★ 侧栏宽度五份简历一律相同（本人要求）。
+   这里曾经为 china-biz 放宽到 324px，理由是德语 Verfügbarkeit 一行放不下
+   （标签 84 + 间距 16 + 值 219 = 319 > 300）—— 现在让它折行，宽度不再分叉。 */
 .cv-info dt { color: var(--ink-faint); }
 .cv-info dd { color: var(--ink); }
 
