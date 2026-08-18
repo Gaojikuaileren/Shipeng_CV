@@ -6,7 +6,9 @@
      POST /hit?v=职业    → 该职业访问 +1，追加时间戳（每职业最多存 100 条）＋ 本周计数 +1
      POST /pdf?v=职业    → 该职业 PDF 导出 +1
      POST /works?v=职业  → 该职业的作品页被打开 +1（纸质 PDF 上的二维码被扫）
-     POST /reset?v=职业&k=密钥 → 清零该职业（v=all 清全部）
+     POST /reset?v=职业  → 清零该职业（v=all 清全部）。**不设密钥** ——
+                            要防的只是误点，而那由控制台的二次确认挡住；
+                            清零只把数字归零，不泄露任何数据。GET 一律 404，爬虫碰不到。
      GET  /data          → 返回各职业明细 + 汇总，本周数由时间戳现算
 
    合法职业：ue5-tech / art-vr / designer / odd / china-biz
@@ -34,10 +36,6 @@ const ALLOW_ORIGINS = [
 //    这里漏登记不会报错，只会让 /hit 与 /pdf 返回 400 —— 那个变体的访问量一次也记不上。
 //    改完必须在 worker/ 目录跑 wrangler deploy，不 deploy 不生效。
 const VARIANTS = ["ue5-tech", "art-vr", "designer", "odd", "china-biz"];
-
-// 清零密钥：hub.html 在公开仓库会暴露，仅用于挡随手乱扫的爬虫。
-// 清零只把统计数字归零，不泄露任何数据，危害很低。
-const RESET_KEY = "spoy-rst-c7f3a91e";
 
 // DO 里存全部数据的 key（一个对象，结构与老版本一致）
 const KEY = "stats";
@@ -201,7 +199,6 @@ export default {
       if (VARIANTS.indexOf(v) === -1) return reply({ error: "bad variant" }, 400);
     } else if (path === "/reset") {
       if (request.method !== "POST") return reply({ error: "not found" }, 404);
-      if (url.searchParams.get("k") !== RESET_KEY) return reply({ error: "forbidden" }, 403);
       if (v !== "all" && VARIANTS.indexOf(v) === -1) return reply({ error: "bad variant" }, 400);
     } else if (path === "/data") {
       if (request.method !== "GET") return reply({ error: "not found" }, 404);

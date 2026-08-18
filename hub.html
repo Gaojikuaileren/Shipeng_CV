@@ -178,21 +178,11 @@
       document.getElementById("st-week").textContent = d.thisWeek != null ? d.thisWeek : "—";
     }
 
-    /* 清零密钥：不写进任何文件，第一次用的时候问一次，之后本机记住。
-       防的是「不懂技术的人误点」，不是防技术人员 —— 所以用 localStorage 而不是
-       sessionStorage：你自己在这台机器上输一次就够，不必每开一次标签页重来。
-       真要清掉记忆：控制台 localStorage.removeItem("cv-rst")。 */
-    function resetKey() {
-      var k = localStorage.getItem("cv-rst");
-      if (!k) {
-        k = window.prompt("清零密钥");
-        if (!k) return null;
-        localStorage.setItem("cv-rst", k.trim());
-      }
-      return localStorage.getItem("cv-rst");
-    }
-    function doReset(v, k) {
-      return fetch(window.Stats.URL + "/reset?v=" + encodeURIComponent(v) + "&k=" + encodeURIComponent(k),
+    /* 清零不再需要密钥。要防的只是「不懂技术的人误点」，而这一步已经由下面那个
+       二次确认挡住了；密钥对本人纯粹是摩擦。真正要紧的那条仍然成立：
+       密钥不在任何随简历发出去的文件里 —— 现在干脆哪儿都没有。 */
+    function doReset(v) {
+      return fetch(window.Stats.URL + "/reset?v=" + encodeURIComponent(v),
         { method: "POST", mode: "cors" }).then(function (r) { return r.json(); });
     }
 
@@ -205,10 +195,7 @@
         flash("已取消");
         return;
       }
-      var key = resetKey();
-      if (!key) { flash("已取消"); return; }
-      doReset(v, key).then(function (r) {
-        if (r && r.error === "forbidden") { localStorage.removeItem("cv-rst"); flash("密钥不对"); return; }
+      doReset(v).then(function (r) {
         if (r && r.ok) {
           flash(label + " 已清零");
           window.Stats.data().then(function (d) {
@@ -219,7 +206,6 @@
           flash("清零失败" + (r && r.error ? "：" + r.error : ""));
         }
       }).catch(function () { flash("清零失败"); });
-      // 注：密钥错了会走上面那条 forbidden 分支并清掉记住的值，下次会重新问
     }
 
     // 载入时取底端两数字
