@@ -44,12 +44,10 @@ window.RESUME_VARIANT = {
     "t-pr", "t-ae", "t-davinci",
     "t-blender", "t-zbrush", "t-nomad", "t-shapr3d",
   ],
-  // hideTools → 工具集黑名单：AI 组是 ue5-tech 变体专用，设计师版不显示
-  hideTools: [
-    "t-claudecode", "t-codex", "t-comfyui", "t-triposplat", "t-birefnet", "t-llamacpp",
-    // MediaPipe 已从 ai 组挪到 interactive 组 —— 仍要挡，否则会漏进本变体的工具集
-    "t-mediapipe", "t-controlnet"
-  ],
+  /* ★ 工具集的**内容**五份简历一律相同（本人要求），只有高亮不同 ——
+     这里曾经用 hideTools 挡掉整个 AI 组。会用什么工具是客观事实，不该按投递方向增删；
+     「这一份想强调什么」由上面的 highlightTools 表达就够了。
+     机制本身留着（data-loader 仍支持 hideTools / onlyTools），将来真要分化改一行即可。 */
   // emphasizeItems → 工作条目重点色
   emphasizeItems: ["work-portfolio", "work-design", "work-freelance"],
   // 本变体显示 projects（moreWorks 整块已 hide）→ 两个个人产品项目要逐条挡

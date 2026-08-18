@@ -115,14 +115,9 @@ window.RESUME_VARIANT = {
      base.js 里没有 Office 类工具 → 不凭空添加。
      ⚠️ 当前 sections.hide 含 "toolset" → 本板块不渲染，下面两个数组暂时不生效。
         保留配置是为了将来想放回来时一行即可（从 hide 里删掉 "toolset"）。 */
-  onlyTools: [
-    "t-ue5",                                          // 技术背景，不高亮
-    "t-arduino", "t-esp32",                           // 硬件理解，不高亮
-    "t-shapr3d", "t-blender",                         // CAD / 3D
-    "t-html",                                         // 网页 / 数字化呈现
-    "t-ps", "t-affinity", "t-canva", "t-webflow",     // 视觉与提案材料
-    "t-pr", "t-davinci",                              // 影像沟通
-  ],
+  /* ★ 工具集内容全站统一（本人要求）：这里原本用 onlyTools 圈了一个白名单。
+     本变体目前整块隐藏工具集（sections.hide 含 "toolset"），所以这份白名单本来也没生效；
+     将来若把工具集放回来，看到的会是与其它简历相同的完整清单，只有下面的高亮不同。 */
   highlightTools: ["t-shapr3d", "t-blender", "t-ps", "t-affinity", "t-canva", "t-webflow", "t-pr", "t-html"],
 
   /* —— 同一段真实经历，换本页语境的叙述侧重 ————————————————————

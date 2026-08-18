@@ -340,9 +340,11 @@ window.RESUME_BASE = {
     /* —— 2026 软件 / AI 项目：与下面 KHM 时期作品同一密度，每条控制在一行 —— */
     { id: "mw-deskdrawer", year: "2026", title: "DeskDrawer",
       type: { zh: "Windows 桌面工具", ja: "Windows デスクトップツール", en: "Windows desktop utility", de: "Windows-Desktop-Tool" },
-      tags: ["C#", ".NET", "WinForms"],   // 不写 Microsoft Store：作品集那条已是「↗ 商店」并直链，重复且会把这一行撑破
-      // link/linkKind → 同时进「作品集」板块与 works.html（判定见 render.js 的 workLink）
-      link: "https://apps.microsoft.com/detail/9N904WFPHZFZ", linkKind: "store" },
+      tags: ["C#", ".NET", "WinForms"],
+      // link/linkKind → 同时进「作品示例」板块与 works.html（判定见 render.js 的 workLink）
+      // 指自己的产品页而不是 Microsoft Store：自己的页面能讲清楚产品是什么、截图与说明都在，
+      // 商店页只是一个下载入口。纸上要照着敲的地址也短得多（本站是 24 字符，商店 46）。
+      link: "https://deskdrawer.pages.dev/", linkKind: "web" },
     { id: "mw-splessons", year: "2026", title: "SP_lessons",
       type: { zh: "课程报名系统", ja: "講座申込システム", en: "Course registration system", de: "Kursanmeldungssystem" },
       tags: ["Next.js", "Cloudflare Workers", "CI/CD"] },
