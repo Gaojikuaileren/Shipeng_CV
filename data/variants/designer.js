@@ -8,10 +8,10 @@ window.RESUME_VARIANT = {
     de: "Designer · Web / Grafik / Produkt / Interaction",
   },
   intro: {
-    zh: "工业设计学士（湖北工业大学），KHM 媒体艺术 Diplom。横跨网页、平面、产品与交互设计，兼具工程实现能力。从用户研究到落地，注重系统性与视觉细节。",
-    ja: "湖北工業大学プロダクトデザイン学士、KHM メディアアーツ Diplom。Web・グラフィック・プロダクト・インタラクションデザインを横断し、実装能力も兼ね備える。リサーチから実装まで、システム的思考とビジュアル細部にこだわる。",
-    en: "B.A. Product Design (Hubei UT) and KHM Media Arts Diploma. Spans web, graphic, product and interaction design with hands-on implementation skills. From research to delivery — systematic thinking and attention to visual detail.",
-    de: "B.A. Produktdesign (Hubei UT) und KHM Diplom in Media Arts. Übergreifend in Web-, Grafik-, Produkt- und Interaktionsdesign, mit praktischen Umsetzungskenntnissen. Von der Recherche bis zur Lieferung — systematisches Denken und visuelles Detail.",
+    zh: "工业设计学士（湖北工业大学），KHM 媒体艺术 Diplom。横跨网页、平面、产品与交互设计，兼具工程实现能力。从用户研究到落地，注重系统性与视觉细节。近年以 AI 辅助设计：自建 ComfyUI 工作流，快速生成并迭代视觉效果参考，并把重复性工作自动化。",
+    ja: "湖北工業大学プロダクトデザイン学士、KHM メディアアーツ Diplom。Web・グラフィック・プロダクト・インタラクションデザインを横断し、実装能力も兼ね備える。リサーチから実装まで、システム的思考とビジュアル細部にこだわる。近年は AI をデザインの補助として活用：ComfyUI のワークフローを自作し、ビジュアルの参考案を素早く生成・反復するほか、繰り返し作業を自動化している。",
+    en: "B.A. Product Design (Hubei UT) and KHM Media Arts Diploma. Spans web, graphic, product and interaction design with hands-on implementation skills. From research to delivery — systematic thinking and attention to visual detail. In recent years I use AI as a design aid: self-built ComfyUI workflows to generate and iterate visual references quickly, and to automate repetitive work.",
+    de: "B.A. Produktdesign (Hubei UT) und KHM Diplom in Media Arts. Übergreifend in Web-, Grafik-, Produkt- und Interaktionsdesign, mit praktischen Umsetzungskenntnissen. Von der Recherche bis zur Lieferung — systematisches Denken und visuelles Detail. In den letzten Jahren nutze ich KI als Entwurfshilfe: eigene ComfyUI-Workflows, um visuelle Referenzen schnell zu erzeugen und zu iterieren sowie wiederkehrende Arbeitsschritte zu automatisieren.",
   },
   greeting: null,
   sections: {
@@ -19,8 +19,10 @@ window.RESUME_VARIANT = {
     hide: ["projects"], // 项目经历整块不展示：本变体讲设计履历，项目细节交给「作品示例」的链接
     emphasize: ["work", "education"],
   },
-  // sidebar → 侧边栏核心能力（设计相关，宏观能力描述）
-  sidebar: ["cap-webgfx", "cap-gfx", "cap-proddes", "cap-3d"],
+  /* sidebar → 侧边栏核心能力（设计相关，宏观能力描述）。
+     cap-genai 放在设计三条之后：对设计岗它是差异化项，不是主身份。
+     另有 cap-aiops（本地 AI 部署运行）没放进来 —— 那是工程侧的事，UE 版在讲。 */
+  sidebar: ["cap-webgfx", "cap-gfx", "cap-proddes", "cap-genai", "cap-3d"],
 
   /* —— 页面底部通向 UE 开发版的按钮 ——————————————————————
      来看设计版的人里有一部分其实在找能写代码的设计师 —— 与其让他们猜，不如给一个入口。
@@ -43,6 +45,9 @@ window.RESUME_VARIANT = {
     "t-ps", "t-affinity", "t-canva", "t-webflow",
     "t-pr", "t-ae", "t-davinci",
     "t-blender", "t-zbrush", "t-nomad", "t-shapr3d",
+    // AI：只高亮出图/出素材/图生 3D 这几件，与设计流程直接相关。
+    // Claude Code / Codex / llama.cpp 是工程侧工具，仍在清单里（内容全站统一），只是不高亮。
+    "t-comfyui", "t-controlnet", "t-triposplat", "t-birefnet",
   ],
   /* ★ 工具集的**内容**五份简历一律相同（本人要求），只有高亮不同 ——
      这里曾经用 hideTools 挡掉整个 AI 组。会用什么工具是客观事实，不该按投递方向增删；
