@@ -79,9 +79,7 @@
     border-top: 0.4pt solid #bbb; font-size: 8.5pt; color: #444;
     text-align: center; letter-spacing: .02em; break-inside: avoid;
   }
-  /* 屏幕端侧栏是 sticky ＋ 限高可滚（screen.css）——
-     这两条必须在打印时全部还原，否则 PDF 里侧栏会被 max-height 裁掉大半 */
-  .cv-aside { position: static !important; max-height: none !important; overflow: visible !important; }
+  .cv-aside { position: static !important; }
   /* PDF 照片：全部变体统一 58mm（打印侧栏 34% ≈ 62.6mm，留 4.6mm 余量）。
      原来是 48mm —— 在 china-biz 那种 42% 的宽侧栏里显得特别小。
      自由职业的兔子图是例外，仍用原尺寸：它不是证件照，放大反而抢版面。 */
