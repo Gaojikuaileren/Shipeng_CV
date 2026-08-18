@@ -178,6 +178,22 @@
       document.getElementById("st-week").textContent = d.thisWeek != null ? d.thisWeek : "—";
     }
 
+    /* 清零密钥：不写进任何文件，用的时候现问，只在本次会话里记着（关掉标签页就没了）。
+       这样即使有人猜到 /hub.html 这个地址，也只能看统计、动不了数据。 */
+    function resetKey() {
+      var k = sessionStorage.getItem("cv-rst");
+      if (!k) {
+        k = window.prompt("清零密钥");
+        if (!k) return null;
+        sessionStorage.setItem("cv-rst", k.trim());
+      }
+      return sessionStorage.getItem("cv-rst");
+    }
+    function doReset(v, k) {
+      return fetch(window.Stats.URL + "/reset?v=" + encodeURIComponent(v) + "&k=" + encodeURIComponent(k),
+        { method: "POST", mode: "cors" }).then(function (r) { return r.json(); });
+    }
+
     function doClean(v) {
       if (!window.Stats || !window.Stats._ready()) { flash("统计未配置"); return; }
       var label = v === "all" ? "全部" : NAMES[v];
@@ -187,7 +203,10 @@
         flash("已取消");
         return;
       }
-      window.Stats.reset(v).then(function (r) {
+      var key = resetKey();
+      if (!key) { flash("已取消"); return; }
+      doReset(v, key).then(function (r) {
+        if (r && r.error === "forbidden") { sessionStorage.removeItem("cv-rst"); flash("密钥不对"); return; }
         if (r && r.ok) {
           flash(label + " 已清零");
           window.Stats.data().then(function (d) {
@@ -198,6 +217,7 @@
           flash("清零失败" + (r && r.error ? "：" + r.error : ""));
         }
       }).catch(function () { flash("清零失败"); });
+      // 注：密钥错了会走上面那条 forbidden 分支并清掉记住的值，下次会重新问
     }
 
     // 载入时取底端两数字

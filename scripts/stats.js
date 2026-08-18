@@ -7,10 +7,6 @@ window.Stats = {
   // 已部署：cv-stats Worker（Cloudflare），后端 worker/cv-stats-worker.js
   URL: "https://cv-stats.weur-apps.workers.dev",
 
-  // 清零密钥（与 worker 一致）。hub.html 在公开仓库会暴露，仅挡随手乱扫；
-  // 清零只把统计数字归零，不泄露任何数据，危害很低。
-  RESET_KEY: "spoy-rst-c7f3a91e",
-
   /* 本机开发不打点。
      CORS 只管浏览器让不让读响应，**挡不住计数** —— 请求照样打到 worker、数字照样 +1。
      于是本地每刷一次页面，线上计数器就永久多一次：2026-08-18 一天就这样刷进去 324 次
@@ -59,10 +55,8 @@ window.Stats = {
     return fetch(this.URL + "/data", { mode: "cors" }).then(function (r) { return r.json(); });
   },
 
-  // 清零某职业（variant="all" 全清）
-  reset: function (variant) {
-    if (!this._ready()) return Promise.reject(new Error("stats URL not configured"));
-    return fetch(this.URL + "/reset?v=" + encodeURIComponent(variant) + "&k=" + encodeURIComponent(this.RESET_KEY),
-      { method: "POST", mode: "cors" }).then(function (r) { return r.json(); });
-  },
+  /* ★ 清零（/reset）**故意不在这里**。
+     这个文件随每一份简历发给每一位 HR —— 密钥写在这儿等于随简历一起送出去，
+     任何人打开开发者工具就能把统计清空。清零的实现搬进了 hub.html，
+     而且那里也不存密钥：用的时候现问，只在本次会话里记着。 */
 };
