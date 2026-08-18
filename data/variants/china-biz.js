@@ -144,7 +144,7 @@ window.RESUME_VARIANT = {
         en: "Independent development of interactive digital applications and platforms for product presentation and customer-facing communication: clarifying requirements with clients, developing concepts, technical implementation and delivery. Mostly remote collaboration.",
         de: "Selbstständige Entwicklung interaktiver digitaler Anwendungen und Plattformen für Produktpräsentation und Kundenkommunikation: Anforderungen mit Auftraggebern klären, Konzepte entwickeln, technische Umsetzung und Lieferung. Überwiegend remote.",
       },
-      tags: ["Digital Platforms", "Product Presentation", "Client Communication", "Requirement Clarification", "Remote Collaboration"],
+      tags: ["Digital Platforms", "Client Communication", "Requirements", "Remote"],
     },
 
     // ② 作品集辅导：职位名保持诚实（不改成 Sales Consultant），描述收拢到客户服务侧
@@ -166,7 +166,7 @@ window.RESUME_VARIANT = {
         en: "Digital product and promotional content for an online used-car marketplace — translating commercial offerings into clear web and advertising visuals.",
         de: "Digitale Produkt- und Werbeinhalte für einen Online-Marktplatz für Gebrauchtwagen — kommerzielle Angebote in klare Web- und Werbevisuals übersetzt.",
       },
-      tags: ["Digital Content", "Product Communication", "Online Marketplace", "Web", "Advertising Visuals"],
+      tags: ["Digital Content", "Online Marketplace", "Advertising", "Web"],
     },
 
     // ④ KHM：学历名称不动，detail 改为研究 / 项目开发 / 协作 / 呈现优先，技术在后

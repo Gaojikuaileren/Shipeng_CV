@@ -79,7 +79,9 @@
     border-top: 0.4pt solid #bbb; font-size: 8.5pt; color: #444;
     text-align: center; letter-spacing: .02em; break-inside: avoid;
   }
-  .cv-aside { position: static !important; }
+  /* 屏幕端侧栏是 sticky ＋ 限高可滚（screen.css）——
+     这两条必须在打印时全部还原，否则 PDF 里侧栏会被 max-height 裁掉大半 */
+  .cv-aside { position: static !important; max-height: none !important; overflow: visible !important; }
   /* PDF 照片：全部变体统一 58mm（打印侧栏 34% ≈ 62.6mm，留 4.6mm 余量）。
      原来是 48mm —— 在 china-biz 那种 42% 的宽侧栏里显得特别小。
      自由职业的兔子图是例外，仍用原尺寸：它不是证件照，放大反而抢版面。 */
@@ -113,10 +115,15 @@
   .cv-intro, [data-sec="portfolio"] { break-inside: avoid; }
   .cv-sec-title { break-after: avoid; }
 
-  /* tags 在屏幕端是 overflow-x:auto 的单排滚动条（screen.css）——
-     打印必须还原成可见，否则放不下的 tag 会被裁掉而不是印出来。
-     nowrap 保留：数据侧每条最多 4 个短 tag，113mm 的打印列放得下。 */
-  .cv-tags { overflow: visible !important; }
+  /* ⚠️ 打印端必须允许换行，而且这条不是「样式偏好」，是**安全网**。
+     屏幕端 .cv-tags 是 nowrap ＋ 横向滚动（screen.css）—— 屏幕上滚动条把溢出关住了，
+     纸上没有滚动条：一旦某个变体的 tag 比栏宽长（china-biz 的标签是
+     "Requirement Clarification" 这种长短语，单个就 50mm，4 个排一行约 180mm，
+     而它的主区只有 99mm），整个文档就会比纸宽，于是 **Chrome 把整页缩到 66% 来塞下**。
+     后果不是「tag 被裁掉」，而是全份 PDF 的字号、照片、所有东西一起变小 ——
+     2026-08-18 实测 china-biz 四语全部中招（正文 9.5pt 被压成 6.3pt，照片 58→38.6mm）。
+     所以：能一行就一行（短 tag 本来就不会换），放不下时宁可折成两行，绝不允许撑破纸宽。 */
+  .cv-tags { flex-wrap: wrap !important; overflow: visible !important; }
 
   /* 强调竖线：屏幕端用 inset box-shadow，而 Chrome 打印默认**不输出背景图形**，
      于是 PDF 里只剩一段莫名其妙的左缩进、没有线。改用边框（边框不受该开关影响）。
@@ -177,8 +184,12 @@
         德语第 2 页靠这 7.3mm 才回到 269mm 以内。QR 尺寸与静区一律不动。 */
   body.v-ue5-tech .cv-pprint-list { line-height: 1.4; }
 
-  /* ④ 项目条目收紧（每条 −1.0mm、tags −1.8mm）：给德语第 2 页腾出余量，
-        德语项目条目是四语里最长的，不收紧第 2 页只剩不到 1mm 富余。 */
+  /* ④ 项目条目收紧（每条 −1.0mm、tags −1.8mm）＋ 作品集目录行距收紧。
+        ★ 2026-08-18 实测（Chrome 真导 PDF，20 份逐页量）：把下面三条一起删掉，
+        本变体日文版 3 页 → 4 页，英文版末页余量 44.9mm → 2.3mm（离多一页只差两行）。
+        同一次实测里，china-biz 与 designer 的同类微调（条目 padding 1.5mm、
+        intro 10pt）删掉后**页数一页不变**，所以那四条已经删了、尺寸与其它简历统一。
+        这三条是「微调换一整页」的那种，留着；要动它必须重出 ue 四语 PDF 复核。 */
   body.v-ue5-tech [data-sec="projects"] .cv-item { padding-top: 1.5mm; padding-bottom: 1.5mm; }
   body.v-ue5-tech [data-sec="projects"] .cv-tags { margin-top: 2.4mm; }
 
@@ -196,13 +207,9 @@
   /* html[lang="de"] body.v-ue5-tech [data-sec="projects"] .cv-item-body { line-height: 1.35; } */
 
   /* 中德商务专项：条目稍紧凑，让 介绍+协作+工作经历 稳定进第一页 */
-  body.v-china-biz .cv-item { padding-top: 1.5mm; padding-bottom: 1.5mm; }
-  body.v-china-biz .cv-intro p { font-size: 10pt; }
 
   /* 设计师专项：省略教育方向描述 + 条目更紧凑，让工作经历+教育进第一页 */
   body.v-designer [data-sec="education"] .cv-item-body { display: none; }
-  body.v-designer .cv-item { padding-top: 1.5mm; padding-bottom: 1.5mm; } /* 只上下，保留 is-emph 左间距 */
-  body.v-designer .cv-intro p { font-size: 10pt; }
 
   /* 跨简历入口：纸上点不了按钮，印一个按钮样式的框只会让人困惑 */
   .cv-crosslink { display: none !important; }

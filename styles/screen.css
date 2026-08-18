@@ -18,11 +18,22 @@
 /* 双栏断点 900px（原来是 760）。760 配上固定 300px 侧栏 ＋ 64px 沟槽的后果：
    iPad 竖屏（768px）主区只剩 312px —— 比 375px 手机上的 327px 还窄，项目板块反而更高。
    900px 起主区至少有 446px，双栏才真的比单栏好看。
-   侧栏原来是 sticky（top:72px）—— 但它自身高 600–900px，比多数笔记本视口还高，
-   钉住的永远是它的上半截，最下面的「联系方式」在整个滚动过程中都露不出来，
-   只有滚到文档最底部才现形。取消 sticky，侧栏随内容正常滚动。 */
+   侧栏保持跟随（sticky）。它实测高约 1260px，比多数笔记本的视口还高 —— 只写 top 的话
+   钉住的永远是上半截，最下面的「联系方式」整个滚动过程都露不出来，只有滚到文档最底部才现形。
+   所以给它加一个高度上限并允许自身滚动：**够不着的问题被解决，跟随一点没丢**。
+   视口够高、侧栏本来就装得下时，浏览器不会画滚动条，看起来与从前完全一样。
+   ⚠️ 打印必须把这两条还原（print.css 里那条 .cv-aside），否则 PDF 里侧栏会被裁掉。 */
 @media (min-width: 900px) {
   .cv-grid { grid-template-columns: var(--aside-w) 1fr; gap: var(--s6); align-items: start; }
+  .cv-aside {
+    position: sticky; top: 72px;
+    max-height: calc(100dvh - 88px);
+    overflow-y: auto;
+    overscroll-behavior: contain;   /* 侧栏滚到底不要带着整页一起滚 */
+    scrollbar-width: thin; scrollbar-color: var(--line) transparent;
+  }
+  .cv-aside::-webkit-scrollbar { width: 6px; }
+  .cv-aside::-webkit-scrollbar-thumb { background: var(--line); }
 }
 
 /* —— Section 通用 —— */
