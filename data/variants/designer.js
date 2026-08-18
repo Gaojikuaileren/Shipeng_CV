@@ -27,8 +27,15 @@ window.RESUME_VARIANT = {
     "t-pr", "t-ae", "t-davinci",
     "t-blender", "t-zbrush", "t-nomad", "t-shapr3d",
   ],
+  // hideTools → 工具集黑名单：AI 组是 ue5-tech 变体专用，设计师版不显示
+  hideTools: [
+    "t-claudecode", "t-codex", "t-comfyui", "t-triposplat", "t-birefnet", "t-llamacpp",
+    // MediaPipe 已从 ai 组挪到 interactive 组 —— 仍要挡，否则会漏进本变体的工具集
+    "t-mediapipe", "t-controlnet"
+  ],
   // emphasizeItems → 工作条目重点色
   emphasizeItems: ["work-portfolio", "work-design", "work-freelance"],
-  hideItems: ["email-freelance", "github"],
+  // 本变体显示 projects（moreWorks 整块已 hide）→ 两个个人产品项目要逐条挡
+  hideItems: ["email-freelance", "github", "prj-versewiki", "prj-vp"],
   order: {},
 };

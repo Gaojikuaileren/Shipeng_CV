@@ -27,7 +27,9 @@ window.RESUME_VARIANT = {
     "t-blender", "t-zbrush", "t-md", "t-rokoko",
   ],
   emphasizeItems: ["prj-room", "prj-grau"],
-  hideItems: ["email-pro"],
+  // 本变体是艺术作品集身份 → 挡掉两个个人产品项目（moreWorks 整块已 hide，不必逐条挡；
+  // 工具集整块也已 hide，所以 AI 组不必写 hideTools）
+  hideItems: ["email-pro", "prj-versewiki", "prj-vp"],
   order: {},
   photo: "assets/photo/usagi.jpg", // 自由职业用艺术化兔子图，非本人证件照
 };

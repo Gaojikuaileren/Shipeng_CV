@@ -38,6 +38,8 @@
   const SECTION = window.UI_TEXT.section;
   const TXT = window.UI_TEXT.txt;
   const SKILL_GROUPS = window.UI_TEXT.group;
+  const MW_TOGGLE = window.UI_TEXT.mwToggle;
+  const WORKS = window.UI_TEXT.works;
 
   /* —— reveal ——————————————————————————————— */
   function revealNode(value, type) {
@@ -101,17 +103,33 @@
     for (let i = 1; i <= 5; i++) append(wrap, h("i", { class: "cv-dot" + (i <= n ? " on" : "") }));
     return wrap;
   }
+  // 经验时长：算不出来就整个元素都不建 —— .cv-skill 是 space-between，
+  // 多挂一个空节点（哪怕 display:none）都会改变剩余空间的分配，破坏现有排布。
+  function renderSince(c, lang) {
+    const D = window.Duration; // odd/index.html 不加载 duration.js → 必须守卫
+    if (!D || !c.since) return null;
+    const text = D.format(D.months(c.since), lang);
+    if (!text) return null;
+    return h("span", { class: "cv-skill-since", "aria-label": D.aria(text, lang) }, text);
+  }
   // 侧边栏核心能力（d.sidebar = 已按变体顺序取好的 capability 对象列表）
-  // d.hideSkillLevels → 只列能力名，不打点数（商务类能力不宜自称「5 星专家」）
+  // d.skillDisplay → 能力名右侧显示什么："level"(5 点熟练度) / "since"(经验年限) / "both" / "none"
+  //   旧字段 d.hideSkillLevels 已由 data-loader 折算成 "none"（商务类能力不宜自称「5 星专家」）
+  // 年限来自 capability.since，没写 since 或算不出的那条只是不显示年限，其余照旧
   function renderSkills(d) {
     const caps = d.sidebar || [];
     if (!caps.length) return null;
-    const plain = !!d.hideSkillLevels;
+    const mode = d.skillDisplay || (d.hideSkillLevels ? "none" : "level"); // odd 页没走 data-loader → 兜底
+    const showLevel = mode === "level" || mode === "both";
+    const showSince = mode === "since" || mode === "both";
+    const plain = mode === "none"; // 右侧彻底不放东西时才用 --plain（名字左对齐，不留空档）
+    const lang = (window.I18n && window.I18n.current) || "en";
     return sectionBlock("skills",
       h("ul", { class: "cv-skills" + (plain ? " cv-skills--plain" : "") },
         caps.map((c) => h("li", { class: "cv-skill is-emph" },
           h("span", { class: "cv-skill-name" }, t(c.name)),
-          plain ? null : renderLevel(c.level)))));
+          showSince ? renderSince(c, lang) : null,
+          showLevel ? renderLevel(c.level) : null))));
   }
 
   /* —— 能力板块（可复用）——————————————————————
@@ -135,7 +153,9 @@
   function renderToolset(d) {
     const all = d.tools || [];
     if (!all.length) return null;
-    const groupOrder = ["engine", "interactive", "techArt", "3d", "code", "design", "video"];
+    // ⚠️ 这个数组就是分组的渲染顺序，也是白名单：group 不在其中的工具会被静默丢弃。
+    //    加新组要同时在 i18n-ui.js 的 group 里加组名，否则只是少一行标签。
+    const groupOrder = ["engine", "ai", "interactive", "techArt", "3d", "code", "design", "video"];
     const grouped = {};
     all.forEach((s) => {
       if (!grouped[s.group]) grouped[s.group] = [];
@@ -226,49 +246,153 @@
   }
 
   /* —— 作品集 ———————————————————————————————
-     屏幕：超链接（→ Vimeo 各视频）
-     打印：一个 QR（→ Vimeo 主页）＋ 有序作品目录
+     进作品集的条件：条目有 link（通用外链）或旧字段 video。
+     linkKind 决定徽标：video ▶「视频」/ store ↗「商店」/ web ↗「网站」
+     （文案在 i18n-ui.js 的 txt；只写 video 的老条目等价于 link + linkKind:"video"）。
+     屏幕：超链接（→ 各条目自己的地址）
+     打印：一个共用 QR ＋ 有序作品目录（整块只有这一个 QR，不给每条各配一个）。
+       非视频条目额外印出网址 —— 纸质版没有扫码设备时还能手抄。
+
+     QR 指向哪里由变体的 worksPage 决定：
+       · 不写（缺省）→ Vimeo 主页，与本机制加入前逐字节一致；
+       · true → 同目录下的 works.html?v=<变体>&lang=<当前语言>，那一页把每件作品的
+         链接排成手指点得中的大块超链接（扫码的人基本都在手机上）。
+     做成开关而不是全站直接换：01 号 ue5-tech 等老变体的 PDF 必须保持原样
+     想让某个变体也用，在该变体加一行 worksPage: true。
   ———————————————————————————————————————————— */
   const VIMEO_PROFILE = "https://vimeo.com/user169301773";
+  const LINK_MARK = { video: "▶", store: "↗", web: "↗" };
+  // 条目 → { url, kind, mark }；两个字段都没有 = 不进作品集。kind 写错则退回 "web"
+  // mark 一并返回（而不是让调用方各自查 LINK_MARK）：works.html 也要用同一个徽标符号
+  // 挂到 window.Render 上给 works.html 复用 → 「什么算作品链接、配哪个徽标」只有这一份定义
+  function workLink(p) {
+    const url = p.link || p.video;
+    if (!url) return null;
+    let kind = p.linkKind || (p.link ? "web" : "video");
+    if (!LINK_MARK[kind]) kind = "web";
+    return { url: url, kind: kind, mark: LINK_MARK[kind] };
+  }
+  // works.html 的绝对地址：运行时从 location 推，绝不写死域名 ——
+  // 本地 http://localhost:5180/ 与线上 …github.io/Shipeng_CV/ 子路径都要对。
+  // new URL(".", href) = 「本页所在目录」，同 hub.html:91 那行的意图，但 query 里带 / 也不会误伤。
+  // 带 lang：PDF 是「某一种语言的一张纸」，扫码的人该落在同一种语言上，而不是他手机浏览器的语言
+  //（德国 HR 拿着德语 PDF、手机却是英文界面，是最常见的情形）。works.html 上仍可切语言，并没锁死。
+  // 只有 http(s) 撑得起一个「扫得开」的绝对地址。README 的「方式二 直接双击 index.html」
+  // 是 file:// 场景：那时 location.href 是本机磁盘路径，编进二维码既扫不出东西，又把私人
+  // 目录名（.meine/职业/.简历/…）印在发给雇主的纸上。→ 返回 null，调用方自动退回老行为。
+  function worksUrl(lang) {
+    if (location.protocol !== "http:" && location.protocol !== "https:") return null;
+    const v = (window.Identity && window.Identity.variant) || "";
+    return new URL(".", location.href).href +
+      "works.html?v=" + encodeURIComponent(v) + "&lang=" + encodeURIComponent(lang);
+  }
+  // 打印块：QR ＋ 有序目录。note 为空（没开 worksPage）时结构与改造前一字不差
+  function portfolioPrint(works, qrUrl, note) {
+    const qr = h("div", { class: "cv-pprint-qr", "data-url": qrUrl });
+    return h("div", { class: "cv-portfolio-print", "aria-hidden": "true" },
+      note ? h("div", { class: "cv-pprint-qrbox" }, qr, h("p", { class: "cv-pprint-note" }, note)) : qr,
+      h("ol", { class: "cv-pprint-list" },
+        works.map((p) => {
+          const l = workLink(p);
+          return h("li", null,
+            h("span", { class: "cv-pi-title" }, t(p.org)),
+            h("span", { class: "cv-pi-type" }, " · " + t(p.type || p.role)),
+            h("span", { class: "cv-pi-period" }, " (" + p.period + ")"),
+            l.kind === "video" ? null
+              : h("span", { class: "cv-pi-url" }, " " + l.url.replace(/^https?:\/\//, "")));
+        })));
+  }
+  // 作品集的条目池 = 项目经历 ＋「更多作品」里带链接的条目。
+  // 后者字段名不同（title / year 对 org / period），在这里归一成项目的形状；
+  // t() 对纯字符串原样返回，所以 title 直接当 org 用没问题。
+  //
+  // ★★★ 「更多作品」那一半必须先过板块可见性：变体把 moreWorks 整块 hide 掉，
+  //   意思就是「这些次要作品不属于这一版简历」—— 那它们的链接也不该从作品集的后门钻进来。
+  //   2026-08-18 实测教训：art-vr（艺术自由职业名片，hide 了 moreWorks 但显示作品集）
+  //   的打印目录里漏进了 DeskDrawer 这个 Windows 工具。靠逐条 hideItems 去堵是治不完的，
+  //   以后每加一条带链接的 moreWorks 都要记得去堵每个变体。改成整类判定，
+  //   同时也与 works.html 的取数规则一致（那边本来就判 sectionVisible）。
+  function portfolioItems(d) {
+    const hide = new Set((d.sections && d.sections.hide) || []);
+    const fromProjects = hide.has("projects") ? [] : (d.projects || []).filter(workLink);
+    const fromMore = hide.has("moreWorks") ? [] : (d.moreWorks || []).filter(workLink).map((w) => ({
+      id: w.id, org: w.title, period: w.year, type: w.type,
+      link: w.link, video: w.video, linkKind: w.linkKind, _emph: w._emph,
+    }));
+    return fromProjects.concat(fromMore);
+  }
   function renderPortfolio(d) {
-    const works = (d.projects || []).filter((p) => p.video);
+    const works = portfolioItems(d);
     if (!works.length) return null;
+    const lang = (window.I18n && window.I18n.current) || "en";
+    // worksPage 开着、但当前协议撑不起可扫地址（file://）→ wu 为 null，整块自动回到
+    // 「QR 指 Vimeo 主页、不印说明行」的老行为，与本机制加入前一致。
+    const wu = d.worksPage ? worksUrl(lang) : null;
     return sectionBlock("portfolio",
       // 屏幕：超链接列表
       h("ul", { class: "cv-portfolio" },
-        works.map((p) =>
-          h("li", { class: "cv-work" + (p._emph ? " is-emph" : "") },
-            h("a", { class: "cv-work-link", href: p.video, target: "_blank", rel: "noopener" },
+        works.map((p) => {
+          const l = workLink(p);
+          return h("li", { class: "cv-work" + (p._emph ? " is-emph" : "") },
+            h("a", { class: "cv-work-link", href: l.url, target: "_blank", rel: "noopener" },
               h("span", { class: "cv-work-title" },
-                h("span", { class: "cv-badge" }, "▶ " + t(TXT.video) + " "),
+                h("span", { class: "cv-badge" }, l.mark + " " + t(TXT[l.kind]) + " "),
                 t(p.org)),
               h("span", { class: "cv-work-meta" },
                 h("span", { class: "cv-work-type" }, t(p.type || p.role)),
-                h("span", { class: "cv-work-period" }, p.period)))))),
+                h("span", { class: "cv-work-period" }, p.period))));
+        })),
       // 打印：单 QR + 有序目录（屏幕隐藏）
-      h("div", { class: "cv-portfolio-print", "aria-hidden": "true" },
-        h("div", { class: "cv-pprint-qr", "data-url": VIMEO_PROFILE }),
-        h("ol", { class: "cv-pprint-list" },
-          works.map((p) =>
-            h("li", null,
-              h("span", { class: "cv-pi-title" }, t(p.org)),
-              h("span", { class: "cv-pi-type" }, " · " + t(p.type || p.role)),
-              h("span", { class: "cv-pi-period" }, " (" + p.period + ")"))))));
+      portfolioPrint(works, wu || VIMEO_PROFILE, wu ? t(WORKS.qrNote) : null));
   }
 
-  /* —— 次要作品列表（仅特定变体）————————————— */
-  function renderMoreWorks(d) {
-    if (!d.moreWorks || !d.moreWorks.length) return null;
-    return sectionBlock("moreWorks",
-      h("ul", { class: "cv-moreworks" },
-        d.moreWorks.map((w) =>
-          h("li", { class: "cv-mw-item" },
-            h("span", { class: "cv-mw-year" }, w.year),
-            h("span", { class: "cv-mw-title" }, w.title),
-            h("span", { class: "cv-mw-type" }, t(w.type)),
-            w.tags && w.tags.length
-              ? h("span", { class: "cv-mw-tags" }, w.tags.join(" · "))
-              : null))));
+  /* —— 次要作品列表（仅特定变体）—————————————
+     条目一多，屏幕端这一块能拖出小半屏 → 超过 MW_COLLAPSED 条就默认只显示前几条，
+     下面给一个真 <button> 切换展开 / 收起（aria-expanded ＋ aria-controls，键盘可用）。
+
+     两条硬性约束：
+       1) PDF 必须全量 —— Render.all 里那份横跨整页的副本传 forPrint=true，压根不折叠、
+          不建按钮；print.css 另有两条兜底（按钮 display:none、[hidden] 条目强制现形）。
+       2) 条目不多的老变体（ue5-tech 就 6 条）必须一点不变 —— 不到阈值时下面这段
+          既不加 id、也不加 hidden 属性、更不建按钮，DOM 与改造前逐字节相同。
+     阈值取 6：既是「收起后仍有实质内容可看」的下限，也正好是 01 号现有的条目数
+     （它因此完全不受影响）。改大改小只需动这一个常量。
+  ———————————————————————————————————————————— */
+  const MW_COLLAPSED = 6;
+  const MW_LIST_ID = "cv-moreworks-list";
+  function renderMoreWorks(d, forPrint) {
+    const items = d.moreWorks || [];
+    if (!items.length) return null;
+    const collapse = !forPrint && items.length > MW_COLLAPSED;
+    const ul = h("ul", { class: "cv-moreworks", id: collapse ? MW_LIST_ID : null },
+      items.map((w, i) =>
+        // h() 会跳过 false → 不折叠时连 hidden 属性都不会写上去
+        h("li", { class: "cv-mw-item", hidden: collapse && i >= MW_COLLAPSED },
+          h("span", { class: "cv-mw-year" }, w.year),
+          h("span", { class: "cv-mw-title" }, w.title),
+          h("span", { class: "cv-mw-type" }, t(w.type)),
+          w.tags && w.tags.length
+            ? h("span", { class: "cv-mw-tags" }, w.tags.join(" · "))
+            : null)));
+    if (!collapse) return sectionBlock("moreWorks", ul);
+    return sectionBlock("moreWorks", ul,
+      h("button", { class: "cv-mw-more", type: "button", "aria-expanded": "false",
+        "aria-controls": MW_LIST_ID, onclick: onMwToggle },
+        t(MW_TOGGLE.expand).replace("{n}", String(items.length))));
+  }
+  function onMwToggle(e) {
+    const btn = e.currentTarget;
+    const list = document.getElementById(btn.getAttribute("aria-controls"));
+    if (!list) return;
+    const open = btn.getAttribute("aria-expanded") !== "true";
+    const rows = list.querySelectorAll(".cv-mw-item");
+    for (let i = MW_COLLAPSED; i < rows.length; i++) rows[i].hidden = !open;
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    btn.textContent = open ? t(MW_TOGGLE.collapse)
+      : t(MW_TOGGLE.expand).replace("{n}", String(rows.length));
+    // 收起时上方内容一下子缩短，按钮可能被甩到视口上方 → 拉回来。
+    // block:"nearest" 已经在视野里就不动；不用 smooth，免得跟 reduced-motion 打架。
+    if (!open) btn.scrollIntoView({ block: "nearest" });
   }
 
   /* —— 教育 ———————————————————————————————— */
@@ -330,6 +454,9 @@
 
   /* —— 对外接口 ————————————————————————————— */
   window.Render = {
+    // works.html 复用：判断一个条目算不算「有链接的作品」、该配哪个徽标。
+    // 导出的是同一个函数，不是抄一份 → 规则永远只有这一处。
+    workLink: workLink,
     all(d) {
       const root = document.getElementById("cv-root");
       if (!root) return;
@@ -368,10 +495,31 @@
       append(grid, main);
       append(frag, grid);
 
+      /* —— 打印专用：变体声明的「全宽板块」———————————————————————————
+         d.printFullWidth = ["work", "education"] → 这些主区板块在 PDF 里脱离
+         34% / 1fr 双栏，改走整页宽度的普通流。
+
+         为什么需要它：CSS Grid 在分页时**不会**丢掉轨道 —— 侧栏内容在第 2 页就结束了，
+         但第 3 页仍然保留那条 34%（约 70mm）的空轨道，于是整条左列通栏留白，
+         而右列被压在 113mm 里被迫向下长。实测这样白扔掉约一整张 A4 的正文面积。
+         挪到 grid 外之后宽度 113 → 184mm（+62%），内容自己就把页面填满了。
+
+         机制与下面的「更多作品 / 工具集」完全同款（那两块本来就是这么做的），
+         这里只是把它参数化：变体给了名字才生效 → 没声明的变体输出一字不变。
+         原位那份打上 .print-moved，由 print.css 在打印态隐藏（屏幕端照旧双栏）。 */
+      (d.printFullWidth || []).forEach((k) => {
+        if (MAIN_DEFAULT.indexOf(k) === -1 || hide.has(k)) return;
+        const copy = RENDER[k] && RENDER[k](d);
+        if (!copy) return;
+        const inGrid = main.querySelector('[data-sec="' + k + '"]');
+        if (inGrid) inGrid.classList.add("print-moved");
+        append(frag, h("div", { class: "cv-sec-print", "data-print-sec": k }, copy));
+      });
+
       // 打印专用：横跨整页排最后 —— 放在 grid 外（普通全宽 block，避免 CSS Grid 打印跨页 bug）
       // 先「更多作品」后「工具集」（屏幕隐藏）
       if (orderMain.indexOf("moreWorks") !== -1 && !hide.has("moreWorks")) {
-        const pm = renderMoreWorks(d);
+        const pm = renderMoreWorks(d, true); // forPrint：PDF 这一份永不折叠、不带按钮
         if (pm) append(frag, h("div", { class: "cv-moreworks-print" }, pm));
       }
       if (orderMain.indexOf("toolset") !== -1 && !hide.has("toolset")) {

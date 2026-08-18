@@ -34,6 +34,8 @@
     (function () {
       var p = new URLSearchParams(location.search);
       var v = (p.get("v") || "").replace(/[^a-z0-9-]/gi, "");
+      // ⚠️ 全站唯一一份需要手工同步的白名单副本：本段必须在 body 渲染前同步跑完（防内容闪现），
+      //    因此排在 data/base.js 之前，读不到那边的 meta.variants。新增变体两处都要加。
       var VALID = { "ue5-tech": 1, "art-vr": 1, "designer": 1, "china-biz": 1 };
       var full = p.get("mode") === "full";
       var saved = false; try { saved = localStorage.getItem("cv-mode") === "full"; } catch (e) {}
@@ -95,6 +97,7 @@
   <script src="scripts/i18n.js"></script>
   <script src="scripts/identity.js"></script>
   <script src="scripts/data-loader.js"></script>
+  <script src="scripts/duration.js"></script>
   <script src="scripts/render.js"></script>
 
   <!-- 导出层 -->

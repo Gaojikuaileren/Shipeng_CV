@@ -1,0 +1,64 @@
+/* ============================================================
+   works.css — 作品链接页（works.html）专用
+   只被 works.html 引用：改这里影响不到简历本体，简历改版也不会顺手压坏这一页。
+   本页不引 screen.css / print.css，所以下面的类名一律用 wk- 前缀，与 cv- 完全分家。
+
+   设计前提：这一页几乎只在手机上被打开（从 PDF 上的 QR 扫进来）。
+   → 移动优先、单列、每条链接的可点区域 ≥ 44px（Apple HIG / WCAG 2.5.5 的下限）。
+   颜色 / 字号 / 间距全部取 tokens.css 的变量，与简历同一套视觉。
+   ============================================================ */
+
+.wk-page { max-width: 640px; margin: 0 auto; padding: var(--s5) clamp(20px, 6vw, 40px) var(--s6); }
+
+/* —— 页头：姓名 ＋ 一句话说明（让扫码的人知道自己在看什么）—— */
+.wk-head { margin-bottom: var(--s5); }
+.wk-name { font-size: clamp(1.7rem, 7vw, 2.4rem); font-weight: 700;
+  letter-spacing: -.02em; line-height: var(--lh-tight); text-wrap: balance; }
+.wk-lead { margin-top: var(--s2); color: var(--ink-soft); line-height: 1.5;
+  text-wrap: pretty; hyphens: auto; overflow-wrap: break-word; }
+
+/* 语言切换：扫码的人手机语言未必等于这张 PDF 的语言 → 给他一个开关 */
+.wk-langs { display: flex; gap: var(--s1); margin-top: var(--s4); }
+.wk-lang {
+  font: inherit; font-size: var(--fs-small);
+  min-width: 44px; min-height: 44px; padding: 0 var(--s2);
+  border: var(--hair) solid var(--line); background: var(--paper); color: var(--ink-faint);
+  cursor: pointer; transition: border-color .15s, color .15s;
+}
+.wk-lang:hover { color: var(--ink); }
+.wk-lang.active { color: var(--ink); font-weight: 600; border-color: var(--ink); }
+
+/* —— 分组（作品集 / 更多作品）—— */
+.wk-sec { margin-bottom: var(--s5); }
+.wk-sec-title {
+  font-size: var(--fs-micro); text-transform: uppercase; letter-spacing: .16em;
+  color: var(--ink-faint); font-weight: 600;
+  padding-bottom: var(--s2); border-bottom: var(--hair) solid var(--line); margin-bottom: var(--s3);
+}
+.wk-list { display: flex; flex-direction: column; gap: var(--s2); }
+
+/* —— 单条作品链接：整块可点 —— */
+.wk-link {
+  display: flex; flex-direction: column; gap: 3px;
+  min-height: 44px; padding: var(--s3);
+  border: var(--hair) solid var(--line);
+  transition: border-color .15s, background .15s;
+}
+.wk-link:hover { border-color: var(--ink); }
+.wk-link:active { border-color: var(--accent); background: var(--paper-2); } /* 手指按下时的反馈 */
+.wk-badge { font-size: var(--fs-micro); color: var(--accent); font-weight: 700; letter-spacing: .04em; }
+.wk-title { font-size: 1.05rem; font-weight: 600; line-height: 1.3; }
+.wk-meta { font-size: var(--fs-small); color: var(--ink-faint); line-height: 1.4;
+  hyphens: auto; overflow-wrap: break-word; }
+/* 目标域名：让人点之前就知道会去哪儿（长网址必须能断，否则撑破窄屏）*/
+.wk-host { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--ink-faint);
+  word-break: break-all; }
+
+/* —— 页尾：回到完整简历 —— */
+.wk-foot { margin-top: var(--s5); padding-top: var(--s3); border-top: var(--hair) solid var(--line); }
+.wk-back { display: inline-flex; align-items: center; min-height: 44px;
+  font-size: var(--fs-small); color: var(--ink-soft); box-shadow: inset 0 -1px 0 var(--line); }
+.wk-back:hover { color: var(--accent); box-shadow: inset 0 -1px 0 var(--accent); }
+
+/* 该变体一条带链接的作品都没有时的兜底文案 */
+.wk-empty { font-size: var(--fs-small); color: var(--ink-faint); }

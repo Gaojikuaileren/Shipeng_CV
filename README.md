@@ -23,10 +23,19 @@ node tools/serve.js
 
 - `data/base.js` — 核心内容：个人情报 / 自我介绍 / 教育 / 项目经历(projects) / 工作经历(work) / 更多作品(moreWorks) / 语言 / 联系。
 - **技能分两块**：`capabilities`（核心能力，侧边栏，四语带熟练度）＋ `tools`（具体软件，工具集，按 group 分组）。
+  - `capabilities` 每项可选 `since: "2024-03"`（也接受 `"2024-03-15"`）＝ 这项能力**从哪个月开始**。
+    页面每次渲染按当前日期实时算年限，**不用每月手工更新数字**。不足 12 个月按月显示，
+    满 12 个月起向下取整到整年（14 个月 → 1 年），起始当月不足 1 个月则不显示。
+    要真的显示出来还得在变体里设 `skillDisplay: "since"` 或 `"both"`。
 - 兼职简历是完全独立的 `odd/data.js`（不与主简历共享数据）。
 - 每个多语字段是 `{ zh, ja, en, de }`，只改引号里的值；某语言留空 `""` 自动 fallback。
 - 技术栈 / 专名（UE5、Blueprint、OSC…）一般不翻译。
 - `visibility: "private"` 默认隐藏；`protected: true` 的邮箱/电话防采集。
+- 项目想同时进「作品集」板块，就给它一个 `link`（外链），并用 `linkKind` 决定徽标：
+  `"video"` ▶视频 / `"store"` ↗商店 / `"web"` ↗网站（不写＝web）。老字段 `video` 继续管用，等于 `linkKind:"video"`。
+- ⚠️ `base.js` 是所有变体共享的：往 `projects` / `moreWorks` / `tools` 加条目，
+  **所有没挡住它的变体都会跟着多出来**。只想给某一个变体用的内容，记得在其余变体里
+  用 `hideItems`（项目 / 作品）或 `hideTools`（软件）挡掉。
 
 ---
 
@@ -38,9 +47,13 @@ node tools/serve.js
 2. 改里面（字段都可选）：
    - `headline` 岗位头衔、`intro` 岗位自我介绍、`greeting` 给特定公司的一句话（顶部显示，加分）
    - `sidebar` 侧边栏显示哪些核心能力（`cap-` id，按数组顺序排）
-   - `hideSkillLevels: true` 侧边栏只列能力名、不打 5 点熟练度（没有年限背书的能力别自称专家）
+   - `skillDisplay` 侧边栏能力名右边显示什么：`"level"`（默认，5 点熟练度）/ `"since"`（经验年限）/
+     `"both"` / `"none"`（什么都不显示）。年限来自 `capabilities` 的 `since`，自动算，见上方「改内容 → 技能分两块」
+   - `hideSkillLevels: true` 旧写法，等同 `skillDisplay: "none"`（两个都写时以 `skillDisplay` 为准）
    - `highlightTools` 工具集里高亮＋排前的软件（`t-` id）
    - `onlyTools` 只显示这些软件（白名单；不写＝显示全部）
+   - `hideTools` 不显示这些软件（黑名单；两个都写时先过白名单再过黑名单）。
+     用途：往 `base.js` 加一组新软件时它会自动出现在所有变体里，不想露给谁就在那个变体里挡掉
    - `sections` 板块级控制 `{ order, hide, emphasize }`（板块名 projects/work/toolset/collab/portfolio…）
      · `order` 里也可以放侧边栏板块名（skills / languages / contact）来调侧边栏顺序
    - `emphasizeItems` / `hideItems` 条目级（id 如 `prj-` / `work-` / `edu-` / `email-`）
@@ -50,11 +63,17 @@ node tools/serve.js
    - `sectionTitles` 覆盖板块标题（如 toolset → "Technical & Creative Background"）
    - `collab` 能力板块数据 `[{ id, title, note, items:[…] }]`（给了才渲染；用于「我能带来什么」这类板块）
    - `contactNote` 联系方式下方一句话 CTA（如求职 ＋ 合作双身份）
+   - `worksPage: true` 把 PDF 作品集里那个共用二维码改指向 `works.html`（见下方「作品链接页」）。
+     不写＝二维码仍指向 Vimeo 主页（老变体保持原样，不多一次跳转）
 3. 把链接 `你的域名/?v=你起的名字` 发给对应招聘方。
-4. 新变体还要在两处登记，否则不生效：
-   - `index.html` 顶部 `VALID = { … }`（裸入口拦截白名单，漏了会显示占位点）
-   - `hub.html` 的 `ROUTES` / `NAMES` / `ORDER` / `CLEAN`，以及 `worker/cv-stats-worker.js` 的 `VARIANTS`
-     （Worker 改完要在 `worker/` 目录跑 `wrangler deploy` 才会统计新变体）
+4. 新变体还要在**四处**登记，否则不生效（漏了大多不报错，只是悄悄不对）：
+   - `data/base.js` 的 `meta.variants`（变体白名单的唯一真相；**`works.html` 从这里读**，
+     漏了它会静默渲染缺省变体的作品清单）
+   - `index.html` 顶部 `VALID = { … }`（裸入口拦截白名单，漏了会显示占位点）。
+     这份必须手工同步：它要在 body 渲染前跑完，早于 `data/base.js`，读不到 `meta.variants`
+   - `hub.html` 的 `ROUTES` / `NAMES` / `ORDER` / `CLEAN`
+   - `worker/cv-stats-worker.js` 的 `VARIANTS`（漏了 `/hit` 与 `/pdf` 返回 400，访问量一次都记不上；
+     改完要在 `worker/` 目录跑 `wrangler deploy` 才生效）
 
 无参数 `/` = 占位点（不暴露内容）；变体不存在自动回退 `ue5-tech`。
 **写错 id 会在浏览器控制台 `console.warn` 提示**，方便排查笔误。
@@ -76,10 +95,32 @@ node tools/serve.js
 ## 导出（工具栏右上）
 
 - **↓ PDF** — 打印对话框选「另存为 PDF」= A4 简历（文字矢量、ATS 友好）。工具集/更多作品在 PDF 里横跨整页排最后；作品集变「二维码＋目录」；页尾带联系方式。
+  · 「更多作品」在**网页上**超过 6 条会默认折叠（下方有展开/收起按钮）；**PDF 里永远全量展开、按钮不出现**。
 - **▭ Card** — 弹出名片卡片窗口：分享（iOS/Mac 系统分享 / 其他端复制链接）＋ 下载 PNG（canvas 离线绘制）。
 - **⧉ Copy** — 复制「姓名 ＋ 当前可见联系方式 ＋ HR 评分模板」（随当前语言）。
 
 > 打印 / PDF 的真实效果需在本地浏览器的打印对话框里看（预览环境看不到）。
+
+---
+
+## 作品链接页 `works.html`
+
+纸上点不了超链接。所以 PDF 的作品集里放**一个共用二维码**，扫进去就是 `works.html` ——
+把该变体每件作品的链接排成手机上点得中的大块链接（单列、可点区域 ≥ 44px）。
+
+- 数据来源就是 `data/base.js` ＋ 变体，**没有第二份链接清单**；条目没有 `link` / `video` 的不列出。
+  变体 `sections.hide` 藏掉的板块，这一页也不会列。
+- 地址运行时从当前页推出来（`location` 的所在目录），本地 5180 与线上 `/Shipeng_CV/` 子路径都对，
+  **没有写死域名**。二维码带 `?v=` 与 `?lang=` —— PDF 是「某种语言的一张纸」，
+  扫码的人应当落在同一种语言上；页面上仍可切语言。
+- 想让某个变体的 PDF 用这个二维码：在该变体加一行 `worksPage: true`。目前只有 `ue5-tech` 开着。
+- 直接打开 `works.html`（不带 `?v=`）默认按 `ue5-tech` 显示；同样 noindex。
+  `<title>` 是中性占位「·」，真实标题由 JS 写入 —— JS 不执行时不吐姓名。
+- 带了 `?v=` 却不在 `meta.variants` 里 → 控制台 `console.warn` 一条并回落缺省变体（不会静默）。
+- 外链是 `rel="noopener noreferrer"` ＋ 整页 `meta referrer=no-referrer`：
+  这一页的 URL 本身带 `?v=`（专属链接），不该随点击进第三方日志。
+- `file://` 直接双击打开时，PDF 里那个二维码会自动退回 Vimeo 主页 —— 本机磁盘路径既扫不出
+  东西，也不该被印在发给雇主的纸上。要真正用上这一页，请用 `node tools/serve.js` 或线上地址。
 
 ---
 
@@ -95,8 +136,8 @@ node tools/serve.js
 - 站点：`https://gaojikuaileren.github.io/Shipeng_CV/`
 - 仓库：`github.com/Gaojikuaileren/Shipeng_CV`（main 分支根目录，GitHub Pages）
 - **私人控制台**：`/hub.html` —— 指令式（未被任何公开页链接，只给你自己用）
-  · `/s01` 游戏开发　`/s02` 媒体艺术　`/s03` 设计师　`/s04` 兼职　`/s05` 中德商务
-  · `/sdata` 看分职业访问统计；`/clean01`–`/clean05`、`/cleanall` 清零
+  · `/s01` 游戏开发　`/s02` 媒体艺术　`/s03` 设计师　`/s04` 兼职　`/s05` 中德商务　`/s06` UE5+AI
+  · `/sdata` 看分职业访问统计；`/clean01`–`/clean06`、`/cleanall` 清零
 
 **改完内容重新部署**：`git add -A && git commit -m "..." && git push`，1–2 分钟自动重建。
 
@@ -109,6 +150,7 @@ node tools/serve.js
 ```
 Shipeng_CV/
 ├── index.html            主简历入口
+├── works.html            作品链接页（PDF 作品集里那个二维码扫进来的落地页；移动优先）
 ├── hub.html              私人控制台（四选一 + 复制链接）
 ├── robots.txt            禁止索引
 ├── odd/
@@ -122,7 +164,8 @@ Shipeng_CV/
 │   ├── tokens.css        设计变量（颜色/字体/间距）← 想换风格先改这里
 │   ├── base.css          reset + 工具栏/按钮/toast + 名片弹窗
 │   ├── screen.css        屏幕布局（移动优先响应式）
-│   └── print.css         A4 简历 + 名片 + 打印专项
+│   ├── print.css         A4 简历 + 名片 + 打印专项
+│   └── works.css         works.html 专用（只被它引用，不影响简历本体）
 ├── scripts/
 │   ├── i18n-ui.js        所有 UI 文案（四语集中）
 │   ├── i18n.js           语言检测/切换

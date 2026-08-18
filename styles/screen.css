@@ -44,6 +44,9 @@ body.v-art-vr .cv-photo { max-width: 320px; }
 }
 
 .cv-info { display: grid; grid-template-columns: auto 1fr; gap: var(--s1) var(--s3); margin-bottom: var(--s4); font-size: var(--fs-small); }
+/* china-biz：德语 Verfügbarkeit 一行放不下（标签 84 + 间距 16 + 值 219 = 319 > 300）。
+   放宽侧栏而不是删字 —— 变体作用域，其它四版仍是 300px。 */
+body.v-china-biz { --aside-w: 324px; }
 .cv-info dt { color: var(--ink-faint); }
 .cv-info dd { color: var(--ink); }
 
@@ -51,6 +54,20 @@ body.v-art-vr .cv-photo { max-width: 320px; }
 .cv-skill { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); font-size: var(--fs-small); }
 .cv-skill.is-emph { box-shadow: inset 2px 0 0 var(--accent); padding-left: var(--s2); }
 .cv-skill.is-emph .cv-skill-name { font-weight: 700; }
+/* 能力名允许在 flex 行里被压缩（默认 min-width:auto 会让长词把行撑破）。
+   刻意不加 overflow-wrap:break-word —— 那是语言无关的按字符硬断，德语会断成
+   「Sensorkommu / nikation」且不带连字符，正字法上是错的，还会直接印进 PDF。
+   实测四语在 254px 侧栏 / 375px 移动端 / 236px 打印侧栏下均不溢出，无需硬断；
+   真要断，正解是在 data 里给德语复合词插软连字符 U+00AD。 */
+.cv-skill-name { min-width: 0; }
+/* 经验年限（capability.since 实时算出）：margin-left:auto 把它连同点数一起顶到右侧，
+   "both" 模式下也不会被 space-between 摊到中间；nowrap 保证「2 Jahre」不被拆行。
+   不用 --font-mono：那套栈里没有任何 CJK 字体，中日文的「个月 / か月」会掉到宋体，
+   既跟全站无衬线冲突，也盖掉 base.css 按语言设的 CJK 字体栈。tabular-nums 不依赖等宽字体，
+   数字照样对齐。 */
+.cv-skill-since { margin-left: auto; flex-shrink: 0; white-space: nowrap;
+  font-size: var(--fs-micro); color: var(--ink-faint);
+  font-variant-numeric: tabular-nums; font-weight: 400; }
 .cv-level { display: inline-flex; gap: 3px; }
 .cv-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--line); }
 .cv-dot.on { background: var(--ink); }
@@ -104,7 +121,11 @@ body.v-art-vr .cv-photo { max-width: 320px; }
    移动端单列堆叠；≥760px 与主区宽度自适应分列。瑞士极简：细线 + 破折号列表。 */
 .cv-collab { display: grid; grid-template-columns: 1fr; gap: var(--s4); }
 @media (min-width: 760px) {
-  .cv-collab { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--s4) var(--s3); }
+  /* subgrid：两栏共用父级行轨道 → 标题对标题、说明对说明、列表对列表。
+     与各语言文字长度无关；说明行数不同也不会把列表顶歪（日语原先错位 17px）。 */
+  .cv-collab { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--s4) var(--s3);
+    grid-template-rows: auto auto auto; }
+  .cv-cb { display: grid; grid-template-rows: subgrid; grid-row: span 3; }
 }
 .cv-cb { border-top: var(--hair) solid var(--line); padding-top: var(--s2); }
 .cv-cb-title { font-size: var(--fs-small); font-weight: 700; letter-spacing: .01em; margin-bottom: var(--s1); }
@@ -145,6 +166,22 @@ body.v-art-vr .cv-photo { max-width: 320px; }
 .cv-mw-title { font-weight: 600; }
 .cv-mw-type { color: var(--ink-soft); }
 .cv-mw-tags { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--ink-faint); }
+/* 折叠起来的条目：.cv-mw-item 是 display:flex，会盖掉浏览器给 [hidden] 的 display:none，
+   所以必须显式写这一条（打印端另有一条把它掀回来，见 print.css）。 */
+.cv-mw-item[hidden] { display: none; }
+/* 展开 / 收起按钮（条目超过阈值时 render.js 才建；PDF 里隐藏）。
+   刻意做得比 .tool-btn 轻——它长在正文里，不该抢内容的视觉重量。
+   min-height 44px：手机上够得着；transition 由 base.css 的 reduced-motion 段统一压掉。 */
+.cv-mw-more {
+  font: inherit; font-size: var(--fs-small); margin-top: var(--s3);
+  display: inline-flex; align-items: center; gap: var(--s2);
+  min-height: 44px; padding: var(--s2) var(--s3);
+  border: var(--hair) solid var(--line); background: var(--paper); color: var(--ink-soft);
+  cursor: pointer; transition: border-color .15s, color .15s;
+}
+.cv-mw-more::before { content: "＋"; font-family: var(--font-mono); color: var(--ink-faint); }
+.cv-mw-more[aria-expanded="true"]::before { content: "−"; }
+.cv-mw-more:hover { border-color: var(--ink); color: var(--ink); }
 
 /* 板块重点（变体 sections.emphasize）：标题用强调色 */
 .is-emph-section > .cv-sec-title { color: var(--accent); border-color: var(--accent); }
@@ -155,6 +192,8 @@ body.v-art-vr .cv-photo { max-width: 320px; }
 /* 工具集/更多作品 横跨版 & 页尾——仅 PDF/打印显示 */
 .cv-toolset-print { display: none; }
 .cv-moreworks-print { display: none; }
+/* 变体声明的全宽打印副本（work / education 等）：屏幕端不存在，只在 PDF 里现形 */
+.cv-sec-print { display: none; }
 .cv-print-footer { display: none; }
 
 /* 名片：屏幕隐藏（仅导出/打印名片时显示）*/

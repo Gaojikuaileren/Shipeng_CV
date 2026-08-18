@@ -29,16 +29,27 @@ base.js（RESUME_BASE：profile/intro/capabilities/tools/projects/work/moreWorks
 variants/<v>.js（按 ?v= 动态注入，RESUME_VARIANT）
    ↓ data-loader 合并：
        · headline/intro/greeting/photo/profileFields 覆盖
-       · sidebar → 从 capabilities 选侧边栏能力（按数组序）；hideSkillLevels → 不打点数
-       · highlightTools → 标记工具集高亮+排前；onlyTools → 工具集白名单
+       · sidebar → 从 capabilities 选侧边栏能力（按数组序）
+       · skillDisplay "level"(默认)/"since"/"both"/"none" → 能力名右侧显示点数 / 经验年限 / 两者 / 无；
+         旧字段 hideSkillLevels:true 折算为 "none"（向后兼容）。年限由 capability.since 实时算（duration.js）
+       · highlightTools → 标记工具集高亮+排前；onlyTools → 工具集白名单；hideTools → 工具集黑名单
+         （两个名单都写时先白后黑；黑名单是给「base 新增工具组不该漏进老变体」用的）
        · sections{order,hide,emphasize} → 板块级控制（order 也可排侧边栏板块）
        · sectionTitles → 板块标题按变体语境改写
        · emphasizeItems/hideItems → 条目级（项目/工作/教育/联系 id）
        · itemOverrides → 条目字段就地覆盖（同一段经历换叙述侧重，事实字段仍来自 base）
        · collab/contactNote → 可选板块数据（给了才渲染）
+       · worksPage:true → PDF 作品集的共用二维码改指向 works.html（不写＝仍指 Vimeo 主页）
+         协议守卫：只有 http(s) 才生成这个地址；file://（双击打开）返回 null → 整块退回
+         「QR 指 Vimeo、不印说明行」。本机磁盘路径既扫不出东西，也不该印在给雇主的纸上。
        · 无效 id → console.warn 提示
    ↓ render 用 I18n.t() 取当前语言、DocumentFragment 一次性渲染
    ↓ #cv-root（屏幕） / #cv-card（名片）
+
+works.html（作品链接页，同一份 base + 同一套变体机制，只是换个渲染）
+   ↓ 读 ?v=（缺省 ue5-tech）＋ ?lang=，复用 Render.workLink 判定「哪些条目有链接、配哪个徽标」
+   ↓ 变体白名单读 base.meta.variants（本页不另抄一份）；带了 ?v= 却不在名单里 → console.warn
+   ↓ #wk-root —— 单列大块超链接，给扫二维码的手机看
 ```
 语言优先级：`?lang=` > localStorage > 浏览器语言 > `meta.defaultLang`。
 
@@ -74,6 +85,17 @@ variants/<v>.js（按 ?v= 动态注入，RESUME_VARIANT）
       CV ＋ Cooperation Profile 双用途（投职位 ＋ 直接发德国 Beschaffungs-/Einkaufsagentur 谈合作）。
       新增可复用机制：`collab` 板块、`itemOverrides`、`onlyTools`、`sectionTitles`、`profileFields`、
       `contactNote`、`hideSkillLevels`、`sections.order` 兼管侧边栏顺序。
+- [x] 经验年限自动化：`capabilities[].since` ＋ 变体 `skillDisplay`（`scripts/duration.js`）。
+      写一次起始月，年限每次渲染按当前日期算出来，不用手工维护数字；
+      默认 `"level"`，不写 since / 不设 skillDisplay 的变体输出与加此机制前完全一致。
+- [x] 作品链接页 `works.html` ＋ 变体开关 `worksPage`：PDF 里作品集仍只有**一个**共用二维码，
+      但它改指向 `works.html?v=<变体>&lang=<语言>`（地址运行时由 `location` 推出，不写死域名），
+      那一页把该变体每件作品的链接排成手机上点得中的大块链接。
+      唯一真相仍在 `data/`：判定复用 `Render.workLink`，没链接的条目不列，变体藏掉的板块也不列。
+      默认关闭 → 老变体的 PDF 与从前逐字节一致。
+- [x] 「更多作品」屏幕端折叠：超过 6 条默认只显示前 6 条 ＋ 真 `<button>`（`aria-expanded`/`aria-controls`）。
+      **PDF 永远全量、按钮不进纸** —— 横跨整页那份副本渲染时就不折叠，print.css 另有两条兜底规则。
+      条目不到阈值的变体（ue5-tech 的 6 条）连按钮都不建，DOM 与加此机制前逐字节相同。
 - [x] 2026-08-17 统计后端从 KV 换成 Durable Object（`worker/`，已部署）：
       老设计把五个职业的数字放在**一个 KV key** 里，每次 +1 都「读整个 JSON → 改 → 写回」。
       KV 读是最终一致的，密集访问时会读到旧快照再写回，把别人的 +1 覆盖掉 —— 实测线上
@@ -96,7 +118,17 @@ variants/<v>.js（按 ?v= 动态注入，RESUME_VARIANT）
 
 **内容尾巴**：
 - [ ] 日语用词校对（如 art-vr「沉浸型」→「没入型」）
-- [ ] 真实 Vimeo 各作品链接（现指向主页）、真实照片（现占位 SVG）
+- [ ] 真实 Vimeo 各作品链接（现指向主页）、真实照片（现占位 SVG）。
+      ⚠️ 有了 `works.html` 之后这条有了新的后果：`prj-room` 与 `prj-grau` 两条的 `video`
+      都还是同一个 Vimeo 主页 → 扫码的人看到 4 张卡片，点进去只有 3 个不同目的地，
+      其中两张完全一样。**补上真实链接之前，别把 ue5-tech 的 PDF 发出去。**
+- [ ] `moreWorks` 15 条全都没有 `link` / `video` → `works.html` 的「更多作品」组恒为空
+      （空组不渲染，代码是对的，缺的是数据）。`s-gjklr.work` / `Spoy Wiki` / `SP_lessons` /
+      `Shipeng CV` 都是有公开网址的，补 `link` ＋ `linkKind:"web"` 就会自动出现在那一页。
+- [ ] `cap-genai` 的 `since: "2024-08"` 是机主口述；本机只找得到 2026-08 起的生成式痕迹。
+      侧边栏年限是 ue5-tech 最大的卖点，发出去前请自查能否拿出佐证。
+- [ ] `tools` 的 AI 组：`Flux` 本机只有 VAE、没有主模型，待机主确认是否真出过图。
+      同批的 Stable Diffusion / SDXL、ControlNet、InstantID、LivePortrait 已因零痕迹删除。
 
 ## 关键约束（别踩）
 - 勿引 Google Fonts CDN（德国 GDPR）。

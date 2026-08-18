@@ -31,6 +31,9 @@
   .cv-name { font-size: 23pt; }
   .cv-title { font-size: 11.5pt; }
   .cv-grid { grid-template-columns: 34% 1fr; gap: 8mm; }
+  /* china-biz：打印布局不走 --aside-w 而走这里的百分比。德语 Verfügbarkeit 在 34%
+     时容器仅 162px、需要 201px → 折行；42% 得 222px（40% 只余 6px，偏险）。 */
+  body.v-china-biz .cv-grid { grid-template-columns: 42% 1fr; }
   /* —— 打印密度收紧：避免临界内容溢出到第二页 —— */
   .cv-head { margin-bottom: 3mm; }
   .cv-block { margin-bottom: 3.5mm; }
@@ -40,9 +43,28 @@
   .cv-main [data-sec="moreWorks"], .cv-main [data-sec="toolset"] { display: none !important; }
   /* 横跨块是 .cv-root 下的普通全宽 block（不在 grid 内），打印跨页正常 */
   .cv-moreworks-print { display: block !important; margin-top: 3.5mm; }
+  /* ⚠️ 下面这句 columns 目前是**不生效**的（不是 bug，是记录在案的现状）：
+     .cv-moreworks 在 screen.css 里是 display:flex，而 CSS 多栏对 flex 容器无效
+     —— column-count 会被直接忽略。所以「更多作品」在 PDF 里实际是**单栏全宽**。
+     2026-08 实测比较过：真开两栏（给它加 display:block）15 条能省约 18mm，但每条要从
+     2 行涨到 3 行、年份与标题不再同行，读起来更碎。单栏全宽反而更像一份作品索引 →
+     维持现状。想改成两栏，加一句 display:block 即可，别忘了行距要从 gap 换成 margin。 */
   .cv-moreworks-print .cv-moreworks { columns: 2; column-gap: 10mm; }
   .cv-moreworks-print .cv-mw-item { break-inside: avoid; }
+  /* 「更多作品」折叠：PDF 必须全量、按钮不能进纸。
+     结构上 main 里那份整块已被上面第一条 display:none，横跨块那份 render 时就没折叠 ——
+     下面两条是兜底：将来谁改了结构，PDF 也绝不会漏掉条目或印出一个点不动的按钮。
+     两条都是全局的：别的变体压根没有这个按钮、也没有 [hidden] 条目，加了等于没加。 */
+  .cv-mw-more { display: none !important; }
+  .cv-mw-item[hidden] { display: flex !important; }
   .cv-toolset-print { display: block !important; margin-top: 3.5mm; }
+  /* 变体声明的全宽打印板块（d.printFullWidth）：原位那份隐藏、grid 外的全宽副本现形。
+     只有声明过的变体才会生成 .print-moved / .cv-sec-print 节点 ——
+     对没声明的老变体这两条是死规则，一个字节都不影响。
+     为什么要挪出 grid：Chrome 分页时不会丢掉 Grid 轨道，侧栏内容结束后那条 34%（约 70mm）
+     的空轨道仍然占位，于是整条左列通栏留白、右列被压在 113mm 里。挪出来后宽 184mm。 */
+  .cv-main .print-moved { display: none !important; }
+  .cv-sec-print { display: block !important; margin-top: 3.5mm; }
   .cv-toolset-print .cv-toolset { gap: 1.5mm; }
   .cv-toolset-print .cv-tset-row { flex-direction: row; align-items: baseline; gap: 3mm; break-inside: avoid; }
   .cv-toolset-print .cv-tset-label { min-width: 30mm; flex-shrink: 0; }
@@ -61,7 +83,15 @@
   .cv-item { padding-top: 2mm; padding-bottom: 2mm; } /* 不清左右 padding，保留 is-emph 左竖线间距 */
   .cv-item.is-emph { padding-left: 4mm; } /* 绿条与内容的间距 */
   .cv-item-body, .cv-item-title, .cv-info, .cv-skill, .cv-lang, .cv-contact-row { font-size: 9.5pt; }
+  /* 经验年限：屏幕端用 rem 字号，打印要跟着 9.5pt 走 → 这里改回 pt 并略缩一档。
+     打印侧栏只有约 61mm，靠 nowrap（screen.css）保证年限本身不拆行，长能力名照常换行 */
+  .cv-skill-since { font-size: 8pt; color: #555; }
   /* 避免板块/条目被跨页切断 */
+  /* ★ 2026-08-18 回退：.cv-block 曾被从这条里拿掉（理由是能让 china-biz 3→2 页、
+     ue5-ai 5→4 页），但那是**全局**改动，实测把 8/24 份 PDF 都改了，其中 ue5-tech
+     四语的「联系方式」整块被劈成两页（p1 印到 Portfolio，p2 才接上 LinkedIn）。
+     当时的注释写「其余三版不变，无一变差」——与实测不符，已作废。
+     结论：要放宽跨页只能按变体开闸（见下方 body.v-ue5-tech 段），不许动这一行。 */
   .cv-block, .cv-item, .cv-work { break-inside: avoid; }
   .cv-sec-title { break-after: avoid; }
 
@@ -75,6 +105,77 @@
   .cv-cb-list li::before { content: none; }
   .cv-cb-list li:not(:last-child)::after { content: " · "; color: #999; }
   .cv-contact-note { font-size: 8.5pt; color: #444; border-top: 0.4pt solid #ccc; }
+
+  /* UE5+AI 专项：本变体内容最多（15 条更多作品 ＋ 完整工具集 ＋ 4 件作品 ＋ 二维码说明行），
+     不收密度就会为了一行页尾多出整整一页。两条都锁死在 body.v-ue5-tech 上 ——
+     老四变体的 PDF 必须逐块坐标不变。 */
+  /* ① 「更多作品」行距：15 条每条省 0.5mm ≈ 省 7mm，正好够页尾留在最后一页 */
+  /* ① 附录「更多作品」真正分栏。
+        ★ 2026-08-18 发现：上文第 52 行的 `.cv-moreworks-print .cv-moreworks { columns: 2 }`
+        **一直是死规则** —— screen.css:163 把这个容器设成了 display:flex，而 columns
+        对 flex 容器无效。也就是说附录里的更多作品从来都是单栏排下来的。
+        这里按变体改成 display:block 让分栏真的生效（15 条单栏约 75mm → 两栏约 40mm）。
+        gap 对 block 容器同样无效，改用条目 margin-bottom 控制行距。
+        **不修全局那条**：01 号 ue5-tech 的附录也走这块，改全局会连带改它的 PDF。 */
+  body.v-ue5-tech .cv-moreworks-print .cv-moreworks {
+    display: block; columns: 2; column-gap: 8mm; }
+  body.v-ue5-tech .cv-moreworks-print .cv-mw-item { margin-bottom: 1.6mm; }
+  /* ② 工作经历整块允许跨页：上面那条 .cv-block{break-inside:avoid} 把整个板块也锁死了，
+        而本变体的工作经历高约 410pt —— 塞不进作品集那页的剩余空间就被整块下推，
+        那一页因此空掉近半张 A4。条目级的 .cv-item / .cv-work 仍是 avoid，单条不会被切开。 */
+  body.v-ue5-tech [data-sec="work"],
+  body.v-ue5-tech .cv-sec-print .cv-block { break-inside: auto; }
+  /* ③ 同理：横跨整页的「更多作品」（15 条）与「工具集」两块也别整块 avoid ——
+        整块塞不下就会把前一页的下半页留空。条目 / 行的 avoid 见上文，仍然生效。 */
+  body.v-ue5-tech .cv-moreworks-print .cv-block,
+  body.v-ue5-tech .cv-toolset-print .cv-block { break-inside: auto; }
+
+  /* ===== UE5 + 视觉生成式 AI 四页版式（2026-08 实测标定，四语逐一验证）=====
+     版面账：每页正文 269mm。难点不是「装不下」，是「切不匀」——
+     第 1 页右列本来空着近 200mm，第 3 页本来只有 226–238mm 内容。
+     以下全部锁死在 body.v-ue5-tech，老四变体与 odd/ 的 PDF 必须逐块坐标不变。 */
+
+  /* ① 附录不再强制起新页。
+        ★ 2026-08-18：原先钉死 break-before:page，代价是主区一旦溢出，那一页就只剩
+        溢出的一点内容 + 近 250mm 空白（德语实测只要多 3 句就触发）。
+        工作+教育改全宽后它们比原来矮得多，附录接着往下流反而排得更满。 */
+
+  /* ② 项目经历第 2 条起翻页：把 66–79mm 搬回第 1 页那片空着的右列。
+        栅格内的强制分页不会连累侧栏 —— Chrome 对两个栅格列独立分片，实测侧栏逐块不变。
+        选择器说明：该板块的子元素只有一个 <h2.cv-sec-title> 和 4 个 <article.cv-item>，
+        所以 :nth-of-type(2)（按 article 计数）精确等于第 2 条。若将来往板块里塞进别的
+        <article>，这条会挪位 —— 改结构后必须重出四语 PDF 复核。 */
+  body.v-ue5-tech [data-sec="projects"] .cv-item:nth-of-type(3) { break-before: page; }
+
+  /* ③ 作品集目录行距：en/de 省 7.3mm、ja 省 5.3mm、zh 省 0
+        （中文目录本来就比 QR 盒矮，这块是 flex 行、高度由 QR 盒定）。
+        德语第 2 页靠这 7.3mm 才回到 269mm 以内。QR 尺寸与静区一律不动。 */
+  body.v-ue5-tech .cv-pprint-list { line-height: 1.4; }
+
+  /* ③b 侧栏板块重新上锁（整块不许跨页）。
+        上文那条通用 break-inside 已经把 .cv-block 拿掉了（为了让 china-biz / 工作经历能跨页），
+        副作用是本变体第 1 页的「联系方式」会被切开：标题 + 仅一行 Email 吊在页尾、
+        其余五行翻到第 2 页。侧栏板块短、整块下移代价小，这里按变体单独锁回来。
+        只锁侧栏：主区与附录仍需跨页能力，见上文 ② 与下文附录三条。 */
+  body.v-ue5-tech .cv-aside .cv-block { break-inside: avoid; }
+
+  /* ④ 项目条目收紧（每条 −1.0mm、tags −1.8mm）：给德语第 2 页腾出余量，
+        德语项目条目是四语里最长的，不收紧第 2 页只剩不到 1mm 富余。 */
+  body.v-ue5-tech [data-sec="projects"] .cv-item { padding-top: 1.5mm; padding-bottom: 1.5mm; }
+  body.v-ue5-tech [data-sec="projects"] .cv-tags { margin-top: 2.4mm; }
+
+  /* ★ 2026-08-18 撤掉三条「充空白」规则（原 ⑤⑥⑦：工作/教育 +20mm padding、
+        侧栏 +8.2mm margin、中文项目 +4.6mm padding）。
+        它们存在的唯一理由是把第 3 页的页底空白压进 45mm 以内 —— 但那一页真正的问题
+        不是「内容少」，而是内容被困在 113mm 的窄栏里、左边 70mm 空轨道白占着。
+        工作 + 教育改走全宽流之后宽度 +62%，内容自己填满，不再需要这 20mm 空气。
+        复核结论原话：「p3 达标 100% 依赖这 20mm 空气」—— 那不是排满，是充气。 */
+
+  /* ⑧ 备用杠杆（默认不启用）：德语第 2 页是四语中最紧的，实测余量 11mm（约两行）。
+        德语项目条目最长，若日后德语文案再长，打开下面这行可把余量抬到约 20mm。
+        默认不开是因为 1.6 → 1.35 会让德语正文明显比其它三语挤，破坏四语观感一致。
+        切勿全局化：实测全局 1.35 会让 zh/en/ja 的第 2 页同时越过 45mm。 */
+  /* html[lang="de"] body.v-ue5-tech [data-sec="projects"] .cv-item-body { line-height: 1.35; } */
 
   /* 中德商务专项：条目稍紧凑，让 介绍+协作+工作经历 稳定进第一页 */
   body.v-china-biz .cv-item { padding-top: 1.5mm; padding-bottom: 1.5mm; }
@@ -90,10 +191,29 @@
   body:not(.printing-card) .cv-portfolio-print {
     display: flex !important; align-items: flex-start; gap: 6mm; margin-top: 2mm; }
   .cv-pprint-qr svg { width: 28mm; height: 28mm; display: block; flex-shrink: 0; }
+  /* 变体开了 worksPage 时才有：QR 与它下面那行说明合成一竖列。
+     34mm 比 QR 宽 6mm —— 说明文字四语最长的德语也就三行，不至于比 QR 高出太多。 */
+  .cv-pprint-qrbox { flex-shrink: 0; width: 34mm; }
+  /* margin-top 是二维码下沿的**静区**（quiet zone），不是排版留白 —— QR 规范要求四周留
+     ≥ 4 个模块的空白，低于这个数就会掉扫描率。这个 QR 固定 28mm 见方，模块数随 URL 长短
+     变化（线上地址 37 模块＝0.757mm/模块，本地 5180 是 33 模块＝0.848mm/模块），
+     4mm 对两者都 ≥ 4 个模块（5.3 / 4.7），留了余量。**别为了省版面把它调小。**
+     上沿不用另设：实测正文与 QR 之间已有 4.3mm（≈5 个模块）。 */
+  .cv-pprint-note { font-size: 7.5pt; line-height: 1.35; color: #555; margin-top: 4mm;
+    hyphens: auto; overflow-wrap: break-word; }
   .cv-pprint-list { margin: 0; padding-left: 4mm; font-size: 9pt; line-height: 1.75; }
   .cv-pi-title { font-weight: 600; }
   .cv-pi-type { color: #666; }
   .cv-pi-period { color: #888; font-size: 8.5pt; }
+  /* 非视频条目（商店 / 网站）才印出裸网址。两种情形都需要它：
+     没开 worksPage 时，那唯一的 QR 指向 Vimeo，根本够不着这些地址；
+     开了 worksPage 时，QR 虽然覆盖了全部链接，但手上只有纸、没有扫码设备的人仍要能照着敲。 */
+  /* 目录里的裸网址：原先 word-break:break-all，实测把地址劈在 token 中间 ——
+     `apps.mic|rosoft`、`vers|e-wiki`、`app|s.microsoft`，手上只有纸的人照着敲会敲错。
+     改成独占一行（目录列约 73mm，`apps.microsoft.com/detail/9N904WFPHZFZ` 约 52mm，放得下），
+     并且只在真的放不下时才断（anywhere），不再无条件按字符切。 */
+  .cv-pi-url { color: #666; font-size: 8.5pt; display: block;
+    word-break: normal; overflow-wrap: anywhere; margin-left: 0; }
 
   /* ——— 名片模式 ——— */
   body.printing-card .cv-root { display: none !important; }

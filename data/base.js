@@ -8,7 +8,9 @@
    - protected: true → 明文不进 DOM，点击才解码（防采集）
    - skill.core: true → 显示在侧边栏（带点数）；所有 skill 无论 core 与否都进「工具集」
    - skill.group → 字符串 key（render.js 负责翻译组名）
-   - project.video → 有值 = 进作品集；空字符串 = 只在项目经历
+   - project.link → 有值 = 进作品集；不写 = 只在项目经历。
+     project.linkKind 决定作品集里的徽标："video" ▶视频 / "store" ↗商店 / "web" ↗网站（缺省 web）
+     旧字段 project.video 仍然管用，等价于 link + linkKind:"video"
    - moreWorks → 次要作品，仅在特定变体（如 ue5-tech）显示
    - contact.id → 变体用 hide:["id"] 控制显示哪个邮箱
    ============================================================ */
@@ -18,6 +20,10 @@ window.RESUME_BASE = {
     defaultLang: "en",
     langLabels: { zh: "中", ja: "日", en: "EN", de: "DE" },
     updated: "2026-06",
+    /* 变体白名单的唯一真相。新增变体在这里加一行，works.html 就自动认得它。
+       唯一的例外是 index.html 顶部那份内联白名单：它要在 body 渲染前同步判定，
+       跑在 data/base.js 加载之前，读不到这里 → 必须手工同步（README「新变体登记」有清单）。 */
+    variants: ["ue5-tech", "art-vr", "designer", "china-biz"],
   },
 
   /* —— 个人情报 ————————————————————————————————— */
@@ -65,23 +71,48 @@ window.RESUME_BASE = {
      2) tools —— 工具集（主区）。具体软件名（不翻译），按 group 分组。
         变体用 highlightTools:["t-xxx", ...] 指定高亮，高亮项在组内自动排到最前。
 
+     capability 的可选字段 since —— 经验年限，自动算，永不用手工更新：
+       写法：since: "2024-03"（也接受 "2024-03-15"，精确到日则当月未到该日不计满月）。
+       显示规则：页面每次渲染都拿「当前日期」跟 since 算整月差 →
+         不足 1 个月（即起始月当月）**什么都不显示** —— 「0 个月」读不通，宁可先空着；
+         不足 12 个月按月显示（1 Monat / 2 Monate…），满 12 个月起向下取整到整年、
+         不显示零头（14 个月 → 1 年）。所以数字一年只跳一次，也永远不会夸大。
+       写到「日」时按日历钳位：since="2024-01-31" 在只有 30 天的月份里，30 号那天就算满月。
+       不写 since 的能力照旧，只是不显示年限；写错格式只会 console.warn，不影响渲染
+         （日期得真实存在：2 月 31 日、平年 2 月 29 日都算写错）。
+       另需变体设 skillDisplay: "since" 或 "both" 才会真的显示出来
+         （默认 "level" = 只打 5 点熟练度，与加此字段前完全一致）。
+
      加新能力 = 往 capabilities 加一项 + 在需要的变体 sidebar 里引用。
      加新软件 = 往 tools 加一项（group 对应分组）+ 在相关变体 highlightTools 里引用。
    ============================================================ */
   defaultSidebar: ["cap-ue5", "cap-vr", "cap-isys", "cap-3d", "cap-techart"],
   capabilities: [
-    { id: "cap-ue5",     level: 5, name: { zh: "虚幻引擎 5", ja: "Unreal Engine 5", en: "Unreal Engine 5", de: "Unreal Engine 5" } },
-    { id: "cap-bp",      level: 5, name: { zh: "蓝图开发", ja: "Blueprint 開発", en: "Blueprint Development", de: "Blueprint-Entwicklung" } },
-    { id: "cap-vr",      level: 5, name: { zh: "VR / MR 开发", ja: "VR / MR 開発", en: "VR / MR Development", de: "VR / MR Entwicklung" } },
+    /* cap-unreal = 虚幻 / 蓝图 / 着色器 三合一（ue5-tech 用）。下面 cap-ue5 / cap-bp /
+       cap-shader 三条**暂不删**：01 号 ue5-tech 的侧边栏还在引用，删了它那三行会静默消失。
+       art-vr 的侧边栏还在引用 cap-ue5 / cap-shader，所以这三条留着；cap-bp 目前无人引用。 */
+    { id: "cap-unreal",  level: 5, since: "2022-01", name: { zh: "虚幻 / 蓝图 / 着色器", ja: "Unreal / Blueprint / シェーダー", en: "Unreal / Blueprint / Shader", de: "Unreal / Blueprint / Shader" } },
+    { id: "cap-ue5",     level: 5, since: "2022-01", name: { zh: "虚幻引擎 5", ja: "Unreal Engine 5", en: "Unreal Engine 5", de: "Unreal Engine 5" } },
+    { id: "cap-bp",      level: 5, since: "2022-01", name: { zh: "蓝图开发", ja: "Blueprint 開発", en: "Blueprint Development", de: "Blueprint-Entwicklung" } },
+    { id: "cap-vr",      level: 5, since: "2022-01", name: { zh: "VR / MR 开发", ja: "VR / MR 開発", en: "VR / MR Development", de: "VR / MR Entwicklung" } },
     { id: "cap-isys",    level: 5, name: { zh: "实时交互系统", ja: "リアルタイム・インタラクション", en: "Interactive Systems", de: "Interaktive Systeme" } },
-    { id: "cap-techart", level: 5, name: { zh: "技术美术", ja: "テクニカルアート", en: "Technical Art", de: "Technical Art" } },
-    { id: "cap-shader",  level: 5, name: { zh: "着色器 / 材质", ja: "シェーダー / マテリアル", en: "Shader & Material", de: "Shader & Material" } },
-    { id: "cap-3d",      level: 5, name: { zh: "3D 建模 / 动画 / 渲染", ja: "3Dモデリング / アニメ / レンダリング", en: "3D Modelling · Animation · Rendering", de: "3D-Modellierung · Animation · Rendering" } },
-    { id: "cap-sensor",  level: 5, name: { zh: "传感器通讯 / 硬件交互", ja: "センサー通信 / ハードウェア連携", en: "Sensor Communication · Hardware", de: "Sensorkommunikation · Hardware" } },
+    { id: "cap-techart", level: 5, since: "2025-08", name: { zh: "技术美术", ja: "テクニカルアート", en: "Technical Art", de: "Technical Art" } },
+    { id: "cap-shader",  level: 5, since: "2022-01", name: { zh: "着色器 / 材质", ja: "シェーダー / マテリアル", en: "Shader & Material", de: "Shader & Material" } },
+    { id: "cap-3d",      level: 5, since: "2013-09", name: { zh: "3D / 动画 / 渲染", ja: "3D / アニメーション / レンダリング", en: "3D / Animation / Rendering", de: "3D / Animation / Rendering" } },
+    { id: "cap-sensor",  level: 5, since: "2023-01", name: { zh: "传感器 / 硬件交互", ja: "センサー / ハードウェア", en: "Sensors / Hardware", de: "Sensoren / Hardware" } },
     { id: "cap-coding",  level: 4, name: { zh: "编程 / 技术开发", ja: "プログラミング / 技術開発", en: "Coding & Technical Development", de: "Programmierung & technische Entwicklung" } },
     { id: "cap-webgfx",  level: 5, name: { zh: "网页 / 平面设计", ja: "Web / グラフィックデザイン", en: "Web & Graphic Design", de: "Web- & Grafikdesign" } },
     { id: "cap-gfx",     level: 5, name: { zh: "图形 / 图像编辑", ja: "グラフィック / 画像編集", en: "Graphic & Image Editing", de: "Grafik- & Bildbearbeitung" } },
+    { id: "cap-artdes",  level: 5, since: "2013-09", name: { zh: "美术与设计", ja: "アート & デザイン", en: "Art & Design", de: "Kunst & Design" } },
+    { id: "cap-webdes",  level: 5, since: "2017-01", name: { zh: "网页设计", ja: "Web デザイン", en: "Web Design", de: "Webdesign" } },
     { id: "cap-proddes", level: 4, name: { zh: "产品设计", ja: "プロダクトデザイン", en: "Product Design", de: "Produktdesign" } },
+    /* —— AI 能力（ue5-tech 变体用；年限由 since 实时算出，见文件头说明）——
+       ★ cap-genai 的 since 是世鹏本人给的，本机只找得到 2026-08 起的生成式痕迹
+       （ComfyUI 模型库 8 个文件全是 2026-08-13、产出图 9 张、保存的工作流 0 个）。
+       侧边栏年限是本变体最大的卖点（「年限可核验，点数是自封的」）→ 发出去前请确认
+       2024-08 以来拿得出实际产出，拿不出就把这个月份往后调。 */
+    { id: "cap-genai",   level: 4, since: "2024-08", name: { zh: "视觉生成 AI 管线", ja: "ビジュアル生成AIパイプライン", en: "Visual Generative AI Pipeline", de: "Visuelle Generative-KI-Pipeline" } },
+    { id: "cap-aiops",   level: 4, since: "2026-02", name: { zh: "本地 AI", ja: "ローカルAI", en: "Local AI", de: "Lokale KI" } },
     /* —— 商务 / 项目 / 跨文化能力（china-biz 变体用；该变体 hideSkillLevels:true 不显示点数）—— */
     { id: "cap-lang",    level: 5, name: { zh: "多语沟通（中 / 德 / 英）", ja: "多言語コミュニケーション（中／独／英）", en: "Multilingual Communication (CN / DE / EN)", de: "Mehrsprachige Kommunikation (CN / DE / EN)" } },
     { id: "cap-xcult",   level: 5, name: { zh: "跨文化沟通（中德）", ja: "異文化コミュニケーション（中独）", en: "Cross-cultural Communication (CN–DE)", de: "Interkulturelle Kommunikation (CN–DE)" } },
@@ -106,11 +137,28 @@ window.RESUME_BASE = {
     { id: "t-levelseq",   name: "Level Sequences",         group: "engine" },
     { id: "t-unity",      name: "Unity",                   group: "engine" },
     { id: "t-godot",      name: "Godot",                   group: "engine" },
+    /* ai —— 清单已由世鹏逐条裁定（2026-08-18）：Flux 不列（本机只有 VAE、无主模型）；
+       Stable Diffusion / SDXL、InstantID、LivePortrait 不列（全盘搜索零命中）；
+       ControlNet 保留 —— 他本人确认用过，本机无痕不等于没用过。
+       ⚠️ 注意 base.js 是一整份静态文件发给每个访客：hideTools / onlyTools 只挡渲染、不挡下发。
+       这里写的每一条，push 之后对所有访客都明文可见 —— 「先写上、发布前再删」行不通。
+       本组只在 ue5-tech 显示：designer 用 hideTools 挡掉，art-vr 隐藏整个工具集，
+       china-biz 走 onlyTools 白名单。增删条目时这三处要同步。 */
+    { id: "t-claudecode", name: "Claude Code",             group: "ai" },
+    { id: "t-codex",      name: "Codex",                   group: "ai" },
+    { id: "t-comfyui",    name: "ComfyUI",                 group: "ai" },
+    { id: "t-controlnet", name: "ControlNet",              group: "ai" },
+    { id: "t-triposplat", name: "TripoSplat",              group: "ai" },
+    { id: "t-birefnet",   name: "BiRefNet",                group: "ai" },
+    { id: "t-llamacpp",   name: "llama.cpp",               group: "ai" },
     // interactive
     { id: "t-osc",        name: "OSC Protocol",            group: "interactive" },
     { id: "t-arduino",    name: "Arduino IDE",             group: "interactive" },
     { id: "t-esp32",      name: "ESP32",                   group: "interactive" },
     { id: "t-opencv",     name: "OpenCV",                  group: "interactive" },
+    // MediaPipe 是追踪 / 姿态推理库，不是生成式模型 —— 放在「AI & 生成式」组里会被面试官
+    // 当成生成式经验来问。实际用处是 LiveTracker 的实时动捕 → 归 interactive。
+    { id: "t-mediapipe",  name: "MediaPipe",               group: "interactive" },
     // techArt
     { id: "t-shader",     name: "Shader & Material",       group: "techArt" },
     { id: "t-light",      name: "Lighting & Post",         group: "techArt" },
@@ -222,10 +270,103 @@ window.RESUME_BASE = {
       tags: ["VR", "Digital Human", "3D Scan", "Digital Archive", "Social Art", "UE5"],
       video: "https://vimeo.com/user169301773", // TODO: 替换为具体视频链接
     },
+    {
+      /* 周期 / 角色 / 技术内容均经世鹏本人确认（2026-08-18）。合作者姓名按他的意思不写。 */
+      id: "prj-vp",
+      period: "2026",
+      role: {
+        zh: "虚拟制片管线搭建",
+        ja: "バーチャルプロダクション・パイプライン構築",
+        en: "Virtual Production Pipeline Setup",
+        de: "Virtual-Production-Pipeline-Aufbau",
+      },
+      org: {
+        zh: "虚拟制片 Workshop",
+        ja: "バーチャルプロダクション・ワークショップ",
+        en: "Virtual Production Workshop",
+        de: "Virtual-Production-Workshop",
+      },
+      context: {
+        zh: "KHM — 科隆媒体艺术学院",
+        ja: "KHM — ケルン・メディア芸術大学",
+        en: "KHM – Academy of Media Arts Cologne",
+        de: "KHM – Kunsthochschule für Medien Köln",
+      },
+      type: {
+        zh: "实时合成 · 相机追踪",
+        ja: "リアルタイム合成 · カメラトラッキング",
+        en: "Real-time Compositing · Camera Tracking",
+        de: "Echtzeit-Compositing · Kameratracking",
+      },
+      summary: {
+        zh: "在 KHM 搭建虚拟制片的实时合成管线：Unreal Engine 5.5 配合 Composure 做现场合成，接入 LiveLink 实时相机追踪，并打通与外部工具之间的 USD 资产交换；演示场景使用自有 3D 资产。",
+        ja: "KHM でバーチャルプロダクションのリアルタイム合成パイプラインを構築：Unreal Engine 5.5 と Composure による現場合成、LiveLink によるリアルタイム・カメラトラッキングの接続、外部ツールとの USD アセット連携までを通した。デモシーンには自作の 3D アセットを使用。",
+        en: "Built a real-time compositing pipeline for virtual production at KHM: on-set compositing with Unreal Engine 5.5 and Composure, live camera tracking via LiveLink, and a working USD asset exchange with external tools. Demo scene built from my own 3D assets.",
+        de: "Aufbau einer Echtzeit-Compositing-Pipeline für Virtual Production an der KHM: On-Set-Compositing mit Unreal Engine 5.5 und Composure, Live-Kameratracking über LiveLink sowie ein funktionierender USD-Assetaustausch mit externen Werkzeugen. Demo-Szene aus eigenen 3D-Assets.",
+      },
+      tags: ["Unreal Engine 5.5", "Virtual Production", "Composure", "LiveLink", "Camera Tracking", "USD"],
+    },
+    {
+      id: "prj-versewiki",
+      period: "2026",
+      role: {
+        zh: "网页全栈开发",
+        ja: "Web のフルスタック開発",
+        en: "Full-Stack Web Development",
+        de: "Full-Stack-Webentwicklung",
+      },
+      org: "Verse Wiki",
+      type: {
+        zh: "UE Verse 中文互动课程站",
+        ja: "UE Verse 中国語インタラクティブ講座サイト",
+        en: "Interactive UE Verse Course Site (Chinese)",
+        de: "Interaktive UE-Verse-Kursseite (Chinesisch)",
+      },
+      summary: {
+        zh: "面向已有 Unreal Engine 蓝图经验的作者：把 Branch、ForEach、Set、Event Dispatcher 这些既有蓝图概念，逐条映射到 Verse 的语法与规则。9 章 30 节主课，每节配一个「蓝图对照」区块，另有术语对照表与速查卡；全站中英双语。",
+        ja: "Unreal Engine のブループリント経験者に向けて、Branch / ForEach / Set / Event Dispatcher といった既存の概念を Verse の構文とルールへ一つずつ対応づける。全 9 章 30 レッスン、各レッスンに「ブループリント対照」セクションを置き、用語対照表とチートシートを併設。サイト全体が中英バイリンガル。",
+        en: "Written for authors who already know Unreal Engine Blueprints: maps familiar concepts — Branch, ForEach, Set, Event Dispatcher — one by one onto Verse syntax and rules. 30 lessons across 9 chapters, each with a Blueprint-comparison block, plus a terminology table and quick-reference cards. Fully bilingual (Chinese / English).",
+        de: "Für Unreal-Engine-Nutzer mit Blueprint-Erfahrung: bekannte Konzepte wie Branch, ForEach, Set und Event Dispatcher werden einzeln auf Verse-Syntax und -Regeln abgebildet. 30 Lektionen in 9 Kapiteln, jede mit einem Blueprint-Vergleichsblock, dazu Begriffstabelle und Kurzreferenzkarten. Durchgehend zweisprachig (Chinesisch / Englisch).",
+      },
+      tags: ["Unreal Engine", "Verse", "Cloudflare", "Supabase", "CN / EN"],
+      link: "https://verse-wiki.pages.dev",
+      linkKind: "web",
+    },
   ],
 
-  /* —— 次要作品（仅在特定变体显示，如 ue5-tech）—— */
+  /* —— 次要作品（仅在特定变体显示，如 ue5-tech）——
+     数组顺序 = 显示顺序（moreWorks 没有 order 钩子），按年份从新到旧排。 */
   moreWorks: [
+    /* —— 2026 软件 / AI 项目：与下面 KHM 时期作品同一密度，每条控制在一行 —— */
+    { id: "mw-deskdrawer", year: "2026", title: "DeskDrawer",
+      type: { zh: "Windows 桌面工具", ja: "Windows デスクトップツール", en: "Windows desktop utility", de: "Windows-Desktop-Tool" },
+      tags: ["C#", ".NET", "WinForms"],   // 不写 Microsoft Store：作品集那条已是「↗ 商店」并直链，重复且会把这一行撑破
+      // link/linkKind → 同时进「作品集」板块与 works.html（判定见 render.js 的 workLink）
+      link: "https://apps.microsoft.com/detail/9N904WFPHZFZ", linkKind: "store" },
+    { id: "mw-splessons", year: "2026", title: "SP_lessons",
+      type: { zh: "课程报名系统", ja: "講座申込システム", en: "Course registration system", de: "Kursanmeldungssystem" },
+      tags: ["Next.js", "Cloudflare Workers", "CI/CD"] },
+    { id: "mw-livetracker", year: "2026", title: "LiveTracker",
+      type: { zh: "实时动捕（原型）", ja: "リアルタイム動作追跡（試作）", en: "Motion capture (prototype)", de: "Motion Capture (Prototyp)" },
+      tags: ["MediaPipe", "TypeScript", "Electron"] },
+    { id: "mw-localai",  year: "2026", title: "localAI",
+      type: { zh: "本地 AI 环境（自用）", ja: "ローカル AI 環境（自分用）", en: "Local AI runtime (personal)", de: "Lokale KI-Umgebung (privat)" },
+      tags: ["llama.cpp", "Local Inference"] },
+    { id: "mw-uenote",   year: "2026", title: "Spoy Wiki",
+      type: { zh: "UE 笔记知识库", ja: "UE ノート知識ベース", en: "UE notes knowledge base", de: "UE-Notizen-Wissensbasis" },
+      tags: ["MkDocs", "FastAPI", "Cloudflare"] },
+    { id: "mw-naiken",   year: "2026", title: "NaikenScore",
+      type: { zh: "房源评分工具", ja: "物件評価ツール", en: "Property scoring tool", de: "Wohnungs-Bewertungstool" },
+      tags: ["Web", "Mobile-first", "CN / JP"] },
+    { id: "mw-umzug",    year: "2026", title: "Umzug",
+      type: { zh: "搬家流程站", ja: "引越し管理サイト", en: "Relocation planner", de: "Umzugsplaner" },
+      tags: ["HTML", "Workflow"] },
+    { id: "mw-profile",  year: "2026", title: "s-gjklr.work",
+      type: { zh: "个人主页 / 作品集", ja: "個人サイト / ポートフォリオ", en: "Personal site / portfolio", de: "Persönliche Website / Portfolio" },
+      tags: ["JavaScript", "Vercel"] },
+    { id: "mw-testvideo", year: "2026", title: "test-video",
+      type: { zh: "播放器测试", ja: "プレイヤーテスト", en: "Video player test", de: "Videoplayer-Test" },
+      tags: ["Web", "Video"] },
     { id: "mw-mirror",   year: "2024", title: "Mirror",
       type: { zh: "互动装置", ja: "インタラクティブ・インスタレーション", en: "Interactive Installation", de: "Interaktive Installation" },
       tags: ["UE5", "ESP32", "OpenCV", "Webcam", "KHM"] },

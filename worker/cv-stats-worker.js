@@ -29,6 +29,9 @@ const ALLOW_ORIGINS = [
 ];
 
 // 合法职业白名单（防止任意字符串污染存储）
+// ⚠️ 与前端的变体清单（data/base.js 的 meta.variants ＋ index.html 内联白名单）是两套东西：
+//    这里漏登记不会报错，只会让 /hit 与 /pdf 返回 400 —— 那个变体的访问量一次也记不上。
+//    改完必须在 worker/ 目录跑 wrangler deploy，不 deploy 不生效。
 const VARIANTS = ["ue5-tech", "art-vr", "designer", "odd", "china-biz"];
 
 // 清零密钥：hub.html 在公开仓库会暴露，仅用于挡随手乱扫的爬虫。

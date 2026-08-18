@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- 中性占位：真实标题由下方 render() 写入，JS 不执行时不吐姓名（同 index.html 裸入口口径）-->
+  <title>·</title>
+
+  <!-- 隐私：与站点其余部分一致，不进搜索引擎（另见 robots.txt 的 Disallow: /）-->
+  <meta name="robots" content="noindex, nofollow" />
+  <!-- 本页的 URL 本身带 ?v=<变体> —— 是发给某一位收件人的专属链接。点出去时别把它
+       交给 vimeo / microsoft / cloudflare 的访问日志（每条 a 另有 rel=noreferrer 兜底）-->
+  <meta name="referrer" content="no-referrer" />
+  <meta name="color-scheme" content="light" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+
+  <!-- 预加载关键字重（与 index.html 同一份），加速手机端首屏 -->
+  <link rel="preload" href="assets/fonts/hanken-latin-400.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/hanken-latin-600.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/hanken-latin-700.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="styles/fonts.css" />
+  <link rel="stylesheet" href="styles/tokens.css" />
+  <link rel="stylesheet" href="styles/base.css" />
+  <link rel="stylesheet" href="styles/works.css" />
+  <!-- 刻意不引 screen.css / print.css：这一页与简历本体的排版互不干扰 -->
+</head>
+<body>
+  <main class="wk-page" id="wk-root"></main>
+
+  <!-- 数据：与简历同一份 base + 同一套变体机制，绝不在这里另抄一份链接 -->
+  <script src="data/base.js"></script>
+  <script src="scripts/i18n-ui.js"></script>
+  <script src="scripts/i18n.js"></script>
+  <script src="scripts/data-loader.js"></script>
+  <!-- render.js：只为复用 Render.workLink（判定链接 + 徽标），本页不调用 Render.all -->
+  <script src="scripts/render.js"></script>
+
+  <script>
+    /* ============================================================
+       works.html — 作品链接页
+       PDF 的作品集里只有一个共用二维码，扫进来就是这一页：把简历上每件作品的链接
+       排成手指点得中的大块超链接。纸上点不了链接，手机上可以。
+
+       数据来源＝ data/base.js ＋ data/variants/<v>.js，与简历完全同一份（唯一真相在 data/）。
+       ?v= 决定用哪个变体（缺省 ue5-tech —— 目前只有它的 PDF 会印这个 QR）；
+       ?lang= 交给 i18n.js 处理（URL > localStorage > 浏览器语言）。
+       没有链接的条目不列：列出来点不动，是坏体验。
+       ============================================================ */
+    (function () {
+      "use strict";
+
+      /* 变体白名单：唯一真相在 data/base.js 的 meta.variants，本页不再另抄一份 ——
+         抄第二份的代价不是报错，而是「新变体忘了登记 → 静默渲染别人的作品清单」。
+         base 没加载 / 老 base 没这个字段时退回只认缺省变体，绝不去猜。 */
+      var META = (window.RESUME_BASE && window.RESUME_BASE.meta) || {};
+      var DEFAULT_V = "ue5-tech";
+      var VALID = {};
+      (META.variants || [DEFAULT_V]).forEach(function (id) { VALID[id] = 1; });
+
+      var params = new URLSearchParams(location.search);
+      var raw = (params.get("v") || "").replace(/[^a-z0-9-]/gi, "").slice(0, 40);
+      var variant = raw;
+      if (!VALID[variant]) {
+        // 不带 ?v= 是有意的缺省（README 已写明）；带了却不认识则多半是漏登记 —— 必须出声，
+        // 否则扫码的 HR 看到的是另一个变体的作品清单，双方都不知情。
+        if (raw) console.warn('[works] 未登记的变体 "' + raw + '" → 回落 ' + DEFAULT_V +
+          "；新变体请加进 data/base.js 的 meta.variants");
+        variant = DEFAULT_V;
+      }
+
+      var DATA = null;
+
+      /* —— 极简元素构建器（render.js 的 h() 关在 IIFE 里，取不到，这里自备一个）—— */
+      function el(tag, cls, text) {
+        var n = document.createElement(tag);
+        if (cls) n.className = cls;
+        if (text != null) n.textContent = text;
+        return n;
+      }
+      function t(field) { return window.I18n.t(field); }
+
+      /* —— 取一条条目的链接信息；没有链接返回 null（→ 不列出）——
+         判定规则复用 render.js 的 workLink：link / 旧字段 video → { url, kind, mark }。
+         projects 与 moreWorks 字段名不同，这里统一成 { url, kind, mark, title, meta, when }。 */
+      function toRow(item, title, meta, when) {
+        var l = window.Render.workLink(item);
+        if (!l) return null;
+        return { url: l.url, kind: l.kind, mark: l.mark, title: title, meta: meta, when: when };
+      }
+      /* 板块可见性沿用 render.js 的口径（Render.all 里那两行）：
+         变体一旦写了 sections.order，没列进 order 的主区板块就不渲染；hide 里的也不渲染。
+         → 简历上看不见「作品集 / 更多作品」的变体，本页也不该把那些链接列出来。 */
+      function sectionVisible(d, key) {
+        var s = d.sections || {};
+        if ((s.hide || []).indexOf(key) !== -1) return false;
+        var ord = s.order || [];
+        return ord.length ? ord.indexOf(key) !== -1 : true;
+      }
+      function collect(d) {
+        var out = { portfolio: [], moreWorks: [] };
+        if (sectionVisible(d, "portfolio")) {
+          (d.projects || []).forEach(function (p) {
+            var r = toRow(p, t(p.org), t(p.type || p.role), p.period);
+            if (r) out.portfolio.push(r);
+          });
+        }
+        // moreWorks 目前 base.js 里还没有任何条目写了 link → 这一组通常是空的（空组不渲染）。
+        // 哪天给某条加上 link，它会自动出现在这里，不用再改本页。
+        if (sectionVisible(d, "moreWorks")) {
+          (d.moreWorks || []).forEach(function (w) {
+            var r = toRow(w, w.title, t(w.type), w.year);
+            if (r) out.moreWorks.push(r);
+          });
+        }
+        return out;
+      }
+
+      // 目标域名：让人点之前就知道会去哪儿。URL 解析失败就退回「砍掉协议头」
+      function hostOf(url) {
+        try { return new URL(url).host; }
+        catch (e) { return String(url).replace(/^https?:\/\//, "").split("/")[0]; }
+      }
+
+      /* —— 一条可点的作品 —— */
+      function rowNode(r) {
+        var a = el("a", "wk-link");
+        a.href = r.url;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer"; // noreferrer：别把带 ?v= 的专属链接送进第三方日志
+        // 徽标（▶ 视频 / ↗ 商店 / ↗ 网站）＋ 标题
+        a.appendChild(el("span", "wk-badge", r.mark + " " + t(window.UI_TEXT.txt[r.kind])));
+        a.appendChild(el("span", "wk-title", r.title));
+        var meta = [r.meta, r.when].filter(Boolean).join(" · ");
+        if (meta) a.appendChild(el("span", "wk-meta", meta));
+        a.appendChild(el("span", "wk-host", hostOf(r.url)));
+        return a;
+      }
+
+      /* —— 一个分组（标题 + 列表）；空组不渲染 —— */
+      function sectionNode(key, rows) {
+        if (!rows.length) return null;
+        var titles = (DATA && DATA.sectionTitles) || null; // 变体可改板块标题，跟简历保持一致
+        var sec = el("section", "wk-sec");
+        sec.appendChild(el("h2", "wk-sec-title", t((titles && titles[key]) || window.UI_TEXT.section[key])));
+        var list = el("div", "wk-list");
+        rows.forEach(function (r) { list.appendChild(rowNode(r)); });
+        sec.appendChild(list);
+        return sec;
+      }
+
+      /* —— 语言切换 —— */
+      function langsNode() {
+        var box = el("div", "wk-langs");
+        var meta = window.RESUME_BASE.meta;
+        meta.langs.forEach(function (lng) {
+          var b = el("button", "wk-lang" + (lng === window.I18n.current ? " active" : ""),
+            meta.langLabels[lng] || lng);
+          b.type = "button";
+          b.addEventListener("click", function () { window.I18n.set(lng); });
+          box.appendChild(b);
+        });
+        return box;
+      }
+
+      function render() {
+        var root = document.getElementById("wk-root");
+        if (!root || !DATA) return;
+        root.textContent = "";
+
+        var W = window.UI_TEXT.works;
+        var head = el("header", "wk-head");
+        head.appendChild(el("h1", "wk-name", t(DATA.profile.name)));
+        head.appendChild(el("p", "wk-lead", t(W.lead)));
+        head.appendChild(langsNode());
+        root.appendChild(head);
+
+        var groups = collect(DATA);
+        var any = false;
+        ["portfolio", "moreWorks"].forEach(function (key) {
+          var node = sectionNode(key, groups[key]);
+          if (node) { root.appendChild(node); any = true; }
+        });
+        if (!any) root.appendChild(el("p", "wk-empty", t(W.empty)));
+
+        // 回到完整简历（带上变体与当前语言，与扫码进来的那份 PDF 对得上）
+        var foot = el("footer", "wk-foot");
+        var back = el("a", "wk-back", "← " + t(W.backCV));
+        back.href = "index.html?v=" + encodeURIComponent(variant) +
+          "&lang=" + encodeURIComponent(window.I18n.current);
+        foot.appendChild(back);
+        root.appendChild(foot);
+
+        document.title = t(DATA.profile.name) + " — " + t(window.UI_TEXT.section.portfolio);
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        if (!window.RESUME_BASE) {
+          console.error("[works] base data missing — 检查 data/base.js 是否已加载");
+          return;
+        }
+        window.I18n.init(window.RESUME_BASE.meta);
+        window.I18n.onChange(render); // 切语言就地重渲染（DataLoader 只跑一次）
+        window.DataLoader.load(variant).then(function (data) {
+          DATA = data;
+          render();
+        }).catch(function (e) { console.error("[works] data load failed", e); });
+      });
+    })();
+  </script>
+</body>
+</html>

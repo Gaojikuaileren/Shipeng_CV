@@ -15,6 +15,16 @@ window.Exporter.resumePDF = function () {
   window.print();
 };
 
+/* ★ 兜底：Ctrl+P、浏览器菜单打印、以及 headless `--print-to-pdf` 都**不经过**
+   工具栏那个 ↓PDF 按钮，于是 protected 字段没被展开，纸上印出来的是
+   「🔒 显示 / Show / Zeigen」按钮而不是真的邮箱和电话 —— 给 HR 的简历里两行是废的。
+   挂在 beforeprint 上，三条路径就都覆盖到了。
+   与上面 resumePDF 里那次 click 幂等：首次点击后 .cv-reveal 已被替换成真值节点，
+   第二次查询自然为空。 */
+window.addEventListener("beforeprint", function () {
+  document.querySelectorAll(".cv-reveal").forEach((b) => b.click());
+});
+
 function cleanupAfterPrint(cls) {
   function clean() {
     document.body.classList.remove(cls);
