@@ -367,10 +367,15 @@
   //   的打印目录里漏进了 DeskDrawer 这个 Windows 工具。靠逐条 hideItems 去堵是治不完的，
   //   以后每加一条带链接的 moreWorks 都要记得去堵每个变体。改成整类判定，
   //   同时也与 works.html 的取数规则一致（那边本来就判 sectionVisible）。
+  /* 「作品示例」列哪些条目：**凡是有链接、且没被 hideItems 挡掉的，都列出来**，
+     与「项目经历 / 更多作品」这两个叙述板块显不显示无关。
+     ★ 原来这里跟着 sections.hide 走 —— 板块一藏，它的链接也从作品示例里消失。
+       designer 要的恰恰是「不要项目叙述、只要作品链接」，那条耦合会让作品示例只剩一条。
+       两者是不同的东西：板块是讲经历，作品示例是一份可点的索引。
+     条目级的取舍仍然有效（hideItems 在 data-loader 里已经把挡掉的条目从数组里去掉了）。 */
   function portfolioItems(d) {
-    const hide = new Set((d.sections && d.sections.hide) || []);
-    const fromProjects = hide.has("projects") ? [] : (d.projects || []).filter(workLink);
-    const fromMore = hide.has("moreWorks") ? [] : (d.moreWorks || []).filter(workLink).map((w) => ({
+    const fromProjects = (d.projects || []).filter(workLink);
+    const fromMore = (d.moreWorks || []).filter(workLink).map((w) => ({
       id: w.id, org: w.title, period: w.year, type: w.type,
       link: w.link, video: w.video, linkKind: w.linkKind, _emph: w._emph,
     }));

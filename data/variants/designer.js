@@ -15,8 +15,8 @@ window.RESUME_VARIANT = {
   },
   greeting: null,
   sections: {
-    order: ["intro", "work", "education", "toolset", "projects", "portfolio", "moreWorks"],
-    hide: [],
+    order: ["intro", "work", "education", "portfolio", "moreWorks", "toolset"],
+    hide: ["projects"], // 项目经历整块不展示：本变体讲设计履历，项目细节交给「作品示例」的链接
     emphasize: ["work", "education"],
   },
   // sidebar → 侧边栏核心能力（设计相关，宏观能力描述）
@@ -53,6 +53,8 @@ window.RESUME_VARIANT = {
   // emphasizeItems → 工作条目重点色
   emphasizeItems: ["work-portfolio", "work-design", "work-freelance"],
   // 本变体显示 projects（moreWorks 整块已 hide）→ 两个个人产品项目要逐条挡
-  hideItems: ["email-freelance", "github", "prj-versewiki", "prj-vp"],
+  // prj-versewiki 放出来：它是本人做的网站产品，属于设计作品，要出现在「作品示例」里。
+  // prj-vp 仍挡着（没有可点链接，进不了作品示例，留着只会在别处冒出来）。
+  hideItems: ["email-freelance", "github", "prj-vp"],
   order: {},
 };

@@ -136,14 +136,20 @@
   .cv-dot { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
 
   /* —— 能力板块（collab）打印态：主区列宽有限，改成「块名 + 行内 · 分隔」的紧凑排版 —— */
-  .cv-collab { grid-template-columns: 1fr; gap: 2.5mm; }
+  /* 与网页一样左右分栏（本人要求），并且不再把竖排的「—」列表压成行内「·」分隔 ——
+     纸上和屏幕上是同一个东西。
+     ⚠️ 列数必须在这里重新声明：屏幕端那条分栏规则挂在 @media (min-width:760px) 上，
+     而打印时媒体查询量的是**版心**宽度（184mm ≈ 695px），够不到 760 —— 实测不声明就是单栏。
+     45mm 的下限在 121mm 的主区里正好排两列（本变体侧栏 34%，主区 66%×184mm）。
+     subgrid 照抄屏幕端：标题对标题、说明对说明、列表对列表，说明行数不同也不会把列表顶歪。 */
+  .cv-collab { grid-template-columns: repeat(auto-fit, minmax(45mm, 1fr));
+    grid-template-rows: auto auto auto; gap: 3mm 4mm; }
+  .cv-cb { display: grid; grid-template-rows: subgrid; grid-row: span 3; }
   .cv-cb { border-top: 0.4pt solid #ccc; padding-top: 1.2mm; break-inside: avoid; }
   .cv-cb-title { font-size: 9.5pt; margin-bottom: 0.6mm; }
   .cv-cb-note { font-size: 8pt; color: #555; margin-bottom: 0.8mm; }
-  .cv-cb-list { display: block; font-size: 9pt; line-height: 1.5; }
-  .cv-cb-list li { display: inline; padding-left: 0; }
-  .cv-cb-list li::before { content: none; }
-  .cv-cb-list li:not(:last-child)::after { content: " · "; color: #777; } /* #999 只有 2.8:1 */
+  .cv-cb-list { gap: 0.6mm; font-size: 9pt; line-height: 1.4; }
+  .cv-cb-list li::before { color: #777; } /* #999 只有 2.8:1，低于 AA */
   .cv-contact-note { font-size: 8.5pt; color: #444; border-top: 0.4pt solid #ccc; }
 
   /* UE5+AI 专项：本变体内容最多（15 条更多作品 ＋ 完整工具集 ＋ 4 件作品 ＋ 二维码说明行），
@@ -209,12 +215,16 @@
   /* 设计师专项：省略教育方向描述 + 条目更紧凑，让工作经历+教育进第一页 */
   body.v-designer [data-sec="education"] .cv-item-body { display: none; }
 
-  /* designer：把联系方式压到第 2 页，四语统一。
-     实测（Chrome 真导）：不加这条时中/日的联系方式本来就在第 2 页，而英/德挤在第 1 页
-     末尾只剩 2.2mm / 7.5mm —— 既塞不下二维码，四语的 QR 位置也对不齐。
-     第 2 页侧栏四语都有 94–127mm 空位，放得下联系方式 + 二维码。
-     栅格内的强制分页只作用于侧栏那一列，主区分页不受影响（Chrome 对两列独立分片）。 */
-  body.v-designer .cv-aside [data-sec="contact"] { break-before: page; }
+  /* 联系方式一律排在第 2 页开头 —— 所有变体、所有语言。
+     为什么：不加这条时它落在哪一页完全由侧栏内容的语言长度决定，
+     实测 designer 的中/日在第 2 页，而英/德挤在第 1 页末尾只剩 2.2mm / 7.5mm ——
+     同一份简历四种语言长得不一样，二维码等后续内容也没法对齐。
+     栅格内的强制分页只作用于侧栏那一列，主区分页不受影响（Chrome 对两列独立分片）。
+
+     ⚠️ 单页简历要排除：强制分页会凭空造出第 2 页。兼职版（odd/）目前四语都是 1 页，
+     它的 <body> 带 cv-onepager 标记走下面这条豁免。哪天它自然长到 2 页，把那个类去掉即可。 */
+  .cv-aside [data-sec="contact"] { break-before: page; }
+  body.cv-onepager .cv-aside [data-sec="contact"] { break-before: auto; }
 
   /* 跨简历入口：纸上点不了按钮，印一个按钮样式的框只会让人困惑 */
   .cv-crosslink { display: none !important; }
