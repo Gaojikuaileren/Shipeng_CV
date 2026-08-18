@@ -18,6 +18,10 @@
        ⑥ tags 数量：每条最多 4 个（本人定的「不超过一排」，超了会在窄栏里撑破或折行）
        ⑦ since 格式：YYYY-MM / YYYY-MM-DD，且必须是日历上真实存在的日期
        ⑧ 作品链接：不许两件作品指向同一个地址（曾经两条「▶ 视频」都指 Vimeo 主页）
+       ⑨ CSS 里 body.v-* 的规则是否都对应一个已登记变体（失配时选择器静默不命中）
+       ⑩ interactions 的变体门禁同理（不命中就直接 return，彩蛋悄悄不装）
+       ⑪ tools/snapshot.py 的变体清单有没有跟上（漏一个＝那个变体没有护栏，却照样报「全部一致」）
+       ⑫ 控制台 hub.html 的四张表有没有跟上（漏了只影响你自己，所以只提示不报错）
 
    退出码 0 = 全过；1 = 有问题，逐条列出。
    零依赖，不需要浏览器，也不需要本地服务器。
@@ -176,13 +180,52 @@ const links = new Map();
   if (!/^https?:\/\//.test(u)) fail(`⑧ ${it.id} 的链接不是 http(s)：${u}`);
 });
 
+/* ── ⑨ body.v-* 的排版规则有没有对应的变体 ─────────────────── */
+// print.css / screen.css 里按变体标定的规则挂在 body.v-<内部 ID> 上。变体改名或退役时
+// 这些规则会静默失配 —— CSS 选择器不命中不报错，只是那份 PDF 悄悄少了几毫米。
+const css = ["styles/print.css", "styles/screen.css"]
+  .map((f) => fs.readFileSync(path.join(ROOT, f), "utf8")).join("\n");
+const usedInCss = [...css.matchAll(/body\.v-([a-z0-9-]+)/g)].map((m) => m[1]);
+[...new Set(usedInCss)].forEach((id) => {
+  if (registered.indexOf(id) === -1)
+    fail(`⑨ CSS 里有 body.v-${id} 的规则，但 ${id} 不是已登记的变体 —— 这条规则永远不会命中`);
+});
+
+/* ── ⑩ interactions 的变体门禁同理 ─────────────────────────── */
+const inter = fs.readFileSync(path.join(ROOT, "scripts/interactions/index.js"), "utf8");
+// 前面必须是引号或点：否则 cv-toolset / cv-photo 这类类名的尾巴也会被当成变体名
+[...inter.matchAll(/["'.]v-([a-z0-9-]+)/g)].map((m) => m[1]).forEach((id) => {
+  if (registered.indexOf(id) === -1 && id !== "art" && id !== "ue5")
+    notes.push(`interactions 里提到 v-${id}，不在已登记变体里（可能是注释或过时的门禁）`);
+});
+
+/* ── ⑪ 护栏的变体清单有没有跟上 ───────────────────────────── */
+// tools/snapshot.py 手抄了一份短链清单：漏掉一个变体，那个变体就等于没有护栏，
+// 而它照样打印「全部一致」。
+const snap = fs.readFileSync(path.join(ROOT, "tools/snapshot.py"), "utf8");
+const snapList = (snap.match(/^VARIANTS = \[([^\]]*)\]/m) || [, ""])[1]
+  .split(",").map((x) => x.trim().replace(/["']/g, "")).filter(Boolean);
+Object.keys(ALIAS).forEach((short) => {
+  if (snapList.indexOf(short) === -1)
+    fail(`⑪ 短链 ${short} 不在 tools/snapshot.py 的 VARIANTS 里 → 这个变体没有护栏，却不会有人告诉你`);
+});
+
+/* ── ⑫ 控制台的清单有没有跟上 ─────────────────────────────── */
+const hub = fs.readFileSync(path.join(ROOT, "hub.html"), "utf8");
+Object.entries(ALIAS).forEach(([short, id]) => {
+  const inRoutes = hub.indexOf('"?v=' + short + '"') !== -1 || (id === "odd" && hub.indexOf('"odd/"') !== -1);
+  if (!inRoutes) notes.push(`控制台 hub.html 的 ROUTES 里没有 ${short}（${id}）—— 只影响你自己按 /sNN 跳转`);
+  if (hub.indexOf('"' + id + '"') === -1)
+    notes.push(`控制台 hub.html 的 NAMES/ORDER/CLEAN 里没有 ${id} —— 统计表里会漏掉这一行`);
+});
+
 /* ── 结果 ─────────────────────────────────────────────────── */
 const stats = `变体 ${registered.length}｜能力 ${(BASE.capabilities || []).length}｜工具 ${(BASE.tools || []).length}｜` +
   `项目 ${(BASE.projects || []).length}｜更多作品 ${(BASE.moreWorks || []).length}`;
 console.log(stats);
 notes.forEach((n) => console.log("提示：" + n));
 if (!problems.length) {
-  console.log("全部通过 —— 8 项检查无异常。");
+  console.log("全部通过 —— 12 项检查无异常。");
   process.exit(0);
 }
 console.log(`\n发现 ${problems.length} 处问题：`);

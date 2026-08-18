@@ -89,7 +89,16 @@
   }
 
   function bindUI(data) {
-    document.body.classList.add("v-" + window.Identity.variant); // 供 print.css 做变体专项排版
+    /* 类名必须跟着**实际加载到的**变体走，而不是 URL 上写的那个。
+       data-loader 在变体文件 404 时会静默回落到 ue5-tech；此时内容已是 ue5-tech，
+       而 Identity.variant 还停在原值 —— print.css 里 body.v-* 的标定会整片落空
+       （art-vr 的照片宽度、ue5-tech 的三条密度、designer 的教育描述），
+       interactions 的两个彩蛋也不装，PDF 就这么无声地少收几毫米、可能多出一页。
+       公开访客碰不到：认不出的 ?v= 会被 index.html 的裸入口占位挡下。
+       碰得到的恰恰是本人 —— mode=full 存进 localStorage 后永不过期，而导 PDF 的就是本人。
+       loaded 为空＝连 ue5-tech.js 都没加载上（站点已经坏了），退回旧行为，不在这里改语义。 */
+    var vid = (window.DataLoader && window.DataLoader.loaded) || window.Identity.variant;
+    document.body.classList.add("v-" + vid); // 供 print.css 做变体专项排版
     on("#btn-pdf", () => {
       if (window.Stats) window.Stats.pdfHit(window.Identity.variant);
       window.Exporter && window.Exporter.resumePDF();

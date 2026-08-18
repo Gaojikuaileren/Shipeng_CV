@@ -8,7 +8,15 @@ window.DataLoader = {
       const base = window.RESUME_BASE;
       const safeId = this._sanitize(variantId) || "default";
 
-      this._inject(safeId, (variant) => {
+      /* loaded：实际加载到的是哪个变体。它与传进来的 variantId 可能不同 ——
+         变体文件 404 时下面会静默回落到 ue5-tech，那时内容已经不是调用方以为的那个了。
+         渲染层要靠它决定 body 的 v-* 类名（见 main.js 的 bindUI），否则会出现
+         「内容是 A、排版类名是 B」，print.css 里按变体标定的规则整片落空、PDF 无声降级。
+         挂在 DataLoader 上而不是塞进 data 对象：data 会被存进 window.__DATA__、
+         切语言时再喂给 Render.all，多一个键要审的面大得多；这里是纯旁路。 */
+      this.loaded = "";
+      this._inject(safeId, (variant, loadedId) => {
+        this.loaded = loadedId;
         variant = variant || {};
         this._validate(base, variant);
         resolve(this._merge(base, variant));
@@ -24,7 +32,7 @@ window.DataLoader = {
   _inject(id, cb) {
     const script = document.createElement("script");
     script.src = `data/variants/${id}.js`;
-    script.onload = () => cb(window.RESUME_VARIANT || {});
+    script.onload = () => cb(window.RESUME_VARIANT || {}, id);
     script.onerror = () => {
       // 变体不存在 → 回退 ue5-tech（主推默认）；它也失败就用空变体（纯 base）
       if (id !== "ue5-tech") {
@@ -32,7 +40,7 @@ window.DataLoader = {
         this._inject("ue5-tech", cb);
       } else {
         console.warn("[cv] fallback variant missing → using base only");
-        cb({});
+        cb({}, ""); // 连 ue5-tech.js 都没有：谁都不该声称加载成功了某个变体
       }
     };
     document.head.appendChild(script);
