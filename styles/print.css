@@ -80,7 +80,11 @@
     text-align: center; letter-spacing: .02em; break-inside: avoid;
   }
   .cv-aside { position: static !important; }
-  .cv-photo { max-width: 48mm !important; } /* PDF 照片用小尺寸（只有网页端放大）*/
+  /* PDF 照片：全部变体统一 58mm（打印侧栏 34% ≈ 62.6mm，留 4.6mm 余量）。
+     原来是 48mm —— 在 china-biz 那种 42% 的宽侧栏里显得特别小。
+     自由职业的兔子图是例外，仍用原尺寸：它不是证件照，放大反而抢版面。 */
+  .cv-photo { max-width: 58mm !important; }
+  body.v-art-vr .cv-photo { max-width: 48mm !important; }
   .cv-photo img { filter: none; box-shadow: none; } /* PDF 不要外阴影 */
   .cv-intro p { font-size: 10.5pt; line-height: 1.45; }
   .cv-item { padding-top: 2mm; padding-bottom: 2mm; } /* 不清左右 padding，保留 is-emph 左竖线间距 */
@@ -200,10 +204,27 @@
   body.v-designer .cv-item { padding-top: 1.5mm; padding-bottom: 1.5mm; } /* 只上下，保留 is-emph 左间距 */
   body.v-designer .cv-intro p { font-size: 10pt; }
 
+  /* 跨简历入口：纸上点不了按钮，印一个按钮样式的框只会让人困惑 */
+  .cv-crosslink { display: none !important; }
+
+  /* 「更多作品」的打印形态：QR ＋ 一行说明 ＋ 一行可点地址（整块横排，条目清单不进纸）*/
+  .cv-mwprint { display: flex; align-items: flex-start; gap: 6mm; break-inside: avoid; }
+  .cv-mwprint-txt { flex: 1; min-width: 0; }
+  .cv-mwprint-wrap { display: block !important; margin-top: 3.5mm; }
+
+  /* QR 下方那行地址：既是 PDF 里能点的链接，也是只有纸时能照着敲的地址。
+     不缩进、独占一行、只在真放不下时才断词（断在 token 中间会让人敲错）。 */
+  .cv-pprint-url-link { display: block; margin-top: 2mm;
+    font-family: var(--font-mono); font-size: 8pt; color: #333 !important;
+    text-decoration: none; word-break: normal; overflow-wrap: anywhere; }
+
   /* 作品集打印态：超链接列表隐藏，显示「单 QR + 有序目录」 */
   body:not(.printing-card) .cv-portfolio { display: none !important; }
+  /* 竖排：上面一行是「QR ＋ 目录」，下面是那行可点地址（跨整块宽度，只占一行；
+     塞进 34mm 的 QR 盒里要折三行、把整块顶高近 10mm）。 */
   body:not(.printing-card) .cv-portfolio-print {
-    display: flex !important; align-items: flex-start; gap: 6mm; margin-top: 2mm; }
+    display: block !important; margin-top: 2mm; }
+  .cv-pprint-row { display: flex; align-items: flex-start; gap: 6mm; }
   .cv-pprint-qr svg { width: 28mm; height: 28mm; display: block; flex-shrink: 0; }
   /* 变体开了 worksPage 时才有：QR 与它下面那行说明合成一竖列。
      34mm 比 QR 宽 6mm —— 说明文字四语最长的德语也就三行，不至于比 QR 高出太多。 */

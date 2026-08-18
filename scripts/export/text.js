@@ -2,6 +2,9 @@
    export/text.js — ⧉ 复制按钮
    内容：姓名 + 当前可见联系方式 + HR 评分模板（随当前语言）
    HR 在拿到简历链接后点 Copy，直接得到可填写的联系模板。
+
+   变体可写 copyLinksOnly: true 关掉 HR 模板，只复制「姓名 + 个人链接」——
+   自由职业版（art-vr）用它：对面是客户与策展人，粘一份评分表过去很奇怪。
    ============================================================ */
 window.Exporter = window.Exporter || {};
 
@@ -22,13 +25,11 @@ window.Exporter.copySummary = function (data) {
     if (c.value) contactLines.push(c.label + ":  " + c.value.replace(/^https?:\/\//, ""));
   });
 
-  // 3) 拼接 + HR 模板
-  const text = [
-    name,
-    contactLines.join("\n"),
-    "",
-    HR_TMPL[lang] || HR_TMPL.en,
-  ].join("\n");
+  // 3) 拼接（HR 模板视变体而定）
+  const parts = [name, contactLines.join("\n")];
+  // 变体开了 copyLinksOnly 就不附 HR 评分模板（自由职业版对面是客户，不是 HR）
+  if (!data.copyLinksOnly) parts.push("", HR_TMPL[lang] || HR_TMPL.en);
+  const text = parts.join("\n");
 
   const ok   = COPY_MSG.ok[lang]   || "Copied";
   const fail = COPY_MSG.fail[lang] || "Copy failed";

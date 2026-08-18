@@ -21,6 +21,19 @@ window.RESUME_VARIANT = {
   },
   // sidebar → 侧边栏核心能力（设计相关，宏观能力描述）
   sidebar: ["cap-webgfx", "cap-gfx", "cap-proddes", "cap-3d"],
+
+  /* —— 页面底部通向 UE 开发版的按钮 ——————————————————————
+     来看设计版的人里有一部分其实在找能写代码的设计师 —— 与其让他们猜，不如给一个入口。
+     只在屏幕上出现；纸上点不了按钮，PDF 里整块隐藏（print.css）。 */
+  crossLink: {
+    to: "ue",
+    label: {
+      zh: "也在做 UE5 实时开发 —— 查看开发版简历",
+      ja: "UE5 のリアルタイム開発も —— 開発版の履歴書を見る",
+      en: "I also build real-time UE5 systems — see the developer CV",
+      de: "Ich entwickle auch UE5-Echtzeitsysteme — zum Entwickler-Lebenslauf",
+    },
+  },
   // highlightTools → 工具集高亮（设计/视频/3D 软件）
   highlightTools: [
     "t-ps", "t-affinity", "t-canva", "t-webflow",

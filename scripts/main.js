@@ -31,8 +31,43 @@
 
     window.I18n.onChange(() => {
       try {
+        /* 切语言 = 整棵 DOM 重建。什么都不做的话会连着跳两下：
+           ① 展开的板块被收回去 → 文档变短 → 浏览器把滚动位置截到新高度；
+           ② 重建后浏览器按新文档重新定位，视口内容整体挪位。
+           所以先把「哪些板块是展开的」和滚动位置记下来，渲染完原样恢复。
+           选择器要精确：项目按钮同时带 .cv-mw-more（共用样式）与 .cv-prj-more，
+           而它在 DOM 里排在「更多作品」之前 —— 只写 .cv-mw-more 会先抓到它。 */
+        const TOGGLES = [".cv-prj-more", '[data-sec="moreWorks"] .cv-mw-more'];
+        const wasOpen = TOGGLES.map((sel) => {
+          const b = document.querySelector(sel);
+          return !!b && b.getAttribute("aria-expanded") === "true";
+        });
+        /* 滚动位置不能按像素还原：德语比中文长，视口上方的内容本来就会变高，
+           还原到同一个 y 只会停在不同的段落上。改记「内容锚点」——
+           视口顶端是哪个板块、它距视口顶多少，渲染完把同一个板块摆回同一个位置。 */
+        const y = window.scrollY;
+        let anchor = null;
+        // 只从主区取锚点：侧栏是 sticky 的，它的 rect.top 被钉住不动，
+        // 拿它当锚点等于什么都没校正（实测 scrollBy 永远算出 0）。
+        const secs = document.querySelectorAll(".cv-main [data-sec]");
+        for (let i = 0; i < secs.length; i++) {
+          const r = secs[i].getBoundingClientRect();
+          if (r.bottom > 0) { anchor = { key: secs[i].getAttribute("data-sec"), top: r.top }; break; }
+        }
+
         window.Render.all(window.__DATA__);
         syncLangSwitcher();
+
+        TOGGLES.forEach((sel, i) => {
+          if (!wasOpen[i]) return;
+          const b = document.querySelector(sel);
+          // 复用按钮自己的切换逻辑，不在这里抄第二份展开代码
+          if (b && b.getAttribute("aria-expanded") !== "true") b.click();
+        });
+        // 锚点还原要在展开态恢复之后：先把内容补齐，再对位，否则对的是收起时的坐标
+        const el = anchor && document.querySelector('.cv-main [data-sec="' + anchor.key + '"]');
+        if (el) window.scrollBy(0, el.getBoundingClientRect().top - anchor.top);
+        else window.scrollTo(0, y); // 没找到锚点（页面还在最顶上）就退回按像素还原
       } catch (e) { console.error("[cv] re-render failed", e); }
     });
   }

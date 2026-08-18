@@ -87,7 +87,7 @@
     const p = d.profile || {};
     const box = h("div", { class: "cv-profile" });
     append(box, h("div", { class: "cv-photo" },
-      h("img", { src: p.photo || "assets/photo/placeholder.svg", alt: t(p.photoAlt), loading: "lazy", decoding: "async" })));
+      h("img", { src: p.photo || "assets/photo/placeholder.svg", alt: t(p.photoAlt), loading: "eager", decoding: "async" })));
     const info = h("dl", { class: "cv-info" });
     (p.fields || []).forEach((f) => {
       const hidden = f.visibility === "private" && !window.Identity.isFull();
@@ -323,10 +323,28 @@
       "works.html?v=" + encodeURIComponent(window.VARIANTS ? window.VARIANTS.toShort(v) : v) +
       "&lang=" + encodeURIComponent(lang);
   }
+  // 在线简历自身的地址（给「更多作品」那个 QR 用）。与 worksUrl 同样的规矩：
+  // 运行时从 location 推、绝不写死域名，file:// 下返回 null 由调用方退回老行为。
+  // 用目录地址而不是 index.html?… —— 少 10 个字符，二维码模块数更少、更好扫。
+  function cvUrl(lang) {
+    if (location.protocol !== "http:" && location.protocol !== "https:") return null;
+    const v = (window.Identity && window.Identity.variant) || "";
+    return new URL(".", location.href).href +
+      "?v=" + encodeURIComponent(window.VARIANTS ? window.VARIANTS.toShort(v) : v) +
+      "&lang=" + encodeURIComponent(lang);
+  }
+  // 印在纸上的地址写法：砍掉协议头（谁都知道要加 https），其余一字不改 —— 手抄的人要照着敲
+  function urlLabel(u) { return String(u).replace(/^https?:\/\//, ""); }
+  // QR 下方那行可点地址：既是 PDF 里能点的超链接，也是纸上能照抄的地址
+  function qrLink(url) { return h("a", { class: "cv-pprint-url-link", href: url }, urlLabel(url)); }
+
   // 打印块：QR ＋ 有序目录。note 为空（没开 worksPage）时结构与改造前一字不差
   function portfolioPrint(works, qrUrl, note) {
     const qr = h("div", { class: "cv-pprint-qr", "data-url": qrUrl });
+    // 地址行放在 QR＋目录这一行**下面**、跨整块宽度：塞进 34mm 的 QR 盒里要折三行、
+    // 把整块顶高近 10mm；放在下面只占一行。
     return h("div", { class: "cv-portfolio-print", "aria-hidden": "true" },
+      h("div", { class: "cv-pprint-row" },
       note ? h("div", { class: "cv-pprint-qrbox" }, qr, h("p", { class: "cv-pprint-note" }, note)) : qr,
       h("ol", { class: "cv-pprint-list" },
         works.map((p) => {
@@ -336,8 +354,9 @@
             h("span", { class: "cv-pi-type" }, " · " + t(p.type || p.role)),
             h("span", { class: "cv-pi-period" }, " (" + p.period + ")"),
             l.kind === "video" ? null
-              : h("span", { class: "cv-pi-url" }, " " + l.url.replace(/^https?:\/\//, "")));
-        })));
+              : h("span", { class: "cv-pi-url" }, " " + urlLabel(l.url)));
+        }))),
+      qrLink(qrUrl));
   }
   // 作品集的条目池 = 项目经历 ＋「更多作品」里带链接的条目。
   // 后者字段名不同（title / year 对 org / period），在这里归一成项目的形状；
@@ -433,6 +452,33 @@
   }
 
   /* —— 教育 ———————————————————————————————— */
+  /* —— 「更多作品」的打印形态：QR ＋ 在线简历地址 ————————————————
+     纸上印 15 条清单要吃掉约 75mm，而这些条目大多没有链接、看完也点不动。
+     改成一个指向在线简历的 QR：扫码的人在手机上能展开全部条目、还能点进去。
+     附页 works.html 里另有一份完整清单（那一页由作品集的 QR 进入）。
+     file:// 打开时 cvUrl 返回 null → 调用方自动退回老行为，仍印完整清单。 */
+  function moreWorksPrint(url, note) {
+    return h("div", { class: "cv-mwprint", "aria-hidden": "true" },
+      h("div", { class: "cv-pprint-qr", "data-url": url }),
+      h("div", { class: "cv-mwprint-txt" },
+        h("p", { class: "cv-pprint-note" }, note),
+        qrLink(url)));
+  }
+
+  /* —— 跨简历入口（屏幕端）——————————————————————————
+     变体声明 crossLink: { to: "<短链>", label: {四语} } 就在页面最底部居中出一个按钮，
+     通向另一份简历。设计版用它指向 UE 开发版：来看设计的人里有一部分其实在找技术岗。
+     纸上点不了按钮，印一个按钮样式的框只会让人困惑 → print.css 里整块隐藏。 */
+  function renderCrossLink(d) {
+    const c = d.crossLink;
+    if (!c || !c.to) return null;
+    return h("p", { class: "cv-crosslink" },
+      h("a", { class: "cv-crosslink-btn",
+        href: "index.html?v=" + encodeURIComponent(c.to) +
+              "&lang=" + encodeURIComponent(window.I18n.current) },
+        t(c.label), h("span", { class: "cv-crosslink-arrow" }, "→")));
+  }
+
   function renderEducation(d) {
     if (!d.education || !d.education.length) return null;
     return sectionBlock("education",
@@ -531,6 +577,7 @@
       append(grid, aside);
       append(grid, main);
       append(frag, grid);
+      append(frag, renderCrossLink(d)); // 页面最底部居中；没声明 crossLink 的变体返回 null
 
       /* —— 打印专用：变体声明的「全宽板块」———————————————————————————
          d.printFullWidth = ["work", "education"] → 这些主区板块在 PDF 里脱离
@@ -558,8 +605,16 @@
       // 打印专用：横跨整页排最后 —— 放在 grid 外（普通全宽 block，避免 CSS Grid 打印跨页 bug）
       // 先「更多作品」后「工具集」（屏幕隐藏）
       if (orderMain.indexOf("moreWorks") !== -1 && !hide.has("moreWorks")) {
-        const pm = renderMoreWorks(d, true); // forPrint：PDF 这一份永不折叠、不带按钮
-        if (pm) append(frag, h("div", { class: "cv-moreworks-print" }, pm));
+        const cu = cvUrl((window.I18n && window.I18n.current) || "en"); // all() 里没有 lang 局部变量
+        if (cu && (d.moreWorks || []).length) {
+          // 有在线地址 → 整块换成 QR ＋ 地址（省约 75mm，且线上那份永远是最新的）
+          append(frag, h("div", { class: "cv-mwprint-wrap" },
+            sectionBlock("moreWorks", moreWorksPrint(cu, t(window.UI_TEXT.mwPrint.note)))));
+        } else {
+          // file:// 或本变体没有条目 → 老行为：印完整清单
+          const pm = renderMoreWorks(d, true); // forPrint：永不折叠、不带按钮
+          if (pm) append(frag, h("div", { class: "cv-moreworks-print" }, pm));
+        }
       }
       if (orderMain.indexOf("toolset") !== -1 && !hide.has("toolset")) {
         const pt = renderToolset(d);

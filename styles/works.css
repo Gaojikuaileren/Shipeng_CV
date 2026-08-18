@@ -45,6 +45,11 @@
   transition: border-color .15s, background .15s;
 }
 .wk-link:hover { border-color: var(--ink); }
+/* 没有公开链接的条目：同一套排版，但点不动 —— 不给 hover / active 反馈，
+   边框弱一档，让「能点」和「只是记录在案」一眼分得开。 */
+.wk-link--static { cursor: default; border-style: dashed; border-color: var(--line); }
+.wk-link--static:hover, .wk-link--static:active { border-color: var(--line); background: none; }
+.wk-tags { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--ink-faint); }
 .wk-link:active { border-color: var(--accent); background: var(--paper-2); } /* 手指按下时的反馈 */
 .wk-badge { font-size: var(--fs-micro); color: var(--accent); font-weight: 700; letter-spacing: .04em; }
 .wk-title { font-size: 1.05rem; font-weight: 600; line-height: 1.3; }

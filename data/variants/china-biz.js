@@ -50,7 +50,7 @@ window.RESUME_VARIANT = {
   sections: {
     order: [
       "languages", "skills", "contact",        // 侧边栏
-      "intro", "collab", "work", "education",  // 主区：自我介绍 → 协作 → 工作 → 教育
+      "intro", "collab", "education", "work",  // 主区：自我介绍 → 协作 → 教育 → 工作
     ],
     hide: ["projects", "portfolio", "moreWorks", "toolset"],
     emphasize: ["collab", "contact"],

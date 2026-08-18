@@ -43,6 +43,28 @@ body.v-art-vr .cv-photo { max-width: 320px; }
   body:not(.v-art-vr) .cv-photo { max-width: min(66.67vw, 300px); }
 }
 
+/* 照片占位：先把位置占住，图片到位前后高度一致。
+   没有它，首屏图一加载就把下面的内容推走（桌面约 450px），切语言重渲染时
+   <img> 重建也会塌一下再弹回来。两张图比例不同：证件照 900×1350，兔子 600×600。 */
+.cv-photo img { aspect-ratio: 2 / 3; }
+body.v-art-vr .cv-photo img { aspect-ratio: 1 / 1; }
+
+/* —— 跨简历入口：页面最底部居中一个按钮（变体声明 crossLink 才有这个节点）——
+   触控目标按项目自己的标准给到 44px；打印时整块隐藏（print.css）。 */
+.cv-crosslink { margin-top: var(--s6); text-align: center; }
+.cv-crosslink-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--s2);
+  min-height: 44px; padding: var(--s2) var(--s4);
+  border: var(--hair) solid var(--line-ink); color: var(--ink);
+  font-size: var(--fs-small); letter-spacing: .02em; text-decoration: none;
+  max-width: min(100%, 46ch); text-wrap: balance;
+}
+.cv-crosslink-btn:hover { background: var(--line-ink); color: var(--paper); }
+.cv-crosslink-arrow { font-family: var(--font-mono); }
+@media (prefers-reduced-motion: no-preference) {
+  .cv-crosslink-btn { transition: background .18s ease, color .18s ease; }
+}
+
 .cv-info { display: grid; grid-template-columns: auto 1fr; gap: var(--s1) var(--s3); margin-bottom: var(--s4); font-size: var(--fs-small); }
 /* china-biz：德语 Verfügbarkeit 一行放不下（标签 84 + 间距 16 + 值 219 = 319 > 300）。
    放宽侧栏而不是删字 —— 变体作用域，其它四版仍是 300px。 */

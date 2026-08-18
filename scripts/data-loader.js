@@ -73,6 +73,11 @@ window.DataLoader = {
       // 变体声明哪些主区板块在 PDF 里改走「全宽流」（脱离双栏）→ render
       // 没声明的变体行为一字不变；机制说明见 render.js 的 printFullWidth 段
       printFullWidth: v.printFullWidth || null,
+      // ⧉ 复制按钮只给「姓名 + 个人链接」，不附 HR 评分模板（面向客户的变体用）
+      copyLinksOnly: !!v.copyLinksOnly,
+      // 跨简历入口：{ to: "<短链>", label: {四语} } → 页面最底部居中一个按钮，通向另一份简历。
+      // 只在屏幕上出现（print.css 里整块隐藏）。没声明的变体没有这个节点。
+      crossLink: v.crossLink || null,
       // 板块级控制（显示/顺序/重点）→ render
       sections: v.sections || { order: [], hide: [], emphasize: [] },
     };

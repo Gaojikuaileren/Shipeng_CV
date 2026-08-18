@@ -13,7 +13,7 @@ window.UI_TEXT = {
     projects:  { zh: "项目经历",   ja: "プロジェクト",   en: "Projects",        de: "Projekte" },
     work:      { zh: "工作经历",   ja: "職務経歴",      en: "Experience",      de: "Berufserfahrung" },
     moreWorks: { zh: "更多作品",   ja: "その他の作品",  en: "More Works",      de: "Weitere Arbeiten" },
-    portfolio: { zh: "作品集",    ja: "作品集",        en: "Selected Work",   de: "Ausgewählte Arbeiten" },
+    portfolio: { zh: "作品示例",  ja: "作品例",        en: "Selected Work",   de: "Ausgewählte Arbeiten" },
     education: { zh: "教育经历",   ja: "学歴",          en: "Education",       de: "Ausbildung" },
     oddjobs:   { zh: "工作经历",   ja: "アルバイト経験", en: "Work Experience", de: "Arbeitserfahrung" },
     /* collab = 通用「能力板块」标题；变体可用 sectionTitles.collab 换成更具体的说法 */
@@ -51,6 +51,17 @@ window.UI_TEXT = {
   mwToggle: {
     expand:   { zh: "展开全部 {n} 项", ja: "すべて表示（{n} 件）", en: "Show all {n} works", de: "Alle {n} Arbeiten anzeigen" },
     collapse: { zh: "收起",           ja: "折りたたむ",           en: "Show fewer",       de: "Weniger anzeigen" },
+  },
+
+  /* 「更多作品」在 PDF 里的形态：一个指向在线简历的 QR ＋ 一行地址。
+     纸上印 15 条点不动的清单没有意义，扫码进去反而能展开、能点。 */
+  mwPrint: {
+    note: {
+      zh: "完整的「更多作品」清单在在线简历里，扫码或访问：",
+      ja: "「その他の作品」の全リストはオンライン版に掲載。QR またはこちら：",
+      en: "The full list of further works is on the online CV — scan or visit:",
+      de: "Die vollständige Liste weiterer Arbeiten steht im Online-Lebenslauf — scannen oder aufrufen:",
+    },
   },
 
   /* 项目经历折叠。与 mwToggle 同一套语气，只是量词从「项/件/works」换成「项目/件/projects」。 */

@@ -103,12 +103,15 @@
             if (r) out.portfolio.push(r);
           });
         }
-        // moreWorks 目前 base.js 里还没有任何条目写了 link → 这一组通常是空的（空组不渲染）。
-        // 哪天给某条加上 link，它会自动出现在这里，不用再改本页。
+        /* 「更多作品」全量列出 —— 这一页是简历的附页，PDF 里那一块已经换成了指向线上的二维码，
+           所以完整清单必须在这里看得到。有链接的照常可点，没链接的也列出来（只是点不动），
+           否则扫码进来的人会以为作品就这么几件。 */
         if (sectionVisible(d, "moreWorks")) {
           (d.moreWorks || []).forEach(function (w) {
             var r = toRow(w, w.title, t(w.type), w.year);
-            if (r) out.moreWorks.push(r);
+            if (!r) r = { url: null, title: w.title, meta: t(w.type), when: w.year };
+            r.tags = (w.tags || []).join(" · ");
+            out.moreWorks.push(r);
           });
         }
         return out;
@@ -122,16 +125,21 @@
 
       /* —— 一条可点的作品 —— */
       function rowNode(r) {
-        var a = el("a", "wk-link");
-        a.href = r.url;
-        a.target = "_blank";
-        a.rel = "noopener noreferrer"; // noreferrer：别把带 ?v= 的专属链接送进第三方日志
-        // 徽标（▶ 视频 / ↗ 商店 / ↗ 网站）＋ 标题
-        a.appendChild(el("span", "wk-badge", r.mark + " " + t(window.UI_TEXT.txt[r.kind])));
+        // 没有链接的条目也要列出来，只是渲染成一个点不动的块（<div> 而不是 <a>）——
+        // 用 <a> 不给 href 会得到一个「看起来能点、其实不能」的假按钮，比不可点更糟。
+        var a = el(r.url ? "a" : "div", "wk-link" + (r.url ? "" : " wk-link--static"));
+        if (r.url) {
+          a.href = r.url;
+          a.target = "_blank";
+          a.rel = "noopener noreferrer"; // noreferrer：别把带 ?v= 的专属链接送进第三方日志
+          // 徽标（▶ 视频 / ↗ 商店 / ↗ 网站）＋ 标题
+          a.appendChild(el("span", "wk-badge", r.mark + " " + t(window.UI_TEXT.txt[r.kind])));
+        }
         a.appendChild(el("span", "wk-title", r.title));
         var meta = [r.meta, r.when].filter(Boolean).join(" · ");
         if (meta) a.appendChild(el("span", "wk-meta", meta));
-        a.appendChild(el("span", "wk-host", hostOf(r.url)));
+        if (r.url) a.appendChild(el("span", "wk-host", hostOf(r.url)));
+        else if (r.tags) a.appendChild(el("span", "wk-tags", r.tags));
         return a;
       }
 

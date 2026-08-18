@@ -29,7 +29,9 @@ html[lang="ja"] body {
     "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Noto Sans JP", sans-serif;
 }
 /* CJK 视觉偏小，行高略增，与拉丁观感对齐 */
-html[lang="zh"] body, html[lang="ja"] body { line-height: 1.72; }
+/* ⚠️ 加在 .cv-root 上而不是 body：加在 body 上会连工具栏一起变高，
+   于是每次切语言整页内容都上下跳约 4px。正文才需要这个行高，工具栏不需要。 */
+html[lang="zh"] .cv-root, html[lang="ja"] .cv-root { line-height: 1.72; }
 /* 德语等长词：自动断词 + 兜底换行，不撑破网格 */
 .cv-intro p, .cv-item-body, .cv-info dd, .cv-work-note, .cv-lang, .cv-contact-row { hyphens: auto; overflow-wrap: break-word; }
 .cv-info dt { overflow-wrap: break-word; min-width: 0; }
@@ -100,12 +102,16 @@ html[lang="zh"] body, html[lang="ja"] body { line-height: 1.72; }
 .bcard-qr svg { width: 64px; height: 64px; display: block; }
 
 /* reveal（private / 防采集字段）*/
+/* 点开前后必须**等高**：老版本是 .9em 字号 + 上下各 1px 边框 + 1px 内边距的小方块，
+   一点开换成正常字号的链接，这一行就长高约 2px，整页跟着轻微下移。
+   现在只留一条虚线下划线作为「可点」的提示 —— 盒模型与揭示后的文本完全一致，
+   宽度仍会变（「🔒 点击显示」比邮箱短），但那只在行内横向变化，不推动纵向排版。 */
 .cv-reveal {
-  font: inherit; font-size: .9em;
-  border: var(--hair) dashed var(--ink-faint); background: var(--paper-2);
-  color: var(--ink-soft); padding: 1px var(--s2); cursor: pointer;
+  font: inherit; line-height: inherit; vertical-align: baseline;
+  border: 0; border-bottom: var(--hair) dashed var(--ink-faint);
+  background: none; color: var(--ink-soft); padding: 0; cursor: pointer;
 }
-.cv-reveal:hover { border-style: solid; color: var(--ink); }
+.cv-reveal:hover { border-bottom-style: solid; color: var(--ink); }
 .cv-reveal::before { content: "🔒 "; }
 
 /* toast */
