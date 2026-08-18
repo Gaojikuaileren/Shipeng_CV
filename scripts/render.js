@@ -634,10 +634,19 @@
 
       // 打印专用：横跨整页排最后 —— 放在 grid 外（普通全宽 block，避免 CSS Grid 打印跨页 bug）
       // 先「更多作品」后「工具集」（屏幕隐藏）
-      if (orderMain.indexOf("moreWorks") !== -1 && !hide.has("moreWorks")) {
+      /* 纸上已经有一个指向作品页的二维码了吗？—— 作品示例那块在开了 worksPage 时
+         会印一个指向 works.html 的 QR，而那一页把「更多作品」的条目也全列出来了。
+         此时再为「更多作品」单印一个 QR 就是两个二维码指向同一批内容，
+         拿到纸的人只会疑惑该扫哪个。所以有它就不再出这一块。 */
+      const hasWorksQr = !!d.worksPage &&
+        orderMain.indexOf("portfolio") !== -1 && !hide.has("portfolio") &&
+        portfolioItems(d).length > 0;
+
+      if (orderMain.indexOf("moreWorks") !== -1 && !hide.has("moreWorks") && !hasWorksQr) {
         const cu = cvUrl(curLang());
         if (cu && (d.moreWorks || []).length) {
-          // 有在线地址 → 整块换成 QR ＋ 地址（省约 75mm，且线上那份永远是最新的）
+          // 没有作品页 QR，但有在线地址 → 用一个指向在线简历的 QR 顶替整块清单
+          //（省约 75mm，且线上那份永远是最新的）
           append(frag, h("div", { class: "cv-mwprint-wrap" },
             sectionBlock("moreWorks", moreWorksPrint(cu, t(window.UI_TEXT.mwPrint.note)))));
         } else {
