@@ -151,6 +151,26 @@ node tools/serve.js
 ---
 
 
+## 出事了怎么退回去
+
+每次动手前会打一个命名标签（`git tag -l` 看全部）。回退**不改写历史** —— 把那一版的文件
+恢复成一次新提交，GitHub Pages 照常重新部署：
+
+```bash
+git checkout stable-20260819 -- .
+git commit -m "Rollback auf stable-20260819"
+git push
+```
+
+想先看看那一版长什么样、又不动当前分支：
+
+```bash
+git switch --detach stable-20260819
+node tools/serve.js
+```
+
+标签的说明里写着那一版的实测状态（页数、缩放、二维码数量），`git tag -n99 stable-20260819` 可以看全。
+
 ## 加内容之前跑一下守卫
 
 ```bash
