@@ -370,7 +370,7 @@ window.RESUME_BASE = {
       tags: ["Web", "Video"] },
     { id: "mw-mirror",   year: "2024", title: "Mirror",
       type: { zh: "互动装置", ja: "インタラクティブ・インスタレーション", en: "Interactive Installation", de: "Interaktive Installation" },
-      tags: ["UE5", "ESP32", "OpenCV", "Webcam", "KHM"] },
+      tags: ["UE5", "ESP32", "OpenCV", "Webcam"] },  // KHM 去掉：同期的 KHM 作品都没写，且已超 4 个上限
     { id: "mw-surreal",  year: "2023", title: "Surreal-RPG",
       type: { zh: "VR 交互艺术", ja: "VR インタラクティブアート", en: "VR Interactive Art", de: "VR Interaktive Kunst" },
       tags: ["UE5", "VR", "MetaQuest", "Spatial Audio"] },
