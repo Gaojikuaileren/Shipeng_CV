@@ -78,13 +78,15 @@ node tools/serve.js
 
 对外一律用短码，对内一律用长 ID：
 
-| 短链 | 内部 ID | 是谁 |
+| 发出去的地址 | 内部 ID | 是谁 |
 |---|---|---|
-| `?v=ue` | `ue5-tech` | 游戏 / UE5 + 视觉生成式 AI |
-| `?v=fl` | `art-vr` | 自由职业媒体艺术 |
-| `?v=ds` | `designer` | 设计 |
-| `?v=mn` | `odd`（跳到 `odd/`） | 兼职 Mini-Job |
-| `?v=cd` | `china-biz` | 外贸 / 中德商务 |
+| `https://gaojikuaileren.github.io/Shipeng_CV/?v=ue` | `ue5-tech` | 游戏 / UE5 + 视觉生成式 AI |
+| `https://gaojikuaileren.github.io/Shipeng_CV/?v=fl` | `art-vr` | 自由职业媒体艺术 |
+| `https://gaojikuaileren.github.io/Shipeng_CV/?v=ds` | `designer` | 设计 |
+| `https://gaojikuaileren.github.io/Shipeng_CV/?v=cd` | `china-biz` | 外贸 / 中德商务 |
+| `https://gaojikuaileren.github.io/Shipeng_CV/odd/` | `odd` | 兼职 Mini-Job |
+
+兼职版是独立页面，直接发 `odd/`；`?v=mn` 也认，会跳过去。
 
 **已经发出去的旧链（`?v=ue5-tech`）与 PDF 二维码里的长地址永久有效**：
 `index.html` 头部脚本认出长 ID 后照常渲染，只用 `history.replaceState` 把地址栏静默换成短链

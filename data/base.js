@@ -231,7 +231,7 @@ window.RESUME_BASE = {
         de: "Benutzer erkunden einen virtuellen Raum, der über Echtzeit-Sensorfeedback mit physischen Objekten verbunden ist — ein Hybridraum zwischen körperlicher Präsenz, digitalem Gedächtnis und immersivem Storytelling.",
       },
       tags: ["UE5", "MR", "VR", "Sensors"],
-      video: "https://vimeo.com/user169301773", // TODO: 替换为该作品的具体 Vimeo 链接
+      video: "https://vimeo.com/showcase/11909785", // 千声之室 作品集
     },
     {
       id: "prj-grau",
@@ -267,7 +267,7 @@ window.RESUME_BASE = {
         de: "Pflegeheim-Bewohner wurden per Gesichtsscan digitalisiert und im virtuellen Raum rekonstruiert. Interviews und Recherche ergeben interaktive Lebensarchive — Digital Human, VR und soziale Fürsorge verbunden.",
       },
       tags: ["UE5", "VR", "Digital Human", "3D Scan"],
-      video: "https://vimeo.com/user169301773", // TODO: 替换为具体视频链接
+      video: "https://vimeo.com/showcase/12281904", // 我的灰发 作品集
     },
     {
       /* 周期 / 角色 / 技术内容均经世鹏本人确认（2026-08-18）。合作者姓名按他的意思不写。 */
