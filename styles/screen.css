@@ -37,7 +37,7 @@
 }
 
 /* —— Aside —— */
-.cv-photo { margin-bottom: var(--s4); max-width: var(--aside-w); }
+.cv-photo { margin-bottom: var(--s4); max-width: var(--photo-w); }
 /* 照片：彩色、按自身比例（不裁）、填满容器；外阴影往左下拉伸（本人照与兔子都有）*/
 .cv-photo img { display: block; width: 100%; height: auto; background: var(--paper-2);
   box-shadow: -10px 16px 32px rgba(20, 20, 20, 0.22);
@@ -45,7 +45,7 @@
   pointer-events: none; user-select: none; -webkit-user-select: none;
   -webkit-touch-callout: none; -webkit-user-drag: none; }
 /* 自由职业兔子：大一号 */
-body.v-art-vr .cv-photo { max-width: 320px; }
+body.v-art-vr { --photo-w: 320px; }
 /* 手机端真人照：宽度最多为屏宽的 2/3，等比缩放（自由职业兔子保持大）*/
 @media (max-width: 899px) {
   body:not(.v-art-vr) .cv-photo { max-width: min(66.67vw, 300px); }
