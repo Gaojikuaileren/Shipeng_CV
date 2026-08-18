@@ -233,6 +233,29 @@
       h("p", { class: "cv-item-body" }, t(e.summary)),
       e.tags && e.tags.length ? h("ul", { class: "cv-tags" }, e.tags.map((tg) => h("li", null, tg))) : null);
   }
+  /* 折叠开关：项目经历与「更多作品」是同一套行为，只有三处不同 ——
+     数哪些行（选择器）、留几条（阈值）、按钮上写什么（四语文案）。
+     做成工厂而不是两份拷贝：那两份已经悄悄分叉过一次（一份写了 scrollIntoView 的理由，
+     另一份没有），再分叉下去就会变成两种手感。
+     ⚠️ 配置只能靠闭包传，**不能塞进按钮的 data-\* 属性** —— 那会改变 DOM，
+        输出就不再逐字节相同，而「显示不变」是这次重构的硬条件。 */
+  function makeToggle(sel, keep, txt) {
+    return function (e) {
+      const btn = e.currentTarget;
+      const box = document.getElementById(btn.getAttribute("aria-controls"));
+      if (!box) return;
+      const open = btn.getAttribute("aria-expanded") !== "true";
+      const rows = box.querySelectorAll(sel);
+      for (let i = keep; i < rows.length; i++) rows[i].hidden = !open;
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      btn.textContent = open ? t(txt.collapse)
+        : t(txt.expand).replace("{n}", String(rows.length));
+      // 收起时上方内容一下子缩短，按钮可能被甩到视口上方 → 拉回来。
+      // block:"nearest" 已经在视野里就不动；不用 smooth，免得跟 reduced-motion 打架。
+      if (!open) btn.scrollIntoView({ block: "nearest" });
+    };
+  }
+
   /* —— 项目经历折叠（屏幕端）——————————————————————————
      一条项目 = 期间 + 标题 + 类型 + 正文 + tags，桌面下整块要 1.4–1.7 屏、手机 2.5 屏，
      一个板块就把页面拖长 → 超过 PRJ_COLLAPSED 条时默认只显示前几条，其余给按钮展开。
@@ -260,18 +283,7 @@
     sec.id = PRJ_SEC_ID; // 给 aria-controls 用；按钮控制的就是这个板块里的条目
     return sec;
   }
-  function onPrjToggle(e) {
-    const btn = e.currentTarget;
-    const sec = document.getElementById(btn.getAttribute("aria-controls"));
-    if (!sec) return;
-    const open = btn.getAttribute("aria-expanded") !== "true";
-    const rows = sec.querySelectorAll(".cv-item");
-    for (let i = PRJ_COLLAPSED; i < rows.length; i++) rows[i].hidden = !open;
-    btn.setAttribute("aria-expanded", open ? "true" : "false");
-    btn.textContent = open ? t(PRJ_TOGGLE.collapse)
-      : t(PRJ_TOGGLE.expand).replace("{n}", String(rows.length));
-    if (!open) btn.scrollIntoView({ block: "nearest" }); // 收起后按钮别被甩到视口上方
-  }
+  const onPrjToggle = makeToggle(".cv-item", PRJ_COLLAPSED, PRJ_TOGGLE);
   function renderWork(d) {
     if (!d.work || !d.work.length) return null;
     return sectionBlock("work", d.work.map(expItem));
@@ -440,20 +452,7 @@
         "aria-controls": MW_LIST_ID, onclick: onMwToggle },
         t(MW_TOGGLE.expand).replace("{n}", String(items.length))));
   }
-  function onMwToggle(e) {
-    const btn = e.currentTarget;
-    const list = document.getElementById(btn.getAttribute("aria-controls"));
-    if (!list) return;
-    const open = btn.getAttribute("aria-expanded") !== "true";
-    const rows = list.querySelectorAll(".cv-mw-item");
-    for (let i = MW_COLLAPSED; i < rows.length; i++) rows[i].hidden = !open;
-    btn.setAttribute("aria-expanded", open ? "true" : "false");
-    btn.textContent = open ? t(MW_TOGGLE.collapse)
-      : t(MW_TOGGLE.expand).replace("{n}", String(rows.length));
-    // 收起时上方内容一下子缩短，按钮可能被甩到视口上方 → 拉回来。
-    // block:"nearest" 已经在视野里就不动；不用 smooth，免得跟 reduced-motion 打架。
-    if (!open) btn.scrollIntoView({ block: "nearest" });
-  }
+  const onMwToggle = makeToggle(".cv-mw-item", MW_COLLAPSED, MW_TOGGLE);
 
   /* —— 教育 ———————————————————————————————— */
   /* —— 「更多作品」的打印形态：QR ＋ 在线简历地址 ————————————————
