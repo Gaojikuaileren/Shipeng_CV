@@ -148,6 +148,35 @@ node tools/serve.js
 
 ---
 
+
+## 改动之后怎么证明「显示没变」
+
+排版是这个仓库唯一的产品，而它没有构建、没有测试 —— 改一个类名或动一条打印规则，
+可能悄悄挪掉某份 PDF 的分页点，肉眼要逐份翻才看得出来。`tools/snapshot.py` 把这件事
+变成一条命令：
+
+```bash
+node tools/serve.js            # 另开一个终端
+python tools/snapshot.py baseline   # 改之前，存基线
+# …改代码…
+python tools/snapshot.py check      # 改之后，核对
+```
+
+抓两层，5 变体 × 4 语共 20 组：
+
+- **DOM** —— Chrome 渲染完之后 dump `#cv-root` 的 outerHTML，归一化后取哈希。
+  类名、元素顺序、属性，任何一处不同都会被抓到。经验年限那类随时间自己变的内容会被
+  替换成占位符，不然放一个月再跑就全是假差异。
+- **PDF** —— headless 导出 A4，比较页数与每页每个文本块的坐标。
+  **不比字节**：PDF 里带生成时间与随机 ID，同样的输入两次导出字节流并不相同；
+  坐标指纹实测两次跑完全一致。
+
+常用参数：`--only ue,cd` 只跑某几个变体；`--dom-only` 跳过 PDF（快 10 倍，
+改 JS/HTML 时够用）。全量 DOM 约 40 秒，DOM+PDF 约 3–4 分钟。
+
+需要 Chrome 与 Python（PDF 那层要 `pymupdf`，没装就自动只跑 DOM 并告诉你）。
+这些只是开发期工具，站点本身仍然零依赖。
+
 ## 部署（已上线）
 
 - 站点：`https://gaojikuaileren.github.io/Shipeng_CV/`
@@ -200,5 +229,7 @@ Shipeng_CV/
 ├── assets/
 │   ├── fonts/            Hanken Grotesk woff2（自托管）
 │   └── photo/            照片（现为占位 SVG）
-└── tools/serve.js        本地预览服务器
+└── tools/
+    ├── serve.js          本地预览服务器
+    └── snapshot.py       输出回归护栏（改动前后比 DOM 与 PDF，见上文）
 ```

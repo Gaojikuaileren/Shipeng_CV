@@ -5,3 +5,6 @@ Thumbs.db
 
 # Lokale Dev-Konfiguration (Preview-Server)
 .claude/
+
+# 输出快照（本机 + 当天生成，不进仓库）
+tools/.snapshot/
