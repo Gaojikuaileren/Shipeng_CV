@@ -14,8 +14,11 @@ window.Identity = {
   init() {
     const p = new URLSearchParams(location.search);
 
-    // 变体：清洗，只允许 [a-z0-9-]，防路径穿越
-    this.variant = this._sanitize(p.get("v")) || "ue5-tech";
+    // 变体：短链与旧的长 ID 都认，统一解析成内部 ID（清洗在 VARIANTS.resolve 里做）。
+    // 注意这里拿到的**永远是内部 ID** —— 统计打点、body.v-* 类名、数据文件都用它，
+    // 所以换短链不会让历史计数断档。地址栏的美化由 index.html 头部脚本负责。
+    this.variant = (window.VARIANTS ? window.VARIANTS.resolve(p.get("v")).id : "") ||
+      this._sanitize(p.get("v")) || "ue5-tech";
 
     // 本人模式：?mode=full（骨架阶段先不加 PIN，TODO 见下）
     const urlFull = p.get("mode") === "full";

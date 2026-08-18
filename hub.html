@@ -89,7 +89,9 @@
   <script src="scripts/stats.js"></script>
   <script>
     var dir = location.href.replace(/[^/]*(\?.*)?(#.*)?$/, ""); // 本页目录
-    var ROUTES = { "/s01": "?v=ue5-tech", "/s02": "?v=art-vr", "/s03": "?v=designer", "/s04": "odd/", "/s05": "?v=china-biz" };
+    // 路由一律走短链（唯一真相在 scripts/variants.js；这里写死是因为本页不加载它，
+    // 只有五条、且与那张表一一对应 —— 改短链时两处一起改）
+    var ROUTES = { "/s01": "?v=ue", "/s02": "?v=fl", "/s03": "?v=ds", "/s04": "odd/", "/s05": "?v=cd" };
     var NAMES = { "ue5-tech": "UE5 + AI", "art-vr": "媒体艺术", "designer": "设计师", "odd": "兼职", "china-biz": "中德商务" };
     var ORDER = ["ue5-tech", "art-vr", "designer", "odd", "china-biz"];
     var CLEAN = { "/clean01": "ue5-tech", "/clean02": "art-vr", "/clean03": "designer", "/clean04": "odd", "/clean05": "china-biz", "/cleanall": "all" };
@@ -178,6 +180,12 @@
     function doClean(v) {
       if (!window.Stats || !window.Stats._ready()) { flash("统计未配置"); return; }
       var label = v === "all" ? "全部" : NAMES[v];
+      // 清零不可撤销，而 /cleanall 与 /clean01 只差几个字符 —— 全清必须再确认一次。
+      // 单个变体不拦：误清一个的代价小，天天用的命令不该每次都弹窗。
+      if (v === "all" && !window.confirm("清空全部变体的访问记录（含时间戳）？此操作不可撤销。")) {
+        flash("已取消");
+        return;
+      }
       window.Stats.reset(v).then(function (r) {
         if (r && r.ok) {
           flash(label + " 已清零");

@@ -93,7 +93,14 @@ body.v-china-biz { --aside-w: 324px; }
 .cv-at { color: var(--ink-faint); font-weight: 400; }
 .cv-item-body { color: var(--ink-soft); max-width: 64ch; }
 
-.cv-tags { display: flex; flex-wrap: wrap; gap: var(--s1); margin-top: var(--s3); }
+/* tags 恒为一排（本人要求）：不换行。窄屏放不下时横向滚动，而不是折成第二排 ——
+   折行会把条目高度从 1 行涨到 2 行，四语下高度还不一致，条目之间的节奏就散了。
+   前提是数据侧每条最多 4 个短 tag（见 data/base.js 的 projects/work）；
+   真要加第 5 个，先量一下 113mm 的打印列放不放得下（print.css 里是 nowrap 且不滚动）。 */
+.cv-tags { display: flex; flex-wrap: nowrap; gap: var(--s1); margin-top: var(--s3);
+  overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
+.cv-tags::-webkit-scrollbar { display: none; }
+.cv-tags li { flex-shrink: 0; }
 .cv-tags li { font-size: var(--fs-micro); font-family: var(--font-mono); color: var(--ink-soft); border: var(--hair) solid var(--line); padding: 1px var(--s2); }
 
 .cv-portfolio { display: grid; grid-template-columns: 1fr; gap: var(--s2); }

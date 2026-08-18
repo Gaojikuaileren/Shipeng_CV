@@ -53,6 +53,12 @@ window.UI_TEXT = {
     collapse: { zh: "收起",           ja: "折りたたむ",           en: "Show fewer",       de: "Weniger anzeigen" },
   },
 
+  /* 项目经历折叠。与 mwToggle 同一套语气，只是量词从「项/件/works」换成「项目/件/projects」。 */
+  prjToggle: {
+    expand:   { zh: "展开全部 {n} 个项目", ja: "すべての案件を表示（{n} 件）", en: "Show all {n} projects", de: "Alle {n} Projekte anzeigen" },
+    collapse: { zh: "收起",               ja: "折りたたむ",                   en: "Show fewer",           de: "Weniger anzeigen" },
+  },
+
   /* 作品链接页 works.html —— PDF 作品集里那个共用 QR 扫进来的落地页。
      纸上印不了超链接，扫码的人又几乎都在手机上 → 那一页把每件作品做成可点的大块链接。
      页面标题直接用 profile.name，这里只放页面自己的文案。 */

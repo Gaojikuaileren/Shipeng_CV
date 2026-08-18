@@ -48,10 +48,17 @@ variants/<v>.js（按 ?v= 动态注入，RESUME_VARIANT）
 
 works.html（作品链接页，同一份 base + 同一套变体机制，只是换个渲染）
    ↓ 读 ?v=（缺省 ue5-tech）＋ ?lang=，复用 Render.workLink 判定「哪些条目有链接、配哪个徽标」
-   ↓ 变体白名单读 base.meta.variants（本页不另抄一份）；带了 ?v= 却不在名单里 → console.warn
+   ↓ 变体解析走 scripts/variants.js（短链与长 ID 都认，本页不另抄白名单）；认不出 → console.warn
    ↓ #wk-root —— 单列大块超链接，给扫二维码的手机看
 ```
 语言优先级：`?lang=` > localStorage > 浏览器语言 > `meta.defaultLang`。
+
+**短链 ↔ 内部 ID（`scripts/variants.js`，全站唯一一份）**：对外发 `?v=ue|fl|ds|mn|cd`，
+对内一律用长 ID（`ue5-tech|art-vr|designer|odd|china-biz`）—— 统计计数键、`body.v-*` 排版类名、
+数据文件名都是长 ID，所以短链改名不断历史统计、不用重调按变体标定的 PDF 版式。
+旧链（`?v=ue5-tech`，含已印在 PDF 二维码里的）与退役 ID（`ue5-ai` → `ue5-tech`）永久有效：
+认出后照常渲染，只用 `history.replaceState` 把地址栏静默换成短链 —— 不跳转、不重载、不多记一次访问。
+`?v=mn` 指向独立页面 `odd/`，是这套里唯一会整页跳转的一条（跳转发生在打点之前，不会重复计数）。
 
 **技能两结构（解耦）**：`capabilities`（核心能力，侧边栏，四语带熟练度，变体 `sidebar` 选）＋ `tools`（具体软件，工具集，变体 `highlightTools` 高亮）。加能力/软件互不影响。
 

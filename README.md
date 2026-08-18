@@ -65,15 +65,32 @@ node tools/serve.js
    - `contactNote` 联系方式下方一句话 CTA（如求职 ＋ 合作双身份）
    - `worksPage: true` 把 PDF 作品集里那个共用二维码改指向 `works.html`（见下方「作品链接页」）。
      不写＝二维码仍指向 Vimeo 主页（老变体保持原样，不多一次跳转）
-3. 把链接 `你的域名/?v=你起的名字` 发给对应招聘方。
-4. 新变体还要在**四处**登记，否则不生效（漏了大多不报错，只是悄悄不对）：
-   - `data/base.js` 的 `meta.variants`（变体白名单的唯一真相；**`works.html` 从这里读**，
-     漏了它会静默渲染缺省变体的作品清单）
-   - `index.html` 顶部 `VALID = { … }`（裸入口拦截白名单，漏了会显示占位点）。
-     这份必须手工同步：它要在 body 渲染前跑完，早于 `data/base.js`，读不到 `meta.variants`
-   - `hub.html` 的 `ROUTES` / `NAMES` / `ORDER` / `CLEAN`
+3. 把短链 `你的域名/?v=<短码>` 发给对应招聘方。
+4. 新变体还要在**三处**登记，否则不生效（漏了大多不报错，只是悄悄不对）：
+   - `scripts/variants.js` 的 `ALIAS`（**短链 ↔ 内部 ID 的唯一真相**；
+     `index.html` 的裸入口拦截、`works.html` 的作品清单、`identity.js` 都从这里读）
+   - `data/base.js` 的 `meta.variants`
    - `worker/cv-stats-worker.js` 的 `VARIANTS`（漏了 `/hit` 与 `/pdf` 返回 400，访问量一次都记不上；
      改完要在 `worker/` 目录跑 `wrangler deploy` 才生效）
+   另外 `hub.html` 的 `ROUTES` / `NAMES` / `ORDER` / `CLEAN` 是控制台自己的清单，按需加。
+
+### 短链与旧链
+
+对外一律用短码，对内一律用长 ID：
+
+| 短链 | 内部 ID | 是谁 |
+|---|---|---|
+| `?v=ue` | `ue5-tech` | 游戏 / UE5 + 视觉生成式 AI |
+| `?v=fl` | `art-vr` | 自由职业媒体艺术 |
+| `?v=ds` | `designer` | 设计 |
+| `?v=mn` | `odd`（跳到 `odd/`） | 兼职 Mini-Job |
+| `?v=cd` | `china-biz` | 外贸 / 中德商务 |
+
+**已经发出去的旧链（`?v=ue5-tech`）与 PDF 二维码里的长地址永久有效**：
+`index.html` 头部脚本认出长 ID 后照常渲染，只用 `history.replaceState` 把地址栏静默换成短链
+—— 不跳转、不重载，因此**不会多记一次访问**。
+统计打点、`body.v-*` 排版类名、数据文件名一律仍用长 ID → 换短链不断历史计数、
+不用重调按变体标定的 PDF 版式。
 
 无参数 `/` = 占位点（不暴露内容）；变体不存在自动回退 `ue5-tech`。
 **写错 id 会在浏览器控制台 `console.warn` 提示**，方便排查笔误。
@@ -136,8 +153,11 @@ node tools/serve.js
 - 站点：`https://gaojikuaileren.github.io/Shipeng_CV/`
 - 仓库：`github.com/Gaojikuaileren/Shipeng_CV`（main 分支根目录，GitHub Pages）
 - **私人控制台**：`/hub.html` —— 指令式（未被任何公开页链接，只给你自己用）
-  · `/s01` 游戏开发　`/s02` 媒体艺术　`/s03` 设计师　`/s04` 兼职　`/s05` 中德商务　`/s06` UE5+AI
-  · `/sdata` 看分职业访问统计；`/clean01`–`/clean06`、`/cleanall` 清零
+  · `/s01` 游戏开发（`?v=ue`）　`/s02` 媒体艺术（`?v=fl`）　`/s03` 设计师（`?v=ds`）
+    `/s04` 兼职（`odd/`）　`/s05` 中德商务（`?v=cd`）
+  · `/sdata` 看分职业访问统计
+  · `/clean01`–`/clean05` 按变体清零；**`/cleanall` 清空全部访问记录**（含时间戳，
+    不可撤销 → 会弹一次确认；单个变体不弹）
 
 **改完内容重新部署**：`git add -A && git commit -m "..." && git push`，1–2 分钟自动重建。
 
@@ -167,6 +187,7 @@ Shipeng_CV/
 │   ├── print.css         A4 简历 + 名片 + 打印专项
 │   └── works.css         works.html 专用（只被它引用，不影响简历本体）
 ├── scripts/
+│   ├── variants.js       变体注册表：短链 ↔ 内部 ID（全站唯一一份）
 │   ├── i18n-ui.js        所有 UI 文案（四语集中）
 │   ├── i18n.js           语言检测/切换
 │   ├── identity.js       变体 / 本人模式解析

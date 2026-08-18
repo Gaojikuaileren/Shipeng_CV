@@ -10,7 +10,7 @@ window.RESUME_VARIANT = {
   },
   intro: {
     zh: "KHM 媒体艺术 Diplom，自由职业媒体艺术开发者。把空间、身体与实时影像编织成沉浸式现场体验。以虚幻引擎为主工具，涵盖 VR/MR、互动装置与传感器系统。开放新的委托、驻留与合作项目。",
-    ja: "KHM メディアアーツ Diplom、フリーランス・メディアアーツ・デベロッパー。空間・身体・リアルタイム映像を沉浸型ライブ体験へと織り上げる。UE5 を主軸に VR/MR、インタラクティブインスタレーション、センサーシステムに対応。新たな委託・レジデンス・コラボを歓迎。",
+    ja: "KHM メディアアーツ Diplom、フリーランス・メディアアーツ・デベロッパー。空間・身体・リアルタイム映像を没入型ライブ体験へと織り上げる。UE5 を主軸に VR/MR、インタラクティブインスタレーション、センサーシステムに対応。新たな委託・レジデンス・コラボを歓迎。",
     en: "KHM Media Arts Diploma, freelance media arts developer. I weave space, body and real-time imagery into immersive live experiences. Primary tool: Unreal Engine — spanning VR/MR, interactive installation and sensor systems. Open to commissions, residencies and collaborations.",
     de: "KHM Diplom in Media Arts, freiberuflicher Medienkunst-Entwickler. Ich verwebe Raum, Körper und Echtzeit-Bilder zu immersiven Live-Erlebnissen. Hauptwerkzeug: Unreal Engine — für VR/MR, interaktive Installation und Sensorsysteme. Offen für Aufträge, Residenzen und Kollaborationen.",
   },

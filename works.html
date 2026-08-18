@@ -30,6 +30,7 @@
   <main class="wk-page" id="wk-root"></main>
 
   <!-- 数据：与简历同一份 base + 同一套变体机制，绝不在这里另抄一份链接 -->
+  <script src="scripts/variants.js"></script>
   <script src="data/base.js"></script>
   <script src="scripts/i18n-ui.js"></script>
   <script src="scripts/i18n.js"></script>
@@ -51,22 +52,18 @@
     (function () {
       "use strict";
 
-      /* 变体白名单：唯一真相在 data/base.js 的 meta.variants，本页不再另抄一份 ——
-         抄第二份的代价不是报错，而是「新变体忘了登记 → 静默渲染别人的作品清单」。
-         base 没加载 / 老 base 没这个字段时退回只认缺省变体，绝不去猜。 */
-      var META = (window.RESUME_BASE && window.RESUME_BASE.meta) || {};
-      var DEFAULT_V = "ue5-tech";
-      var VALID = {};
-      (META.variants || [DEFAULT_V]).forEach(function (id) { VALID[id] = 1; });
-
+      /* 变体解析：短链（?v=ue）与旧的长 ID（?v=ue5-tech）都认，唯一真相在 scripts/variants.js。
+         本页以前自己抄了一份白名单 —— 抄第二份的代价不是报错，而是「新变体忘了登记 →
+         静默渲染别人的作品清单」。现在两边共用同一张表，抄不出第二份。 */
       var params = new URLSearchParams(location.search);
-      var raw = (params.get("v") || "").replace(/[^a-z0-9-]/gi, "").slice(0, 40);
-      var variant = raw;
-      if (!VALID[variant]) {
+      var DEFAULT_V = "ue5-tech";
+      var resolved = window.VARIANTS.resolve(params.get("v"));
+      var variant = resolved.id;
+      if (!variant) {
         // 不带 ?v= 是有意的缺省（README 已写明）；带了却不认识则多半是漏登记 —— 必须出声，
         // 否则扫码的 HR 看到的是另一个变体的作品清单，双方都不知情。
-        if (raw) console.warn('[works] 未登记的变体 "' + raw + '" → 回落 ' + DEFAULT_V +
-          "；新变体请加进 data/base.js 的 meta.variants");
+        if (params.get("v")) console.warn('[works] 未登记的变体 "' + params.get("v") +
+          '" → 回落 ' + DEFAULT_V + "；新变体请加进 scripts/variants.js");
         variant = DEFAULT_V;
       }
 
@@ -187,7 +184,7 @@
         // 回到完整简历（带上变体与当前语言，与扫码进来的那份 PDF 对得上）
         var foot = el("footer", "wk-foot");
         var back = el("a", "wk-back", "← " + t(W.backCV));
-        back.href = "index.html?v=" + encodeURIComponent(variant) +
+        back.href = "index.html?v=" + encodeURIComponent(window.VARIANTS.toShort(variant)) +
           "&lang=" + encodeURIComponent(window.I18n.current);
         foot.appendChild(back);
         root.appendChild(foot);

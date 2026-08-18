@@ -39,6 +39,7 @@
   const TXT = window.UI_TEXT.txt;
   const SKILL_GROUPS = window.UI_TEXT.group;
   const MW_TOGGLE = window.UI_TEXT.mwToggle;
+  const PRJ_TOGGLE = window.UI_TEXT.prjToggle;
   const WORKS = window.UI_TEXT.works;
 
   /* —— reveal ——————————————————————————————— */
@@ -232,9 +233,44 @@
       h("p", { class: "cv-item-body" }, t(e.summary)),
       e.tags && e.tags.length ? h("ul", { class: "cv-tags" }, e.tags.map((tg) => h("li", null, tg))) : null);
   }
-  function renderProjects(d) {
+  /* —— 项目经历折叠（屏幕端）——————————————————————————
+     一条项目 = 期间 + 标题 + 类型 + 正文 + tags，桌面下整块要 1.4–1.7 屏、手机 2.5 屏，
+     一个板块就把页面拖长 → 超过 PRJ_COLLAPSED 条时默认只显示前几条，其余给按钮展开。
+     做法与「更多作品」完全一致（真 <button> ＋ aria-expanded / aria-controls，键盘可用）。
+
+     两条硬性约束，与 renderMoreWorks 同源：
+       1) PDF 必须全量 —— print.css 有两条兜底：按钮 display:none、
+          [data-sec="projects"] .cv-item[hidden] 强制现形。屏幕折没折不影响纸面。
+       2) 不到阈值的变体一点不变 —— art-vr 只有 2 条（hideItems 挡掉两条），
+          走上面那条 return，既不加 hidden、也不加 id、更不建按钮，DOM 逐字节同改造前。
+     阈值取 2：ue5-tech 4 条 → 收起后仍能看到两条最重的（emphasizeItems 排在前）。 */
+  const PRJ_COLLAPSED = 2;
+  const PRJ_SEC_ID = "cv-projects-sec";
+  function renderProjects(d, forPrint) {
     if (!d.projects || !d.projects.length) return null;
-    return sectionBlock("projects", d.projects.map(expItem));
+    const items = d.projects.map(expItem);
+    // forPrint：printFullWidth 生成的打印副本。不折叠、不建按钮、不带 id ——
+    // 否则会造出重复的 #cv-projects-sec 与指错的 aria-controls（与 moreWorks 同源的坑）
+    if (forPrint || items.length <= PRJ_COLLAPSED) return sectionBlock("projects", items);
+    for (let i = PRJ_COLLAPSED; i < items.length; i++) items[i].hidden = true;
+    const sec = sectionBlock("projects", items,
+      h("button", { class: "cv-mw-more cv-prj-more", type: "button", "aria-expanded": "false",
+        "aria-controls": PRJ_SEC_ID, onclick: onPrjToggle },
+        t(PRJ_TOGGLE.expand).replace("{n}", String(items.length))));
+    sec.id = PRJ_SEC_ID; // 给 aria-controls 用；按钮控制的就是这个板块里的条目
+    return sec;
+  }
+  function onPrjToggle(e) {
+    const btn = e.currentTarget;
+    const sec = document.getElementById(btn.getAttribute("aria-controls"));
+    if (!sec) return;
+    const open = btn.getAttribute("aria-expanded") !== "true";
+    const rows = sec.querySelectorAll(".cv-item");
+    for (let i = PRJ_COLLAPSED; i < rows.length; i++) rows[i].hidden = !open;
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    btn.textContent = open ? t(PRJ_TOGGLE.collapse)
+      : t(PRJ_TOGGLE.expand).replace("{n}", String(rows.length));
+    if (!open) btn.scrollIntoView({ block: "nearest" }); // 收起后按钮别被甩到视口上方
   }
   function renderWork(d) {
     if (!d.work || !d.work.length) return null;
@@ -284,7 +320,8 @@
     if (location.protocol !== "http:" && location.protocol !== "https:") return null;
     const v = (window.Identity && window.Identity.variant) || "";
     return new URL(".", location.href).href +
-      "works.html?v=" + encodeURIComponent(v) + "&lang=" + encodeURIComponent(lang);
+      "works.html?v=" + encodeURIComponent(window.VARIANTS ? window.VARIANTS.toShort(v) : v) +
+      "&lang=" + encodeURIComponent(lang);
   }
   // 打印块：QR ＋ 有序目录。note 为空（没开 worksPage）时结构与改造前一字不差
   function portfolioPrint(works, qrUrl, note) {
@@ -509,7 +546,9 @@
          原位那份打上 .print-moved，由 print.css 在打印态隐藏（屏幕端照旧双栏）。 */
       (d.printFullWidth || []).forEach((k) => {
         if (MAIN_DEFAULT.indexOf(k) === -1 || hide.has(k)) return;
-        const copy = RENDER[k] && RENDER[k](d);
+        // 传 forPrint=true：会折叠的板块（moreWorks / projects）在打印副本里必须全量、
+        // 且不能带按钮与 id —— 否则同一个 id 在文档里出现两次
+        const copy = RENDER[k] && RENDER[k](d, true);
         if (!copy) return;
         const inGrid = main.querySelector('[data-sec="' + k + '"]');
         if (inGrid) inGrid.classList.add("print-moved");

@@ -29,20 +29,40 @@
   <link rel="stylesheet" href="styles/motion.css" />
   <link rel="stylesheet" href="styles/print.css" />
 
-  <!-- 裸入口拦截：无有效 ?v= 且非本人模式 → 占位（同步执行，须在 body 渲染前判定，防工具栏闪现暴露内容）-->
+  <!-- 变体注册表（短链 ↔ 内部 ID）。必须排在下面那段之前：裸入口判定要用它解析 ?v= -->
+  <script src="scripts/variants.js"></script>
+
+  <!-- 短链解析 ＋ 裸入口拦截（同步执行，须在 body 渲染前判定，防工具栏闪现暴露内容）
+       1) ?v=mn 这类指向独立页面的 → 整页跳过去（此时本页还没渲染、也还没打点）
+       2) 认不出来的 ?v= 且非本人模式 → 占位
+       3) 旧的长 ID（?v=ue5-tech，已经发出去的链接与 PDF 二维码）→ 照常渲染，
+          只把地址栏静默换成短链：replaceState 不重载、不跳转，因此不会多记一次访问 -->
   <script>
     (function () {
       var p = new URLSearchParams(location.search);
-      var v = (p.get("v") || "").replace(/[^a-z0-9-]/gi, "");
-      // ⚠️ 全站唯一一份需要手工同步的白名单副本：本段必须在 body 渲染前同步跑完（防内容闪现），
-      //    因此排在 data/base.js 之前，读不到那边的 meta.variants。新增变体两处都要加。
-      var VALID = { "ue5-tech": 1, "art-vr": 1, "designer": 1, "china-biz": 1 };
+      var r = window.VARIANTS.resolve(p.get("v"));
+
+      if (r.redirect) {
+        p.delete("v");                       // 目标页面自己就是那个变体，不需要再带 v
+        var q = p.toString();
+        location.replace(r.redirect + (q ? "?" + q : "") + location.hash);
+        return;
+      }
+
       var full = p.get("mode") === "full";
       var saved = false; try { saved = localStorage.getItem("cv-mode") === "full"; } catch (e) {}
-      if (!VALID[v] && !full && !saved) {
+      if (!r.id && !full && !saved) {
         window.__BLANK__ = true;
         document.documentElement.className += " blank";
         document.title = "·"; // 标签页标题也不暴露姓名 / CV
+        return;
+      }
+
+      if (r.short && p.get("v") !== r.short) {
+        p.set("v", r.short);
+        try {
+          history.replaceState(null, "", location.pathname + "?" + p.toString() + location.hash);
+        } catch (e) {} // file:// 下 replaceState 会抛，静默忽略：地址栏好不好看不值得挡住渲染
       }
     })();
   </script>

@@ -38,7 +38,7 @@ window.RESUME_BASE = {
       zh: "媒体艺术开发者 · UE5 / VR / 互动装置",
       ja: "メディアアーツ・デベロッパー · UE5 / VR / インタラクティブ・インスタレーション",
       en: "Media Arts Developer · UE5 / VR / Interactive Installation",
-      de: "Medienkünstler & Entwickler · UE5 / VR / Interaktive Installation",
+      de: "Medienkunst-Entwickler · UE5 / VR / Interaktive Installation",
     },
     photo: "assets/photo/FotoCV-2026.jpg",
     photoAlt: { zh: "照片", ja: "顔写真", en: "Portrait", de: "Porträt" },
@@ -231,7 +231,7 @@ window.RESUME_BASE = {
         en: "Users explore a virtual room connected to real-time sensor feedback from physical objects, creating a hybrid space between physical presence, digital memory and immersive storytelling.",
         de: "Benutzer erkunden einen virtuellen Raum, der über Echtzeit-Sensorfeedback mit physischen Objekten verbunden ist — ein Hybridraum zwischen körperlicher Präsenz, digitalem Gedächtnis und immersivem Storytelling.",
       },
-      tags: ["UE5", "MR", "VR", "Sensor Feedback", "Interactive Installation", "KHM"],
+      tags: ["UE5", "MR", "VR", "Sensors"],
       video: "https://vimeo.com/user169301773", // TODO: 替换为该作品的具体 Vimeo 链接
     },
     {
@@ -267,7 +267,7 @@ window.RESUME_BASE = {
         en: "Elderly care home residents digitized through facial scanning and reconstructed in virtual space. Interviews and research create interactive life archives — combining digital human, VR space and social care.",
         de: "Pflegeheim-Bewohner wurden per Gesichtsscan digitalisiert und im virtuellen Raum rekonstruiert. Interviews und Recherche ergeben interaktive Lebensarchive — Digital Human, VR und soziale Fürsorge verbunden.",
       },
-      tags: ["VR", "Digital Human", "3D Scan", "Digital Archive", "Social Art", "UE5"],
+      tags: ["UE5", "VR", "Digital Human", "3D Scan"],
       video: "https://vimeo.com/user169301773", // TODO: 替换为具体视频链接
     },
     {
@@ -304,7 +304,7 @@ window.RESUME_BASE = {
         en: "Built a real-time compositing pipeline for virtual production at KHM: on-set compositing with Unreal Engine 5.5 and Composure, live camera tracking via LiveLink, and a working USD asset exchange with external tools. Demo scene built from my own 3D assets.",
         de: "Aufbau einer Echtzeit-Compositing-Pipeline für Virtual Production an der KHM: On-Set-Compositing mit Unreal Engine 5.5 und Composure, Live-Kameratracking über LiveLink sowie ein funktionierender USD-Assetaustausch mit externen Werkzeugen. Demo-Szene aus eigenen 3D-Assets.",
       },
-      tags: ["Unreal Engine 5.5", "Virtual Production", "Composure", "LiveLink", "Camera Tracking", "USD"],
+      tags: ["UE5", "Blackmagic", "Seemo", "Lightcraft"],
     },
     {
       id: "prj-versewiki",
@@ -328,7 +328,7 @@ window.RESUME_BASE = {
         en: "Written for authors who already know Unreal Engine Blueprints: maps familiar concepts — Branch, ForEach, Set, Event Dispatcher — one by one onto Verse syntax and rules. 30 lessons across 9 chapters, each with a Blueprint-comparison block, plus a terminology table and quick-reference cards. Fully bilingual (Chinese / English).",
         de: "Für Unreal-Engine-Nutzer mit Blueprint-Erfahrung: bekannte Konzepte wie Branch, ForEach, Set und Event Dispatcher werden einzeln auf Verse-Syntax und -Regeln abgebildet. 30 Lektionen in 9 Kapiteln, jede mit einem Blueprint-Vergleichsblock, dazu Begriffstabelle und Kurzreferenzkarten. Durchgehend zweisprachig (Chinesisch / Englisch).",
       },
-      tags: ["Unreal Engine", "Verse", "Cloudflare", "Supabase", "CN / EN"],
+      tags: ["UE Verse", "Cloudflare", "Supabase", "CN / EN"],
       link: "https://verse-wiki.pages.dev",
       linkKind: "web",
     },
@@ -410,7 +410,7 @@ window.RESUME_BASE = {
         en: "UE5, real-time 3D, VR/MR, interactive systems, sensor integration, visualization and digital asset production — for art projects, media productions and independent clients across Germany and remote.",
         de: "UE5, Echtzeit-3D, VR/MR, interaktive Systeme, Sensor-Integration, Visualisierung und digitale Asset-Produktion für Kunstprojekte, Medienproduktionen und unabhängige Kunden — in Deutschland und remote.",
       },
-      tags: ["UE5", "VR/MR", "Interactive Systems", "Sensor Integration", "Real-time 3D"],
+      tags: ["UE5", "VR/MR", "Sensors", "Real-time 3D"],
     },
     {
       id: "work-portfolio",
@@ -456,7 +456,7 @@ window.RESUME_BASE = {
         en: "Visual content for a used-car trading platform: web design, UI visuals and advertising graphics.",
         de: "Visuelle Inhalte für eine Gebrauchtwagenplattform: Webdesign, UI-Visuals und Werbegrafik.",
       },
-      tags: ["Web Design", "Graphic Design", "UI", "Image Editing", "3D Modelling"],
+      tags: ["Web Design", "Graphic Design", "UI", "3D"],
     },
   ],
 
