@@ -19,6 +19,17 @@ window.Stats = {
       /\.local$/.test(h) || /^192\.168\./.test(h) || /^10\./.test(h);
   },
 
+  /* 本人自己的访问不计数。
+     没有 cookie 的前提下，唯一可靠的办法是在每台设备上做一次标记：
+     开一次 ?me=1（处理见 index.html 头部），本机就记下 cv-me，从此这个浏览器永不打点。
+     mode=full 也一并算本人 —— 那个标记只有你自己会有。
+     代价：换浏览器 / 清数据 / 无痕窗口都要重新标一次。这是不用 cookie 的必然结果。 */
+  _isOwner: function () {
+    try {
+      return localStorage.getItem("cv-me") === "1" || localStorage.getItem("cv-mode") === "full";
+    } catch (e) { return false; } // 隐私模式下 localStorage 可能抛，抛了就当普通访客
+  },
+
   _ready: function () {
     return /^https?:\/\/.+/.test(this.URL);
   },
@@ -26,15 +37,34 @@ window.Stats = {
   _post: function (path) {
     if (!this._ready()) return;
     if (this._isLocal()) { console.info("[stats] 本机环境，跳过打点：" + path); return; }
+    if (this._isOwner()) { console.info("[stats] 本机已标记为本人，跳过打点：" + path); return; }
     try {
       fetch(this.URL + path, { method: "POST", mode: "cors", keepalive: true }).catch(function () {});
     } catch (e) {}
   },
 
-  // 记录一次访问（按职业；访客打开简历时调用）
-  ping: function (variant) {
+  /* 记录一次访问。除了职业，另带两样**不指向任何个人**的信息：
+       lang 对方实际读的是哪一语（判断某个语言版本值不值得继续打磨）
+       dev  手机还是桌面（按视口宽度判断，不嗅探 UA）
+     国家不在这里发 —— 那个由 worker 从 Cloudflare 的边缘信息里取，前端无从伪造。 */
+  ping: function (variant, lang, dev) {
     if (!variant) return;
-    this._post("/hit?v=" + encodeURIComponent(variant));
+    this._post("/hit?v=" + encodeURIComponent(variant) +
+      (lang ? "&lang=" + encodeURIComponent(lang) : "") +
+      (dev ? "&dev=" + encodeURIComponent(dev) : ""));
+  },
+
+  /* 记录「读得深不深」：停留秒数 ＋ 滚动到的百分比。
+     页面关闭那一刻才知道结果，那时普通 fetch 会被浏览器掐断 → 用 sendBeacon，
+     它把请求交给浏览器在后台发完，不阻塞关闭。
+     只发这一次、只发两个数，服务端也只累加总数 —— 单次停留时长是能用来认人的，总数不能。 */
+  readHit: function (variant, sec, depth) {
+    if (!variant || !this._ready() || this._isLocal() || this._isOwner()) return;
+    if (!navigator.sendBeacon) return; // 老浏览器直接放弃，不值得为它降级成同步请求
+    try {
+      navigator.sendBeacon(this.URL + "/read?v=" + encodeURIComponent(variant) +
+        "&sec=" + encodeURIComponent(sec) + "&depth=" + encodeURIComponent(depth));
+    } catch (e) {}
   },
 
   // 记录一次「作品页被打开」（纸质 PDF 上的二维码被扫进来）

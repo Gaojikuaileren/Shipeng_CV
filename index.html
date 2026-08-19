@@ -50,6 +50,18 @@
         return;
       }
 
+      /* ?me=1 —— 把这台设备标记成「本人」，从此不再计入访问统计；?me=0 撤销。
+         没有 cookie 的前提下，排除自己访问的唯一可靠办法就是逐台设备标记一次。
+         标记完当场把参数从地址栏抹掉：一来地址干净，二来免得这个链接被转发出去
+         让别人也变成「本人」。 */
+      var me = p.get("me");
+      if (me === "1" || me === "0") {
+        try { me === "1" ? localStorage.setItem("cv-me", "1") : localStorage.removeItem("cv-me"); } catch (e) {}
+        p.delete("me");
+        var q = p.toString();
+        try { history.replaceState(null, "", location.pathname + (q ? "?" + q : "") + location.hash); } catch (e) {}
+      }
+
       var full = p.get("mode") === "full";
       var saved = false; try { saved = localStorage.getItem("cv-mode") === "full"; } catch (e) {}
       if (!r.id && !full && !saved) {

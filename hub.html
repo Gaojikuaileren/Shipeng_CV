@@ -26,6 +26,13 @@
     #send:hover { background: var(--accent); }
 
     /* 底端两数字（合计） */
+    .me { margin-top: var(--s3); font-size: .72rem; color: var(--ink-faint); letter-spacing: .04em; }
+    .me a { color: var(--ink-faint); text-underline-offset: .2em; }
+    .me b { color: var(--ink); font-weight: 600; }
+    .dist { display: flex; flex-direction: column; gap: 4px; margin-bottom: var(--s4); }
+    .dist-row { display: flex; gap: var(--s3); font-size: .78rem; line-height: 1.5; }
+    .dist-k { color: var(--ink-faint); min-width: 3em; flex-shrink: 0; }
+    .dist-v { font-family: var(--font-mono); color: var(--ink); }
     .stats { font-family: var(--font-mono); font-size: .82rem; color: var(--ink-faint); letter-spacing: .05em;
       display: flex; gap: 20px; }
     .stats b { color: var(--ink); font-weight: 600; }
@@ -77,11 +84,15 @@
       <button id="send" type="button" aria-label="执行">↵</button>
     </div>
     <div class="stats" id="stats"><span>Σ <b id="st-total">—</b></span><span>W <b id="st-week">—</b></span></div>
+    <!-- 本机是否被排除在统计之外。手机上想标记，就在手机浏览器里开一次那个链接。 -->
+    <div class="me" id="me"></div>
   </main>
 
   <div class="data" id="data">
     <div class="data-head"><span id="data-title">ACCESS</span><button class="data-close" id="data-close" aria-label="关闭">✕</button></div>
     <table class="stat-table" id="stat-table"></table>
+    <div class="log-title">分布</div>
+    <div class="dist" id="dist"></div>
     <div class="log-title">最近访问</div>
     <ul class="log" id="log"></ul>
   </div>
@@ -136,22 +147,51 @@
       log.innerHTML = '<li class="log-empty">加载中…</li>';
       if (!window.Stats || !window.Stats._ready()) { log.innerHTML = '<li class="log-empty">统计未配置</li>'; return; }
       window.Stats.data().then(function (d) {
-        renderStats(d); renderTable(d); renderLog(d);
+        renderStats(d); renderTable(d); renderDist(d); renderLog(d);
       }).catch(function () { log.innerHTML = '<li class="log-empty">读取失败</li>'; });
     }
 
     function renderTable(d) {
       var table = document.getElementById("stat-table");
       var vs = d.variants || {};
-      var head = '<thead><tr><th></th><th>访问</th><th>PDF</th><th>扫码</th><th>本周</th></tr></thead>';
+      var head = '<thead><tr><th></th><th>访问</th><th>PDF</th><th>扫码</th><th>停留</th><th>读完</th><th>本周</th></tr></thead>';
       var body = '<tbody>';
       ORDER.forEach(function (id) {
         var x = vs[id] || { visits: 0, pdf: 0, works: 0, thisWeek: 0 };
-        body += '<tr><td class="n">' + NAMES[id] + '</td><td>' + (x.visits||0) + '</td><td>' + (x.pdf||0) + '</td><td>' + (x.works||0) + '</td><td>' + (x.thisWeek||0) + '</td></tr>';
+        // 停留与读完只有在真有样本时才显示数字，否则给一个「—」，别让 0 冒充「读了 0 秒」
+        var sec = x.readN ? x.avgSec + 's' : '—';
+        var dep = x.readN ? x.avgDepth + '%' : '—';
+        body += '<tr><td class="n">' + NAMES[id] + '</td><td>' + (x.visits||0) + '</td><td>' + (x.pdf||0) + '</td><td>' + (x.works||0) + '</td><td>' + sec + '</td><td>' + dep + '</td><td>' + (x.thisWeek||0) + '</td></tr>';
       });
-      body += '<tr class="sum"><td class="n">合计</td><td>' + (d.total||0) + '</td><td>' + (d.totalPdf||0) + '</td><td>' + (d.totalWorks||0) + '</td><td>' + (d.thisWeek||0) + '</td></tr>';
+      body += '<tr class="sum"><td class="n">合计</td><td>' + (d.total||0) + '</td><td>' + (d.totalPdf||0) + '</td><td>' + (d.totalWorks||0) + '</td><td></td><td></td><td>' + (d.thisWeek||0) + '</td></tr>';
       body += '</tbody>';
       table.innerHTML = head + body;
+    }
+
+    /* 分布：语言 / 国家 / 设备。把五个变体的计数合起来看 —— 分变体看样本太少，没意义。
+       按数量降序，只显示有数的项。 */
+    function renderDist(d) {
+      var box = document.getElementById("dist");
+      var vs = d.variants || {};
+      var acc = { lang: {}, geo: {}, dev: {} };
+      ORDER.forEach(function (id) {
+        var x = vs[id]; if (!x) return;
+        ["lang", "geo", "dev"].forEach(function (k) {
+          var m = x[k] || {};
+          Object.keys(m).forEach(function (kk) { acc[k][kk] = (acc[k][kk] || 0) + m[kk]; });
+        });
+      });
+      var DEVNAME = { m: "手机", d: "桌面" };
+      function line(label, map, rename) {
+        var keys = Object.keys(map).filter(function (k) { return map[k] > 0; })
+          .sort(function (a, b) { return map[b] - map[a]; });
+        if (!keys.length) return '<div class="dist-row"><span class="dist-k">' + label + '</span><span class="dist-v">—</span></div>';
+        var txt = keys.map(function (k) {
+          return (rename && rename[k] ? rename[k] : k) + " " + map[k];
+        }).join("　·　");
+        return '<div class="dist-row"><span class="dist-k">' + label + '</span><span class="dist-v">' + txt + '</span></div>';
+      }
+      box.innerHTML = line("语言", acc.lang) + line("国家", acc.geo) + line("设备", acc.dev, DEVNAME);
     }
 
     function renderLog(d) {
@@ -200,13 +240,26 @@
           flash(label + " 已清零");
           window.Stats.data().then(function (d) {
             renderStats(d);
-            if (dataEl.classList.contains("show")) { renderTable(d); renderLog(d); }
+            if (dataEl.classList.contains("show")) { renderTable(d); renderDist(d); renderLog(d); }
           }).catch(function () {});
         } else {
           flash("清零失败" + (r && r.error ? "：" + r.error : ""));
         }
       }).catch(function () { flash("清零失败"); });
     }
+
+    /* 本机有没有被标记成「本人」。标记过的浏览器不会计入任何统计 ——
+       这是不用 cookie 排除自己访问的唯一可靠办法，代价是每台设备都要标一次。 */
+    function renderMe() {
+      var box = document.getElementById("me");
+      var on = false;
+      try { on = localStorage.getItem("cv-me") === "1" || localStorage.getItem("cv-mode") === "full"; } catch (e) {}
+      var link = dir + "?v=ue&me=" + (on ? "0" : "1");
+      box.innerHTML = on
+        ? '本机<b>已排除</b>在统计之外　·　<a href="' + link + '">取消排除</a>'
+        : '本机<b>未排除</b> —— 你自己的访问正在被计数　·　<a href="' + link + '">标记为本人</a>';
+    }
+    renderMe();
 
     // 载入时取底端两数字
     if (window.Stats && window.Stats._ready()) {

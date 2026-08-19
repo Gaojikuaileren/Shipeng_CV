@@ -12,7 +12,12 @@
     }
     window.Identity.init();
     window.I18n.init(window.RESUME_BASE.meta);
-    if (window.Stats) window.Stats.ping(window.Identity.variant); // 记录一次访问（按职业，无 IP / cookie）
+    // 记录一次访问（按职业 ＋ 读的哪一语 ＋ 手机还是桌面；无 IP、无 cookie、无标识符）
+    if (window.Stats) {
+      window.Stats.ping(window.Identity.variant, window.I18n.current,
+        window.innerWidth < 760 ? "m" : "d");
+      trackReading(window.Identity.variant);
+    }
 
     window.DataLoader.load(window.Identity.variant).then((data) => {
       try {
@@ -72,6 +77,48 @@
         else window.scrollTo(0, y); // 没找到锚点（页面还在最顶上）就退回按像素还原
       } catch (e) { console.error("[cv] re-render failed", e); }
     });
+  }
+
+  /* —— 读得深不深 ————————————————————————————————
+     单看「访问数」回答不了任何问题：打开一下就算一次，三秒关掉和读完十分钟没有区别。
+     这里记两个数：真正看得见页面的秒数、滚动到过的最深百分比，页面关闭时发一次。
+
+     几个刻意的选择：
+       · 只在页面可见时累加秒数（切到别的标签页不算），否则挂着一个标签页过夜会污染平均值；
+       · 用 pagehide 而不是 unload —— 手机上（尤其 iOS）unload 经常压根不触发；
+       · 发送走 sendBeacon，浏览器会在后台把它发完，不阻塞页面关闭；
+       · 只发一次，且服务端只累加总数 —— 单次停留时长是能用来认人的，总数不能。 */
+  function trackReading(variant) {
+    var shownAt = document.visibilityState === "visible" ? Date.now() : 0;
+    var seconds = 0;
+    var depth = 0;
+    var sent = false;
+
+    function measureDepth() {
+      var doc = document.documentElement;
+      var scrollable = doc.scrollHeight - window.innerHeight;
+      // 页面比视口还短（兼职版就是）→ 一屏看完即 100%，不然永远是 0，反而失真
+      var pct = scrollable <= 0 ? 100 : ((window.scrollY + window.innerHeight) / doc.scrollHeight) * 100;
+      depth = Math.max(depth, Math.min(100, Math.round(pct)));
+    }
+    function pause() {
+      if (shownAt) { seconds += (Date.now() - shownAt) / 1000; shownAt = 0; }
+    }
+    function send() {
+      if (sent) return;
+      sent = true;
+      pause();
+      measureDepth();
+      window.Stats.readHit(variant, Math.round(seconds), depth);
+    }
+
+    measureDepth();
+    window.addEventListener("scroll", measureDepth, { passive: true });
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") shownAt = Date.now();
+      else pause();
+    });
+    window.addEventListener("pagehide", send);
   }
 
   /* 控件的可访问名跟着语言走（原来写死在 index.html 里）。
