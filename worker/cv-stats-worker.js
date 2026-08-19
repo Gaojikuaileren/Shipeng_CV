@@ -53,7 +53,9 @@ const LOG_MAX = 100;
      v    访问数
      p    PDF 导出数
      w    作品页打开数（纸质二维码被扫）
-     log  最近 100 条时间戳（看时段分布用）
+     log  最近 100 次访问，逐条：{ t 时间, lang 语言, cc 国家, dev 设备, sec 停留秒数, depth 读到百分之几 }
+          —— 逐条比平均值有用得多：平均值说「这份简历大体被读了」，逐条才说得出
+          「这一次三秒就关，那一次读了四分钟」。仍然没有任何标识符，一行＝一次匿名打开。
      wk   按 ISO 周计数，留最近 8 周
      lang 读的是哪一语：{ zh: 12, de: 5, … }
      geo  来自哪个国家：{ DE: 9, CN: 4, … }（Cloudflare 直接给，前端不参与）
@@ -72,6 +74,9 @@ const okCC = (x) => (/^[A-Z]{2}$/.test(x || "") ? x : "??");
 // 停留时长与滚动深度要设上限：这两个数来自客户端，不设限等于让任何人往里灌垃圾
 const clampSec = (n) => Math.max(0, Math.min(3600, Math.round(+n || 0)));
 const clampDepth = (n) => Math.max(0, Math.min(100, Math.round(+n || 0)));
+// 本次浏览的临时号：只用来把同一次访问的 /hit 与 /read 缝在一起。
+// 客户端只在内存里生成、不落任何存储，所以两次访问之间无法关联；worker 缝完即删。
+const okRid = (x) => (/^[a-z0-9]{4,12}$/.test(x || "") ? x : "");
 
 // wk 只留最近 8 周：够画一条趋势，又不会无限长
 const WK_KEEP = 8;
@@ -92,6 +97,9 @@ function loadAll(raw) {
     if (typeof data[id].p !== "number") data[id].p = 0;
     if (typeof data[id].w !== "number") data[id].w = 0;
     if (!Array.isArray(data[id].log)) data[id].log = [];
+    // 老格式的 log 是一串时间戳字符串；就地升格成对象，历史记录不丢
+    data[id].log = data[id].log.map((r) => (typeof r === "string" ? { t: r } : (r && typeof r === "object" ? r : null)))
+      .filter(Boolean);
     if (!data[id].lang || typeof data[id].lang !== "object") data[id].lang = {};
     if (!data[id].geo || typeof data[id].geo !== "object") data[id].geo = {};
     if (!data[id].dev || typeof data[id].dev !== "object") data[id].dev = {};
@@ -121,6 +129,7 @@ export class Stats {
       const lang = okLang(url.searchParams.get("lang"));
       const dev = okDev(url.searchParams.get("dev"));
       const cc = okCC(url.searchParams.get("cc")); // 外层 worker 从 request.cf 填进来
+      const rid = okRid(url.searchParams.get("rid")); // 本次浏览的临时号，用完即弃
       await this._mutate((data) => {
         const now = new Date();
         data[v].v += 1;
@@ -128,21 +137,35 @@ export class Stats {
         bump(data[v].lang, lang);
         bump(data[v].geo, cc);
         bump(data[v].dev, dev);
-        data[v].log.push(now.toISOString());
+        data[v].log.push({ t: now.toISOString(), lang: lang, cc: cc, dev: dev, rid: rid });
         if (data[v].log.length > LOG_MAX) data[v].log = data[v].log.slice(-LOG_MAX);
       });
       return this._json({ ok: true });
     }
 
     /* —— 读得深不深：页面关闭时由 sendBeacon 发一次 ——
-       只累加总数，不存每次的值 —— 单次停留时长是能用来认人的，总数不能。 */
+       两件事：① 累加总数（全时段平均用）；② 回填到本次访问那一行（最近访问列表用）。
+       靠 rid 找到那一行 —— 那个号只活在页面内存里，关掉就没了，两次访问之间无法关联；
+       缝完就把它从存储里删掉，免得留一堆没用的随机串。
+       找不到行也不算错：那次访问已经被挤出最近 100 条了，总数照样加。 */
     if (path === "/read") {
       const sec = clampSec(url.searchParams.get("sec"));
       const depth = clampDepth(url.searchParams.get("depth"));
+      const rid = okRid(url.searchParams.get("rid"));
       await this._mutate((data) => {
         data[v].rd.n += 1;
         data[v].rd.sec += sec;
         data[v].rd.depth += depth;
+        if (!rid) return;
+        const log = data[v].log;
+        for (let i = log.length - 1; i >= 0; i--) {
+          if (log[i] && log[i].rid === rid) {
+            log[i].sec = sec;
+            log[i].depth = depth;
+            delete log[i].rid; // 缝完即弃：同一个 rid 不会被第二次匹配，也不留在存储里
+            break;
+          }
+        }
       });
       return this._json({ ok: true });
     }

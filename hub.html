@@ -26,6 +26,12 @@
     #send:hover { background: var(--accent); }
 
     /* 底端两数字（合计） */
+    .lm { font-family: var(--font-mono); font-size: .68rem; color: var(--ink-faint); }
+    /* 停留数据靠右：一列扫下去就能看出哪几次读得久 */
+    .rd { margin-left: auto; }
+    /* 停留 ≥30 秒的用强调色：一眼看出哪几次是真读过，哪几次是点开又关 */
+    .rd { font-family: var(--font-mono); font-size: .68rem; color: var(--ink-faint); }
+    .rd-good { color: var(--accent); font-weight: 600; }
     .me { margin-top: var(--s3); font-size: .72rem; color: var(--ink-faint); letter-spacing: .04em; }
     .me a { color: var(--ink-faint); text-underline-offset: .2em; }
     .me b { color: var(--ink); font-weight: 600; }
@@ -68,7 +74,8 @@
     .log-title { font-family: var(--font-mono); font-size: .7rem; color: var(--ink-faint); letter-spacing: .08em; margin-bottom: 6px; }
     .log { list-style: none; margin: 0; padding: 0; max-height: 34vh; overflow: auto; border-top: 1px solid var(--line); }
     .log li { font-family: var(--font-mono); font-size: .74rem; color: var(--ink-soft);
-      padding: 5px 2px; border-bottom: 1px solid var(--line); display: flex; gap: 10px; align-items: baseline; }
+      padding: 5px 2px; border-bottom: 1px solid var(--line); display: flex; gap: 10px;
+      align-items: baseline; flex-wrap: wrap; }
     .log .i { color: var(--ink-faint); min-width: 26px; text-align: right; }
     .log .who { color: var(--accent); min-width: 52px; font-size: .68rem; }
     .log .t { color: var(--ink-soft); }
@@ -198,18 +205,40 @@
       var log = document.getElementById("log");
       var vs = d.variants || {};
       var all = [];
+      // log 现在是逐条对象 { t, lang, cc, dev, sec, depth }；老数据可能只有 t
       ORDER.forEach(function (id) {
-        ((vs[id] && vs[id].log) || []).forEach(function (iso) { all.push({ iso: iso, who: NAMES[id] }); });
+        ((vs[id] && vs[id].log) || []).forEach(function (r) {
+          var row = (typeof r === "string") ? { t: r } : (r || {});
+          all.push({ iso: row.t, who: NAMES[id], lang: row.lang, cc: row.cc,
+                     dev: row.dev, sec: row.sec, depth: row.depth });
+        });
       });
       all.sort(function (a, b) { return a.iso < b.iso ? 1 : (a.iso > b.iso ? -1 : 0); }); // 新→旧
       if (!all.length) { log.innerHTML = '<li class="log-empty">暂无访问记录</li>'; return; }
       log.innerHTML = "";
+      var DEV = { m: "手机", d: "桌面" };
       all.forEach(function (item, i) {
         var li = document.createElement("li");
         var idx = document.createElement("span"); idx.className = "i"; idx.textContent = (all.length - i);
         var who = document.createElement("span"); who.className = "who"; who.textContent = item.who;
         var t = document.createElement("span"); t.className = "t"; t.textContent = fmt(item.iso);
-        li.appendChild(idx); li.appendChild(who); li.appendChild(t); log.appendChild(li);
+        li.appendChild(idx); li.appendChild(who); li.appendChild(t);
+
+        // 这一次是谁、读了多久。没有的字段就不显示 —— 老记录、或者页面被强杀没发出 beacon
+        var meta = [item.lang, item.cc, DEV[item.dev]].filter(Boolean).join(" · ");
+        if (meta) {
+          var m = document.createElement("span"); m.className = "lm"; m.textContent = meta;
+          li.appendChild(m);
+        }
+        if (item.sec != null) {
+          var r2 = document.createElement("span");
+          // 秒数超过一分钟就写成 m:ss，读起来快
+          var sec = item.sec, txt = sec >= 60 ? Math.floor(sec / 60) + ":" + ("0" + (sec % 60)).slice(-2) : sec + "s";
+          r2.className = "rd" + (sec >= 30 ? " rd-good" : "");
+          r2.textContent = txt + " · " + item.depth + "%";
+          li.appendChild(r2);
+        }
+        log.appendChild(li);
       });
     }
 

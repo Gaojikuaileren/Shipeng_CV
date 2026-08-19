@@ -47,9 +47,15 @@ window.Stats = {
        lang 对方实际读的是哪一语（判断某个语言版本值不值得继续打磨）
        dev  手机还是桌面（按视口宽度判断，不嗅探 UA）
      国家不在这里发 —— 那个由 worker 从 Cloudflare 的边缘信息里取，前端无从伪造。 */
+  /* 本次浏览的临时号：把这一次的 /hit 与关闭时的 /read 缝在一起，好把停留时长
+     回填到「最近访问」里那一行。**只存在于这个页面的内存**：不写 cookie、不写
+     localStorage、刷新一次就是新的 —— 所以它认不出「同一个人的两次访问」，
+     只认得出「同一次访问的两个请求」。worker 缝完也会把它删掉。 */
+  _rid: Math.random().toString(36).slice(2, 10),
+
   ping: function (variant, lang, dev) {
     if (!variant) return;
-    this._post("/hit?v=" + encodeURIComponent(variant) +
+    this._post("/hit?v=" + encodeURIComponent(variant) + "&rid=" + this._rid +
       (lang ? "&lang=" + encodeURIComponent(lang) : "") +
       (dev ? "&dev=" + encodeURIComponent(dev) : ""));
   },
@@ -62,7 +68,7 @@ window.Stats = {
     if (!variant || !this._ready() || this._isLocal() || this._isOwner()) return;
     if (!navigator.sendBeacon) return; // 老浏览器直接放弃，不值得为它降级成同步请求
     try {
-      navigator.sendBeacon(this.URL + "/read?v=" + encodeURIComponent(variant) +
+      navigator.sendBeacon(this.URL + "/read?v=" + encodeURIComponent(variant) + "&rid=" + this._rid +
         "&sec=" + encodeURIComponent(sec) + "&depth=" + encodeURIComponent(depth));
     } catch (e) {}
   },
