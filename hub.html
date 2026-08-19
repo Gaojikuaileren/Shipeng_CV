@@ -132,6 +132,18 @@
       if (Object.prototype.hasOwnProperty.call(ROUTES, v)) { location.href = dir + ROUTES[v]; return; }
       if (v === "/sdata") { cmd.value = ""; showData(); return; }
       if (Object.prototype.hasOwnProperty.call(CLEAN, v)) { cmd.value = ""; doClean(CLEAN[v]); return; }
+      /* 把本机排除在统计之外 / 取消。写的是 localStorage，与简历页同源，所以在这里设了，
+         简历页就认。每台设备都要单独设一次 —— 不用 cookie 就没有跨设备的办法。 */
+      if (v === "/paichu=1" || v === "/paichu=0") {
+        var on = v === "/paichu=1";
+        try {
+          on ? localStorage.setItem("cv-me", "1") : localStorage.removeItem("cv-me");
+          cmd.value = "";
+          renderMe();
+          flash(on ? "本机已排除在统计之外" : "已取消排除，本机重新计数");
+        } catch (e) { flash("浏览器不让写本地存储"); }
+        return;
+      }
       // 无效指令：抖动提示（无文字）
       wrap.classList.remove("shake"); void wrap.offsetWidth; wrap.classList.add("shake");
     }
@@ -283,10 +295,8 @@
       var box = document.getElementById("me");
       var on = false;
       try { on = localStorage.getItem("cv-me") === "1" || localStorage.getItem("cv-mode") === "full"; } catch (e) {}
-      var link = dir + "?v=ue&me=" + (on ? "0" : "1");
-      box.innerHTML = on
-        ? '本机<b>已排除</b>在统计之外　·　<a href="' + link + '">取消排除</a>'
-        : '本机<b>未排除</b> —— 你自己的访问正在被计数　·　<a href="' + link + '">标记为本人</a>';
+      // 排除了才出这一行；没排除就跟以前一样什么都不显示 —— 那是常态，不需要占版面
+      box.textContent = on ? "本机已排除在统计之外" : "";
     }
     renderMe();
 
