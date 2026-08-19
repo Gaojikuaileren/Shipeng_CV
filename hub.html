@@ -35,6 +35,11 @@
     .me { margin-top: var(--s3); font-size: .72rem; color: var(--ink-faint); letter-spacing: .04em; }
     .me a { color: var(--ink-faint); text-underline-offset: .2em; }
     .me b { color: var(--ink); font-weight: 600; }
+    .cmds { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+    .cmds li { display: flex; gap: 12px; align-items: baseline; font-size: .74rem; }
+    .cmds .c { font-family: var(--font-mono); color: var(--ink); min-width: 8.5em; flex-shrink: 0; }
+    .cmds .d { color: var(--ink-faint); }
+    .cmds .sep { height: 1px; background: var(--line); margin: 4px 0; display: block; }
     .dist { display: flex; flex-direction: column; gap: 4px; margin-bottom: var(--s4); }
     .dist-row { display: flex; gap: var(--s3); font-size: .78rem; line-height: 1.5; }
     .dist-k { color: var(--ink-faint); min-width: 3em; flex-shrink: 0; }
@@ -95,6 +100,11 @@
     <div class="me" id="me"></div>
   </main>
 
+  <div class="data" id="help">
+    <div class="data-head"><span>指令</span><button class="data-close" id="help-close" aria-label="关闭">✕</button></div>
+    <ul class="cmds" id="cmds"></ul>
+  </div>
+
   <div class="data" id="data">
     <div class="data-head"><span id="data-title">ACCESS</span><button class="data-close" id="data-close" aria-label="关闭">✕</button></div>
     <table class="stat-table" id="stat-table"></table>
@@ -104,6 +114,8 @@
     <ul class="log" id="log"></ul>
   </div>
 
+  <!-- 短链 ↔ 内部 ID 的权威表：帮助里要把 ?v=ue 说成「UE5 + AI」，靠它翻译 -->
+  <script src="scripts/variants.js"></script>
   <script src="scripts/stats.js"></script>
   <script>
     var dir = location.href.replace(/[^/]*(\?.*)?(#.*)?$/, ""); // 本页目录
@@ -131,6 +143,7 @@
       // 查表走 hasOwnProperty：裸对象会把 constructor / __proto__ 这类原型键也认成命令
       if (Object.prototype.hasOwnProperty.call(ROUTES, v)) { location.href = dir + ROUTES[v]; return; }
       if (v === "/sdata") { cmd.value = ""; showData(); return; }
+      if (v === "/shelp") { cmd.value = ""; showHelp(); return; }
       if (Object.prototype.hasOwnProperty.call(CLEAN, v)) { cmd.value = ""; doClean(CLEAN[v]); return; }
       /* 把本机排除在统计之外 / 取消。写的是 localStorage，与简历页同源，所以在这里设了，
          简历页就认。每台设备都要单独设一次 —— 不用 cookie 就没有跨设备的办法。 */
@@ -150,6 +163,9 @@
     cmd.addEventListener("keydown", function (e) { if (e.key === "Enter") run(); });
     document.getElementById("send").addEventListener("click", run);
     document.getElementById("data-close").addEventListener("click", function () { dataEl.classList.remove("show"); cmd.focus(); });
+    document.getElementById("help-close").addEventListener("click", function () {
+      document.getElementById("help").classList.remove("show"); cmd.focus();
+    });
 
     function fmt(iso) {
       var d = new Date(iso);
@@ -158,7 +174,39 @@
       return (d.getMonth() + 1) + "-" + p(d.getDate()) + " " + p(d.getHours()) + ":" + p(d.getMinutes());
     }
 
+    /* 指令表从 ROUTES / CLEAN / NAMES 派生 —— 加一个变体，这里自动多两行，
+       不会出现「帮助里写着的指令其实不存在」那种事（README 就这么漂移过）。 */
+    function showHelp() {
+      var box = document.getElementById("cmds");
+      var rows = [];
+      Object.keys(ROUTES).forEach(function (k) {
+        var t = ROUTES[k];
+        // ROUTES 里是短链（?v=ue / odd/），NAMES 按内部 ID 建 —— 用短链表翻译一次
+        var short = t === "odd/" ? "mn" : (t.split("=")[1] || "");
+        var id = (window.VARIANTS && window.VARIANTS.alias[short]) || short;
+        rows.push([k, "打开 " + (NAMES[id] || t)]);
+      });
+      rows.push(["sep"]);
+      rows.push(["/sdata", "看访问统计"]);
+      rows.push(["/shelp", "就是这一页"]);
+      rows.push(["sep"]);
+      rows.push(["/paichu=1", "把本机排除在统计之外"]);
+      rows.push(["/paichu=0", "取消排除，本机重新计数"]);
+      rows.push(["sep"]);
+      Object.keys(CLEAN).forEach(function (k) {
+        var id = CLEAN[k];
+        rows.push([k, id === "all" ? "清空全部访问记录（会问一次）" : "清零 " + (NAMES[id] || id)]);
+      });
+      box.innerHTML = rows.map(function (r) {
+        return r[0] === "sep" ? '<li><span class="sep"></span></li>'
+          : '<li><span class="c">' + r[0] + '</span><span class="d">' + r[1] + '</span></li>';
+      }).join("");
+      document.getElementById("data").classList.remove("show");
+      document.getElementById("help").classList.add("show");
+    }
+
     function showData() {
+      document.getElementById("help").classList.remove("show"); // 两个面板不同时开
       dataEl.classList.add("show");
       var table = document.getElementById("stat-table");
       var log = document.getElementById("log");
