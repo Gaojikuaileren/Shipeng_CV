@@ -63,9 +63,13 @@ window.RESUME_VARIANT = {
     de: "Aufenthaltstitel nach § 21 Abs. 5 AufenthG — freiberufliche Tätigkeit als Medienentwickler/Medienkünstler, bundesweit erlaubt bis 05.03.2028. Kopie des Titels und des Zusatzblatts stelle ich auf Anfrage vor Vertragsschluss zur Verfügung. Rechnung mit deutscher Steuernummer. Ich arbeite mit eigenen Betriebsmitteln, eigener Zeiteinteilung und für mehrere Auftraggeber.",
   },
 
+  /* 工具集不显示（本人 2026-08-24 定）：它是一整块长清单，把页面拉得很长，
+     而这份的读者是采购 —— 他们看的是项目能不能交付，不是我会多少软件。
+     下面的 highlightTools 因此目前不生效，留着：哪天又想显示，把 "toolset"
+     从 hide 里拿走、加回 order 即可。 */
   sections: {
-    order: ["intro", "projects", "portfolio", "toolset", "education"],
-    hide: ["work", "moreWorks"],
+    order: ["intro", "projects", "portfolio", "education"],
+    hide: ["work", "moreWorks", "toolset"],
     emphasize: ["projects", "portfolio", "contact"],
   },
 
