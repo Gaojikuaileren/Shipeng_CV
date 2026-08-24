@@ -529,6 +529,11 @@ window.RESUME_BASE = {
   contact: [
     { id: "email-pro",       type: "email",   label: "Email",     value: "shipengouyang@gmail.com",                 visibility: "private", protected: true },
     { id: "email-freelance", type: "email",   label: "Email",     value: "freeketchup@icloud.com",                  visibility: "private", protected: true },
+    /* 对外接单用的正式邮箱（自有域名）。icloud 那个前缀是玩笑词、域名是私人邮箱，
+       发给付费客户的名片上不合适。
+       ⚠️ TODO(2026-08-19)：contact@s-gjklr.work 的 MX 记录还没配好，现在寄来的信会退信。
+          art-vr 已经改成显示这一条并挡掉另外两条 —— **确认邮箱能收信之前不要上线**。 */
+    { id: "email-biz",       type: "email",   label: "Email",     value: "contact@s-gjklr.work",                    visibility: "private", protected: true },
     { id: "phone",           type: "phone",   label: "Tel",       value: "+49 176 64161464",                        visibility: "private", protected: true },
     // 链接默认顺序：Portfolio → LinkedIn → GitHub → Instagram
     { id: "web",             type: "website", label: "Portfolio", value: "https://s-gjklr.work/",                   visibility: "public" },
