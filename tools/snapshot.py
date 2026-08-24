@@ -61,14 +61,14 @@ PORT = 5180
 
 # 短链与语言：唯一真相在 scripts/variants.js，这里是它的镜像。
 # 加变体时两处都要改 —— 护栏漏掉一个变体，那个变体就等于没有护栏。
-VARIANTS = ["ue", "fl", "ds", "cd", "mn"]
+VARIANTS = ["ue", "fl", "ds", "cd", "bz", "mn"]
 LANGS = ["zh", "ja", "en", "de"]
 
 # 作品页（PDF 二维码扫进来的落地页）也要有基线 —— 它渲染的是同一份数据的另一种排布，
 # 改 render.js 或数据同样会波及它，而它以前完全在护栏之外。
 # 只覆盖开了 worksPage 的变体：别的变体 PDF 里根本没有指向它的二维码。
 # hub.html 不进护栏：它显示实时访问计数，每次跑都不一样，没法比。
-WORKS_VARIANTS = ["ue", "fl", "ds"]
+WORKS_VARIANTS = ["ue", "fl", "ds", "bz"]
 
 CHROME_DEFAULT = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 

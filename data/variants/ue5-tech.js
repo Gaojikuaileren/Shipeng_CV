@@ -105,7 +105,7 @@ window.RESUME_VARIANT = {
 
   // 四条项目全部标重点（左侧绿竖线）；DeskDrawer 已降级到 moreWorks，改标 mw-deskdrawer
   emphasizeItems: ["prj-room", "prj-grau", "prj-vp", "prj-versewiki", "mw-deskdrawer"],
-  hideItems: ["email-freelance"],
+  hideItems: ["email-freelance", "email-biz"], // 求职版只留求职邮箱；接单/对外邮箱都挡掉
   /* order.projects：折叠状态下网页只显示前两条（render.js 的 PRJ_COLLAPSED = 2），
      所以谁排前两位＝谁是这份简历的门面。本变体投的是 UE 开发，选「千声之室」（实时交互装置）
      与「虚拟制片」（实时合成管线 ＋ 代课讲师）。_order 的语义是「列出的排前面、其余保持原序」，

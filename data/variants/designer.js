@@ -58,5 +58,5 @@ window.RESUME_VARIANT = {
   // 本变体显示 projects（moreWorks 整块已 hide）→ 两个个人产品项目要逐条挡
   // prj-versewiki 放出来：它是本人做的网站产品，属于设计作品，要出现在「作品示例」里。
   // prj-vp 仍挡着（没有可点链接，进不了作品示例，留着只会在别处冒出来）。
-  hideItems: ["email-freelance", "github", "prj-vp"],
+  hideItems: ["email-freelance", "github", "prj-vp", "email-biz"],
 };

@@ -191,7 +191,7 @@ window.RESUME_VARIANT = {
   /* —— 联系：职业邮箱 ＋ 电话 ＋ LinkedIn。
      GitHub / Instagram 对本方向无关；个人主页（作品集）也不放 —— 内容偏媒体艺术，
      对采购 / 商务方向没有说服力，反而把注意力带走。 —— */
-  hideItems: ["email-freelance", "github", "instagram", "web"],
+  hideItems: ["email-freelance", "github", "instagram", "web", "email-biz"],
   order: { contact: ["email-pro", "phone", "linkedin"] },
 
   /* —— CTA：求职 ＋ 项目合作双身份（§15）—— */

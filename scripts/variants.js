@@ -29,10 +29,11 @@
     ds: "designer",   // 设计
     mn: "odd",        // 兼职 Mini-Job
     cd: "china-biz",  // 外贸 / 中德商务
+    bz: "biz-3d",     // 德国企业客户（展台 / 影视 / 建筑可视化 / 数字代理商）
   };
 
   /* 在 index.html 里渲染的变体 */
-  var PAGE = { "ue5-tech": 1, "art-vr": 1, "designer": 1, "china-biz": 1 };
+  var PAGE = { "ue5-tech": 1, "art-vr": 1, "designer": 1, "china-biz": 1, "biz-3d": 1 };
 
   /* 有自己独立页面的变体：解析到它就要整页跳过去，而不是在 index.html 里渲染 */
   var EXTERNAL = { odd: "odd/" };

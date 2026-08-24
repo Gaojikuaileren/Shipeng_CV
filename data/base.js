@@ -23,7 +23,7 @@ window.RESUME_BASE = {
     /* 变体白名单的唯一真相。新增变体在这里加一行，works.html 就自动认得它。
        唯一的例外是 index.html 顶部那份内联白名单：它要在 body 渲染前同步判定，
        跑在 data/base.js 加载之前，读不到这里 → 必须手工同步（README「新变体登记」有清单）。 */
-    variants: ["ue5-tech", "art-vr", "designer", "china-biz"],
+    variants: ["ue5-tech", "art-vr", "designer", "china-biz", "biz-3d"],
   },
 
   /* —— 个人情报 ————————————————————————————————— */

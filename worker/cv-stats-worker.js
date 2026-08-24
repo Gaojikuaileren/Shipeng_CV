@@ -38,7 +38,7 @@ const ALLOW_ORIGINS = [
 // ⚠️ 与前端的变体清单（data/base.js 的 meta.variants ＋ index.html 内联白名单）是两套东西：
 //    这里漏登记不会报错，只会让 /hit 与 /pdf 返回 400 —— 那个变体的访问量一次也记不上。
 //    改完必须在 worker/ 目录跑 wrangler deploy，不 deploy 不生效。
-const VARIANTS = ["ue5-tech", "art-vr", "designer", "odd", "china-biz"];
+const VARIANTS = ["ue5-tech", "art-vr", "designer", "odd", "china-biz", "biz-3d"];
 
 // DO 里存全部数据的 key（一个对象，结构与老版本一致）
 const KEY = "stats";
