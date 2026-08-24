@@ -522,18 +522,20 @@ window.RESUME_BASE = {
 
   /* —— 联系方式
      email-pro      → 职业求职邮箱（默认变体和职位变体用）
-     email-freelance → 自由职业接单邮箱（目前没有变体在用：art-vr 已改用 email-biz）
+     email-freelance → 旧的自由职业接单邮箱，目前**没有任何变体在用**（art-vr 改用了 email-biz）。
+                       暂不删：四个变体的 hideItems 里都还列着它，且地址本身仍然有效。
      变体通过 hide:["email-pro"] 或 hide:["email-freelance"] 控制显示哪个。
      web → 部署后替换为实际域名 URL。
   ————————————————————————————————————————————— */
   contact: [
     { id: "email-pro",       type: "email",   label: "Email",     value: "shipengouyang@gmail.com",                 visibility: "private", protected: true },
     { id: "email-freelance", type: "email",   label: "Email",     value: "freeketchup@icloud.com",                  visibility: "private", protected: true },
-    /* 对外接单用的正式邮箱（自有域名）。icloud 那个前缀是玩笑词、域名是私人邮箱，
-       发给付费客户的名片上不合适。
-       ⚠️ TODO(2026-08-19)：contact@s-gjklr.work 的 MX 记录还没配好，现在寄来的信会退信。
-          art-vr（?v=fl，企业客户版）显示这一条并挡掉另外两条 —— **确认邮箱能收信之前别把 fl 的链接发出去**。 */
-    { id: "email-biz",       type: "email",   label: "Email",     value: "contact@s-gjklr.work",                    visibility: "private", protected: true },
+    /* 对外接单用的正式邮箱。**只有 art-vr（?v=fl）显示它**，其余变体都在各自的
+       hideItems 里挡掉了 —— 改这一行的 value 只影响自由职业那份。
+       2026-08-24 从 contact@s-gjklr.work 换成 iCloud 地址：自有域名那个的 MX 一直没配，
+       寄来的信会退回，而退信的人不会再试第二次；换 iCloud 是为了立刻能收信，不用等 DNS。
+       前缀用 contact.gjklr，不用下面 email-freelance 那个玩笑词 —— 发给付费客户不掉价。 */
+    { id: "email-biz",       type: "email",   label: "Email",     value: "contact.gjklr@icloud.com",                visibility: "private", protected: true },
     { id: "phone",           type: "phone",   label: "Tel",       value: "+49 176 64161464",                        visibility: "private", protected: true },
     // 链接默认顺序：Portfolio → LinkedIn → GitHub → Instagram
     { id: "web",             type: "website", label: "Portfolio", value: "https://s-gjklr.work/",                   visibility: "public" },

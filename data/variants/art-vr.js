@@ -19,8 +19,8 @@
      · 只重新解释 base.js 里已有的真实经历。日期 / 学校 / 学历 / 语言等级只来自 base.js，
        这里一律用 itemOverrides 换叙述，绝不新增不存在的项目、客户、交付或年限。
 
-   ⚠️ 联系邮箱用 email-biz（contact@s-gjklr.work）—— MX 还没配好，见 base.js 那条 TODO。
-      在邮箱能收信之前不要把本变体的链接发出去。 */
+   联系邮箱用 email-biz（contact.gjklr@icloud.com）。这个条目只有本变体显示，
+   其余变体都在 hideItems 里挡了它 —— 改 base.js 里那一行不会溢到别的简历上。 */
 window.RESUME_VARIANT = {
   id: "art-vr", // 见文件头：ID 保持 art-vr 是为了统计计数键与排版类名不断档
 
