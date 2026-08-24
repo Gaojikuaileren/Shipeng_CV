@@ -44,18 +44,16 @@
   /* 禁止选中 / 拖拽 / 手机长按菜单 / 一切指针交互（防取图）*/
   pointer-events: none; user-select: none; -webkit-user-select: none;
   -webkit-touch-callout: none; -webkit-user-drag: none; }
-/* 自由职业兔子：大一号 */
-body.v-art-vr { --photo-w: 320px; }
-/* 手机端真人照：宽度最多为屏宽的 2/3，等比缩放（自由职业兔子保持大）*/
+/* 手机端：照片宽度最多为屏宽的 2/3，等比缩放 */
 @media (max-width: 899px) {
-  body:not(.v-art-vr) .cv-photo { max-width: min(66.67vw, 300px); }
+  .cv-photo { max-width: min(66.67vw, 300px); }
 }
 
 /* 照片占位：先把位置占住，图片到位前后高度一致。
    没有它，首屏图一加载就把下面的内容推走（桌面约 450px），切语言重渲染时
-   <img> 重建也会塌一下再弹回来。两张图比例不同：证件照 900×1350，兔子 600×600。 */
+   <img> 重建也会塌一下再弹回来。全站现在只用证件照 900×1350。
+   2026-08-24：art-vr 改用证件照后，原来给兔子图 600×600 的 1:1 例外一并删了。 */
 .cv-photo img { aspect-ratio: 2 / 3; }
-body.v-art-vr .cv-photo img { aspect-ratio: 1 / 1; }
 
 /* —— 跨简历入口：页面最底部居中一个按钮（变体声明 crossLink 才有这个节点）——
    触控目标按项目自己的标准给到 44px；打印时整块隐藏（print.css）。 */

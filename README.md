@@ -81,12 +81,16 @@ node tools/serve.js
 | 发出去的地址 | 内部 ID | 是谁 |
 |---|---|---|
 | `https://gaojikuaileren.github.io/Shipeng_CV/?v=ue` | `ue5-tech` | 游戏 / UE5 + 视觉生成式 AI |
-| `https://gaojikuaileren.github.io/Shipeng_CV/?v=fl` | `art-vr` | 自由职业媒体艺术 |
+| `https://gaojikuaileren.github.io/Shipeng_CV/?v=fl` | `art-vr` | 德国企业客户（展台 / 影视 / 建筑可视化 / 代理商）|
 | `https://gaojikuaileren.github.io/Shipeng_CV/?v=ds` | `designer` | 设计 |
 | `https://gaojikuaileren.github.io/Shipeng_CV/?v=cd` | `china-biz` | 外贸 / 中德商务 |
 | `https://gaojikuaileren.github.io/Shipeng_CV/odd/` | `odd` | 兼职 Mini-Job |
 
 兼职版是独立页面，直接发 `odd/`；`?v=mn` 也认，会跳过去。
+
+> `art-vr` 这个 ID 现在名不副实：2026-08-24 `?v=fl` 的内容从「媒体艺术自由职业名片」
+> 整体换成了「德国企业客户」，但 ID 没改 —— 它是统计计数键与 `body.v-*` 排版类名，
+> 改名会把历史访问数断成两截、并要求重标 print.css。短暡存在过的 `biz-3d` / `bz` 已并入它。
 
 **已经发出去的旧链（`?v=ue5-tech`）与 PDF 二维码里的长地址永久有效**：
 `index.html` 头部脚本认出长 ID 后照常渲染，只用 `history.replaceState` 把地址栏静默换成短链
@@ -287,7 +291,7 @@ Shipeng_CV/
 │   └── data.js           兼职数据（独立，不引用主 base）
 ├── data/
 │   ├── base.js           核心内容（capabilities/tools/projects/work/…，四语）
-│   └── variants/         职位变体（ue5-tech / art-vr / designer / china-biz）
+│   └── variants/         职位变体（ue5-tech / art-vr※ / designer / china-biz）※ art-vr = 企业客户版
 ├── styles/
 │   ├── fonts.css         自托管 Hanken Grotesk @font-face
 │   ├── tokens.css        设计变量（颜色/字体/间距）← 想换风格先改这里

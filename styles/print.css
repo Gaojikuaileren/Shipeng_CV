@@ -32,8 +32,8 @@
      · 二维码 28mm 与它下沿 4mm 的静区（第 ~245 行起）
        静区是 QR 规范要求的（四周 ≥ 4 个模块），不是排版留白。调小会掉扫描率。
 
-     · 照片 58mm / art-vr 48mm（第 ~86 行）
-       58mm 是「打印侧栏 34% ≈ 62.6mm 留 4.6mm 余量」算出来的上限。兔子图是本人指定的例外。
+     · 照片 58mm（第 ~86 行）
+       58mm 是「打印侧栏 34% ≈ 62.6mm 留 4.6mm 余量」算出来的上限，全部变体统一。
      ══════════════════════════════════════════════════════════════════════════ */
 
   /* 通用：去掉屏幕装饰 */
@@ -113,10 +113,8 @@
   }
   .cv-aside { position: static !important; }
   /* PDF 照片：全部变体统一 58mm（打印侧栏 34% ≈ 62.6mm，留 4.6mm 余量）。
-     原来是 48mm —— 在 china-biz 那种 42% 的宽侧栏里显得特别小。
-     自由职业的兔子图是例外，仍用原尺寸：它不是证件照，放大反而抢版面。 */
+     原来是 48mm —— 在 china-biz 那种 42% 的宽侧栏里显得特别小。 */
   .cv-photo { max-width: 58mm !important; }
-  body.v-art-vr .cv-photo { max-width: 48mm !important; }
   .cv-photo img { filter: none; box-shadow: none; } /* PDF 不要外阴影 */
   .cv-intro p { font-size: 10.5pt; line-height: 1.45; }
   .cv-item { padding-top: 2mm; padding-bottom: 2mm; } /* 不清左右 padding，保留 is-emph 左竖线间距 */

@@ -25,23 +25,24 @@
   /* 短链 → 内部变体 ID */
   var ALIAS = {
     ue: "ue5-tech",   // 游戏 / UE5 + 视觉生成式 AI
-    fl: "art-vr",     // 自由职业媒体艺术
+    fl: "art-vr",     // 德国企业客户（展台 / 影视 / 建筑可视化 / 数字代理商）
+                      // ↑ ID 沿用 art-vr：2026-08-24 内容整体换掉了，但计数键不改，见该文件头
     ds: "designer",   // 设计
     mn: "odd",        // 兼职 Mini-Job
     cd: "china-biz",  // 外贸 / 中德商务
-    bz: "biz-3d",     // 德国企业客户（展台 / 影视 / 建筑可视化 / 数字代理商）
   };
 
   /* 在 index.html 里渲染的变体 */
-  var PAGE = { "ue5-tech": 1, "art-vr": 1, "designer": 1, "china-biz": 1, "biz-3d": 1 };
+  var PAGE = { "ue5-tech": 1, "art-vr": 1, "designer": 1, "china-biz": 1 };
 
   /* 有自己独立页面的变体：解析到它就要整页跳过去，而不是在 index.html 里渲染 */
   var EXTERNAL = { odd: "odd/" };
 
   /* 退役的旧 ID → 现在归到哪个变体。
      发出去的链接收不回来，所以这张表只增不删：命中后照常渲染新变体，
-     地址栏静默换成新短链。ue5-ai 在 2026-08-18 并进了 ue5-tech。 */
-  var LEGACY = { "ue5-ai": "ue5-tech" };
+     地址栏静默换成新短链。ue5-ai 在 2026-08-18 并进了 ue5-tech；
+     biz-3d / bz 在 2026-08-24 并进了 art-vr（?v=fl）—— 它整体顶替了原来的艺术自由职业版。 */
+  var LEGACY = { "ue5-ai": "ue5-tech", "biz-3d": "art-vr", "bz": "art-vr" };
 
   /* 内部 ID → 短链（旧链改写用），由 ALIAS 反推，不手写第二份 */
   var SHORT = {};

@@ -88,6 +88,9 @@ works.html（作品链接页，同一份 base + 同一套变体机制，只是�
 
 **已完成**（2026-06-04 已部署上线 `gaojikuaileren.github.io/Shipeng_CV/`）：
 - [x] 真实内容灌入；4 职业变体（ue5-tech/art-vr/designer/china-biz）＋ 兼职独立页 `odd/`
+- [x] 2026-08-24 `?v=fl`（内部 ID 仍为 `art-vr`）整体换成德国企业客户版：
+      展台搭建 / 影视制作 / 建筑可视化 / 数字代理商的项目经理与采购。
+      原媒体艺术自由职业版与兔子彩蛋一并退役（在 git 历史里：`eb62e5b`、`c8e2cec`）。
 - [x] 2026-08-17 第五变体 `china-biz`（中德商务开发 / 采购对接 / 项目协调，`?v=china-biz`，hub `/s05`）：
       CV ＋ Cooperation Profile 双用途（投职位 ＋ 直接发德国 Beschaffungs-/Einkaufsagentur 谈合作）。
       新增可复用机制：`collab` 板块、`itemOverrides`、`onlyTools`、`sectionTitles`、`profileFields`、
@@ -124,7 +127,7 @@ works.html（作品链接页，同一份 base + 同一套变体机制，只是�
 - [ ] CJK 自托管字体（Noto Sans CJK），跨设备观感更统一
 
 **内容尾巴**：
-- [ ] 日语用词校对（如 art-vr「沉浸型」→「没入型」）
+- [ ] 日语用词校对
 - [ ] 真实 Vimeo 各作品链接（现指向主页）、真实照片（现占位 SVG）。
       ⚠️ 有了 `works.html` 之后这条有了新的后果：`prj-room` 与 `prj-grau` 两条的 `video`
       都还是同一个 Vimeo 主页 → 扫码的人看到 4 张卡片，点进去只有 3 个不同目的地，

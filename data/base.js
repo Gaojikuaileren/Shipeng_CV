@@ -23,7 +23,7 @@ window.RESUME_BASE = {
     /* 变体白名单的唯一真相。新增变体在这里加一行，works.html 就自动认得它。
        唯一的例外是 index.html 顶部那份内联白名单：它要在 body 渲染前同步判定，
        跑在 data/base.js 加载之前，读不到这里 → 必须手工同步（README「新变体登记」有清单）。 */
-    variants: ["ue5-tech", "art-vr", "designer", "china-biz", "biz-3d"],
+    variants: ["ue5-tech", "art-vr", "designer", "china-biz"],
   },
 
   /* —— 个人情报 ————————————————————————————————— */
@@ -88,9 +88,9 @@ window.RESUME_BASE = {
    ============================================================ */
   defaultSidebar: ["cap-ue5", "cap-vr", "cap-isys", "cap-3d", "cap-techart"],
   capabilities: [
-    /* cap-unreal = 虚幻 / 蓝图 / 着色器 三合一（ue5-tech 用）。下面 cap-ue5 / cap-bp /
-       cap-shader 三条**暂不删**：01 号 ue5-tech 的侧边栏还在引用，删了它那三行会静默消失。
-       art-vr 的侧边栏还在引用 cap-ue5 / cap-shader，所以这三条留着；cap-bp 目前无人引用。 */
+    /* cap-unreal = 虚幻 / 蓝图 / 着色器 三合一，现在所有变体都用它。
+       下面 cap-ue5 / cap-bp / cap-shader 三条已经没有变体引用（cap-ue5 只剩 defaultSidebar
+       用于裸入口占位）—— 暂不删：它们是拆开叙述用的备件，删了以后想分开写要重建。 */
     { id: "cap-unreal",  level: 5, since: "2022-01", name: { zh: "虚幻 / 蓝图 / 着色器", ja: "Unreal / Blueprint / シェーダー", en: "Unreal / Blueprint / Shader", de: "Unreal / Blueprint / Shader" } },
     { id: "cap-ue5",     level: 5, since: "2022-01", name: { zh: "虚幻引擎 5", ja: "Unreal Engine 5", en: "Unreal Engine 5", de: "Unreal Engine 5" } },
     { id: "cap-bp",      level: 5, since: "2022-01", name: { zh: "蓝图开发", ja: "Blueprint 開発", en: "Blueprint Development", de: "Blueprint-Entwicklung" } },
@@ -142,8 +142,8 @@ window.RESUME_BASE = {
        ControlNet 保留 —— 他本人确认用过，本机无痕不等于没用过。
        ⚠️ 注意 base.js 是一整份静态文件发给每个访客：hideTools / onlyTools 只挡渲染、不挡下发。
        这里写的每一条，push 之后对所有访客都明文可见 —— 「先写上、发布前再删」行不通。
-       本组只在 ue5-tech 显示：designer 用 hideTools 挡掉，art-vr 隐藏整个工具集，
-       china-biz 走 onlyTools 白名单。增删条目时这三处要同步。 */
+       工具集内容现在全站统一（本人 2026-08-21 定的口径：会用什么工具是客观事实，
+       不按投递方向增删）—— 没有变体再用 hideTools / onlyTools 挡它，机制本身留着备用。 */
     { id: "t-claudecode", name: "Claude Code",             group: "ai" },
     { id: "t-codex",      name: "Codex",                   group: "ai" },
     { id: "t-comfyui",    name: "ComfyUI",                 group: "ai" },
@@ -522,7 +522,7 @@ window.RESUME_BASE = {
 
   /* —— 联系方式
      email-pro      → 职业求职邮箱（默认变体和职位变体用）
-     email-freelance → 自由职业接单邮箱（art-vr 变体用）
+     email-freelance → 自由职业接单邮箱（目前没有变体在用：art-vr 已改用 email-biz）
      变体通过 hide:["email-pro"] 或 hide:["email-freelance"] 控制显示哪个。
      web → 部署后替换为实际域名 URL。
   ————————————————————————————————————————————— */
@@ -532,7 +532,7 @@ window.RESUME_BASE = {
     /* 对外接单用的正式邮箱（自有域名）。icloud 那个前缀是玩笑词、域名是私人邮箱，
        发给付费客户的名片上不合适。
        ⚠️ TODO(2026-08-19)：contact@s-gjklr.work 的 MX 记录还没配好，现在寄来的信会退信。
-          art-vr 已经改成显示这一条并挡掉另外两条 —— **确认邮箱能收信之前不要上线**。 */
+          art-vr（?v=fl，企业客户版）显示这一条并挡掉另外两条 —— **确认邮箱能收信之前别把 fl 的链接发出去**。 */
     { id: "email-biz",       type: "email",   label: "Email",     value: "contact@s-gjklr.work",                    visibility: "private", protected: true },
     { id: "phone",           type: "phone",   label: "Tel",       value: "+49 176 64161464",                        visibility: "private", protected: true },
     // 链接默认顺序：Portfolio → LinkedIn → GitHub → Instagram

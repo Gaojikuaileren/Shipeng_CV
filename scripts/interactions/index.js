@@ -83,37 +83,8 @@ window.Interactions.register({
   },
 });
 
-/* —— 自由职业兔子：随时间渐放大、越来越快，1 小时后占满屏幕停止 —— */
-window.Interactions.register({
-  id: "rabbit-grow",
-  desktop: true, mobile: true,
-  init: function () {
-    if (!document.body.classList.contains("v-art-vr")) return;
-    const photo = document.querySelector(".cv-photo");
-    if (!photo) return;
-    const p = new URLSearchParams(location.search);
-    const secs = parseInt(p.get("grow"), 10);        // 测试用：?grow=60 → 1 分钟看完整过程
-    const DURATION = (secs > 0 ? secs : 1200) * 1000; // 默认 1200s = 20 分钟
-    const rect = photo.getBoundingClientRect();
-    const base = rect.width || 320;
-    const maxS = Math.max(window.innerWidth, window.innerHeight) / base * 1.2;  // 占满屏幕
-    const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;      // 兔子初始中心
-    photo.style.transformOrigin = "center center";
-    photo.style.position = "relative";
-    photo.style.zIndex = "600";
-    const t0 = performance.now();
-    (function tick(now) {
-      const t = Math.min(1, (now - t0) / DURATION);
-      const ease = Math.pow(t, 2.4);                  // 开始慢、越来越快
-      const s = 1 + (maxS - 1) * ease;
-      const dx = (window.innerWidth / 2 - cx) * ease; // 同时往屏幕中心移 → 最终居中放大
-      const dy = (window.innerHeight / 2 - cy) * ease;
-      photo.style.transform = "translate(" + dx.toFixed(1) + "px," + dy.toFixed(1) + "px) scale(" + s.toFixed(3) + ")";
-      if (t < 1) requestAnimationFrame(tick);
-    })(t0);
-  },
-});
-
+/* 兔子彩蛋（rabbit-grow）已于 2026-08-24 删除：art-vr 换成企业客户版后用的是证件照，
+   让它慢慢胀满屏幕对采购是灾难。要找回来：git show c8e2cec:scripts/interactions/index.js */
 /* —— 游戏开发专属彩蛋：联系方式停留 5s → 左下掀黑角 → 点击撕开 Steam 链接 —— */
 window.Interactions.register({
   id: "contact-peel",
