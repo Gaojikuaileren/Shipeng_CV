@@ -12,12 +12,22 @@
    由此推出的三条硬规则（改这个文件之前先读）：
      · 全文第一人称单数。不出现「我们 / wir / Team / Studio / Agentur」——
        个人自由职业者用复数会造成法律与税务上的误解（像在冒充一家公司）。
-       注意：intro 里提到「代理商 / Agenturen」是在说**客户是谁**，不是在说我是谁，那是允许的。
      · 不出现艺术词汇（艺术家 / Künstler / Medienkunst / 驻留 / Residenz / 策展 / 沉浸式体验）。
        同一批经历换一套讲法：装置→系统 / 应用，展览→连续运行 X 周且公开可访问，
        观众体验→用户操作，概念研究→需求分析与方案设计，实时影像→实时渲染，沉浸式→交互式 / 可操作。
      · 只重新解释 base.js 里已有的真实经历。日期 / 学校 / 学历 / 语言等级只来自 base.js，
        这里一律用 itemOverrides 换叙述，绝不新增不存在的项目、客户、交付或年限。
+
+   ⚠️ 文案红线（2026-08-24 定，改本文件的文案前必读）：
+     ① 不写「产品配置器」这个类目，也不写它的**等价描述**
+        （把你的 CAD 数据做成可操作程序 ＋ 产品视频）—— 换个词不算数。
+        顺带一提：base.js 里本来也没有任何一条配置器项目，删掉之后
+        页面反而和证据对得上了。
+     ② 不写「分包 / 承揽 / 白标」这套服务商叙事。改成强调本人亲自构思、
+        亲自实现、亲自到场负责 —— 页面要传达的是「我本人做的」，
+        不是「我能转包」。
+     这两条背后有具体理由，**故意不写在这里**（本文件会原样下发给每个访客）；
+     要改先问本人，不要因为「看着像是漏写了」就把它们加回去。
 
    联系邮箱用 email-biz（contact.gjklr@icloud.com）。这个条目只有本变体显示，
    其余变体都在 hideItems 里挡了它 —— 改 base.js 里那一行不会溢到别的简历上。 */
@@ -25,17 +35,17 @@ window.RESUME_VARIANT = {
   id: "art-vr", // 见文件头：ID 保持 art-vr 是为了统计计数键与排版类名不断档
 
   headline: {
-    zh: "实时 3D 开发 · 产品配置器 / 虚拟展厅 / 互动展台",
-    ja: "リアルタイム 3D 開発 · 製品コンフィギュレーター / バーチャルショールーム / インタラクティブ展示",
-    en: "Real-time 3D Developer · Product Configurators / Virtual Showrooms / Interactive Exhibits",
-    de: "Echtzeit-3D-Entwickler · Produktkonfiguratoren / Virtuelle Showrooms / Interaktive Messeexponate",
+    zh: "实时 3D 开发 · 虚拟展厅 / 互动展台",
+    ja: "リアルタイム 3D 開発 · バーチャルショールーム / インタラクティブ展示",
+    en: "Real-time 3D Developer · Virtual Showrooms / Interactive Exhibits",
+    de: "Echtzeit-3D-Entwickler · Virtuelle Showrooms / Interaktive Messeexponate",
   },
 
   intro: {
-    zh: "科隆自由职业媒体开发者。用 Unreal Engine 5 做实时 3D 应用——产品配置器、虚拟展厅、互动展台，离线跑在你的硬件上，整场展会无人值守也不掉链子。输入是你的 CAD / 3D 数据，输出是一个能上手操作的程序；同一个工程还能顺带出渲染图和产品视频。也承接代理商、展台搭建公司、影视制作公司的分包，走承揽合同，可白标。",
-    ja: "ケルンを拠点とするフリーランスのメディア開発者。Unreal Engine 5 でリアルタイム 3D アプリケーションを開発します——製品コンフィギュレーター、バーチャルショールーム、インタラクティブ展示。いずれも御社のハードウェア上でオフラインで動作し、展示会の全会期を無人で稼働し続けます。御社の CAD・3D データを入力に、操作できるアプリケーションを納品。同じプロジェクトからレンダリング画像と製品動画も併せて出力します。代理店・展示施工会社・映像制作会社の下請けにも対応します——請負契約、ご希望に応じてホワイトレーベルで。",
-    en: "Freelance media developer based in Cologne. I build real-time 3D applications with Unreal Engine 5 — product configurators, virtual showrooms and interactive exhibits that run offline on your hardware and survive a full trade-fair week unattended. Your CAD and 3D data goes in; a usable application comes out, plus renderings and product videos from the same project. I also work as a subcontractor for agencies, exhibition builders and production companies — on a work-for-hire contract, white-label on request.",
-    de: "Freiberuflicher Medienentwickler in Köln. Ich entwickle Echtzeit-3D-Anwendungen mit Unreal Engine 5 — Produktkonfiguratoren, virtuelle Showrooms und interaktive Exponate, die offline auf Ihrer Hardware laufen und einen ganzen Messeeinsatz ohne Betreuung durchhalten. Aus Ihren CAD- und 3D-Daten entsteht eine bedienbare Anwendung, aus demselben Projekt zusätzlich Renderings und Produktvideos. Ich arbeite auch als Subunternehmer für Agenturen, Messebauer und Produktionsfirmen — im Werkvertrag, auf Wunsch White-Label.",
+    zh: "科隆自由职业媒体开发者。用 Unreal Engine 5 做实时 3D 应用——虚拟展厅、互动展台，离线跑在你的硬件上，整场展会无人值守也不掉链子。输入是你的 3D 数据与场地条件，输出是一个能上手操作的程序；同一个工程还能顺带出渲染影像。技术方案、实现到现场调试，都由我本人完成。",
+    ja: "ケルンを拠点とするフリーランスのメディア開発者。Unreal Engine 5 でリアルタイム 3D アプリケーションを開発します——バーチャルショールーム、インタラクティブ展示。いずれも御社のハードウェア上でオフラインで動作し、展示会の全会期を無人で稼働し続けます。御社の 3D データと会場条件を入力に、操作できるアプリケーションを納品。同じプロジェクトからレンダリング映像も併せて出力します。技術設計・実装・現地調整は、すべて私自身が担当します。",
+    en: "Freelance media developer based in Cologne. I build real-time 3D applications with Unreal Engine 5 — virtual showrooms and interactive exhibits that run offline on your hardware and survive a full trade-fair week unattended. Your 3D data and the conditions of the site go in; a usable application comes out, plus rendered footage from the same project. Concept, implementation and on-site commissioning are all my own work.",
+    de: "Freiberuflicher Medienentwickler in Köln. Ich entwickle Echtzeit-3D-Anwendungen mit Unreal Engine 5 — virtuelle Showrooms und interaktive Exponate, die offline auf Ihrer Hardware laufen und einen ganzen Messeeinsatz ohne Betreuung durchhalten. Aus Ihren 3D-Daten und den Gegebenheiten des Orts entsteht eine bedienbare Anwendung, aus demselben Projekt zusätzlich gerendertes Bildmaterial. Konzeption, Umsetzung und Inbetriebnahme vor Ort verantworte ich selbst.",
   },
 
   greeting: null,
