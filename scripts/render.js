@@ -231,7 +231,8 @@
           ctx ? h("span", { class: "cv-item-ctx" }, " — " + ctx) : null)),
       typ ? h("p", { class: "cv-item-type" }, typ) : null,
       h("p", { class: "cv-item-body" }, t(e.summary)),
-      e.tags && e.tags.length ? h("ul", { class: "cv-tags" }, e.tags.map((tg) => h("li", null, tg))) : null);
+      // tag 可以是字符串（各语言同一个，绝大多数条目）或 {zh,ja,en,de}（要按语言换写法时）；t() 对字符串原样返回
+      e.tags && e.tags.length ? h("ul", { class: "cv-tags" }, e.tags.map((tg) => h("li", null, t(tg)))) : null);
   }
   /* 折叠开关：项目经历与「更多作品」是同一套行为，只有三处不同 ——
      数哪些行（选择器）、留几条（阈值）、按钮上写什么（四语文案）。

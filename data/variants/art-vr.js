@@ -42,10 +42,10 @@ window.RESUME_VARIANT = {
   },
 
   intro: {
-    zh: "科隆自由职业媒体开发者。用 Unreal Engine 5 做实时 3D 应用——虚拟展厅、互动展台，离线跑在你的硬件上，整场展会无人值守也不掉链子。输入是你的 3D 数据与场地条件，输出是一个能上手操作的程序；同一个工程还能顺带出渲染影像。技术方案、实现到现场调试，都由我本人完成。",
-    ja: "ケルンを拠点とするフリーランスのメディア開発者。Unreal Engine 5 でリアルタイム 3D アプリケーションを開発します——バーチャルショールーム、インタラクティブ展示。いずれも御社のハードウェア上でオフラインで動作し、展示会の全会期を無人で稼働し続けます。御社の 3D データと会場条件を入力に、操作できるアプリケーションを納品。同じプロジェクトからレンダリング映像も併せて出力します。技術設計・実装・現地調整は、すべて私自身が担当します。",
-    en: "Freelance media developer based in Cologne. I build real-time 3D applications with Unreal Engine 5 — virtual showrooms and interactive exhibits that run offline on your hardware and survive a full trade-fair week unattended. Your 3D data and the conditions of the site go in; a usable application comes out, plus rendered footage from the same project. Concept, implementation and on-site commissioning are all my own work.",
-    de: "Freiberuflicher Medienentwickler in Köln. Ich entwickle Echtzeit-3D-Anwendungen mit Unreal Engine 5 — virtuelle Showrooms und interaktive Exponate, die offline auf Ihrer Hardware laufen und einen ganzen Messeeinsatz ohne Betreuung durchhalten. Aus Ihren 3D-Daten und den Gegebenheiten des Orts entsteht eine bedienbare Anwendung, aus demselben Projekt zusätzlich gerendertes Bildmaterial. Konzeption, Umsetzung und Inbetriebnahme vor Ort verantworte ich selbst.",
+    zh: "科隆自由职业媒体开发者。用 Unreal Engine 5 做实时 3D 应用——虚拟展厅、互动展台，离线跑在你的硬件上，整场展会无人值守也不掉链子。输入是你的 3D 数据与场地条件，输出是一个能上手操作的程序；同一个工程还能顺带出渲染影像。还能把 3D 预演直接转成影片镜头——整条 AI 管线在本地硬件上运行，素材不上传云端。技术方案、实现到现场调试，都由我本人完成。",
+    ja: "ケルンを拠点とするフリーランスのメディア開発者。Unreal Engine 5 でリアルタイム 3D アプリケーションを開発します——バーチャルショールーム、インタラクティブ展示。いずれも御社のハードウェア上でオフラインで動作し、展示会の全会期を無人で稼働し続けます。御社の 3D データと会場条件を入力に、操作できるアプリケーションを納品。同じプロジェクトからレンダリング映像も併せて出力します。3D プリビズをそのまま映像ショットへ変換することもできます——AI パイプライン全体がローカルのハードウェア上で動作し、素材をクラウドへアップロードすることはありません。技術設計・実装・現地調整は、すべて私自身が担当します。",
+    en: "Freelance media developer based in Cologne. I build real-time 3D applications with Unreal Engine 5 — virtual showrooms and interactive exhibits that run offline on your hardware and survive a full trade-fair week unattended. Your 3D data and the conditions of the site go in; a usable application comes out, plus rendered footage from the same project. I can also turn a 3D previs straight into film shots — the whole AI pipeline runs on local hardware, and no material is uploaded to the cloud. Concept, implementation and on-site commissioning are all my own work.",
+    de: "Freiberuflicher Medienentwickler in Köln. Ich entwickle Echtzeit-3D-Anwendungen mit Unreal Engine 5 — virtuelle Showrooms und interaktive Exponate, die offline auf Ihrer Hardware laufen und einen ganzen Messeeinsatz ohne Betreuung durchhalten. Aus Ihren 3D-Daten und den Gegebenheiten des Orts entsteht eine bedienbare Anwendung, aus demselben Projekt zusätzlich gerendertes Bildmaterial. Aus einer 3D-Previs erzeuge ich außerdem direkt Filmshots — die gesamte KI-Pipeline läuft auf lokaler Hardware, kein Material wird in eine Cloud hochgeladen. Konzeption, Umsetzung und Inbetriebnahme vor Ort verantworte ich selbst.",
   },
 
   greeting: null,
@@ -102,13 +102,25 @@ window.RESUME_VARIANT = {
     "t-vp", "t-metahuman", "t-metaxr", "t-blender", "t-osc", "t-arduino", "t-esp32",
   ],
 
-  /* 四条项目全部按「任务 / 实现 / 结果 / 技术 / 角色」五段重写。
+  /* 五条项目全部按「任务 / 实现 / 结果 / 技术 / 角色」五段重写。
      「结果」那一段是**可核验的数字**，2026-08-24 由本人逐条给出并填入四语。
      ⚠️ 规矩不变：这些数字会被采购当场追问，改动前先确认对得上。宁可删掉一句，
         也不要写一个圆不回来的数字 —— 下面两处就是这么删的：
           · 我的灰发：访谈素材时长不是他处理的，整句去掉；
-          · Verse Wiki：注册用户数与支付成功率按本人要求移除。 */
+          · Verse Wiki：注册用户数与支付成功率按本人要求移除。
+     FilmGen（2026-09-28 加入）的结果数字同样由本人给出：单镜头耗时、三种出片模式；
+     「全部本地运行、素材不上传云端」经本人确认属实。 */
   itemOverrides: {
+    "prj-filmgen": {
+      role: { zh: "AI 视频管线搭建", ja: "AI 動画パイプライン構築", en: "AI Video Pipeline Development", de: "KI-Video-Pipeline-Entwicklung" },
+      type: { zh: "3D 预演 → AI 影片镜头 · 本地运行", ja: "3D プリビズ → AI 映像ショット · ローカル稼働", en: "3D Previs → AI Film Shots · Runs Locally", de: "3D-Previs → KI-Filmshots · lokal betrieben" },
+      summary: {
+        zh: "任务：把 3D 白盒预演直接转成可用的影片镜头 —— 场景布局、机位运动和动作节奏按预演走，人物与画面按参考图走，全部在本地硬件上运行、素材不上传云端。实现：在 UE5 中用简单几何体搭场景与人物占位、用 Sequencer 设计镜头并导出白盒 / 深度视频；在 ComfyUI 中搭建模块化生产工作流，结合首帧、角色设定板与分时提示词生成镜头，含姿态动作控制与多镜头长片串联。结果：一条 5 秒镜头（480P）本地生成约 160–225 秒；按「布局最严 / 速度优先 / 动作最自然」三种需求定出固定的出片模式。技术：Unreal Engine 5、Sequencer、Movie Render Queue、ComfyUI、视频生成模型、深度 / 姿态控制。角色：独立负责技术方案、工作流架构、预演制作与画面质量把控。",
+        ja: "課題：3D ブロックアウトのプリビズを、そのまま使える映像ショットへ変換すること —— レイアウト・カメラワーク・動作のタイミングはプリビズに、人物と画づくりは参照画像に従い、すべてをローカルのハードウェア上で処理して素材をクラウドへ上げない。実装：UE5 で単純なジオメトリによりセットと人物の仮置きを組み、Sequencer でショットを設計してブロックアウト / 深度動画を書き出し、ComfyUI 上にモジュール式の制作ワークフローを構築。先頭フレーム・キャラクターシート・時間区切りのプロンプトからショットを生成し、ポーズによる動作制御と複数ショットの長尺連結まで対応。結果：5 秒のショット（480P）1 本あたりローカル生成で約 160〜225 秒、「レイアウト最優先 / 速度優先 / 動作の自然さ優先」の 3 要件に対応する固定の出力モードを確立。技術：Unreal Engine 5、Sequencer、Movie Render Queue、ComfyUI、動画生成モデル、深度 / ポーズ制御。担当：技術設計・ワークフロー設計・プリビズ制作・画質管理を単独で担当。",
+        en: "Task: turn a 3D blockout previs directly into usable film shots — layout, camera moves and action timing follow the previs, characters and look follow the reference images; everything runs on local hardware and no material is uploaded to the cloud. Implementation: blocked out sets and character stand-ins in UE5 with simple geometry, designed the shots in Sequencer and exported blockout / depth videos; built a modular production workflow in ComfyUI that generates shots from a first frame, character sheets and timed prompts, including pose-driven motion control and multi-shot long-form sequencing. Result: one 5-second shot (480p) generated locally in about 160–225 seconds; three fixed output modes for three typical requirements — strictest layout, fastest turnaround, most natural motion. Stack: Unreal Engine 5, Sequencer, Movie Render Queue, ComfyUI, video generation models, depth / pose control. Role: sole responsibility for technical concept, workflow architecture, previs and image-quality control.",
+        de: "Aufgabe: eine 3D-Blockout-Previs direkt in verwendbare Filmshots überführen — Layout, Kamerabewegung und Bewegungs-Timing folgen der Previs, Figuren und Bildlook den Referenzbildern; alles läuft auf lokaler Hardware, kein Material wird in eine Cloud hochgeladen. Umsetzung: Sets und Figuren-Platzhalter in UE5 aus einfacher Geometrie aufgebaut, Shots im Sequencer gestaltet und als Blockout- bzw. Tiefenvideo exportiert; in ComfyUI einen modularen Produktions-Workflow aufgebaut, der Shots aus Startframe, Character Sheets und zeitlich gegliederten Prompts erzeugt, inklusive posenbasierter Bewegungssteuerung und Verkettung mehrerer Shots zu Langformen. Ergebnis: ein 5-Sekunden-Shot (480p) in etwa 160–225 Sekunden lokal erzeugt; drei feste Ausgabemodi für drei typische Anforderungen — exaktes Layout, kürzeste Laufzeit, natürlichste Bewegung. Technik: Unreal Engine 5, Sequencer, Movie Render Queue, ComfyUI, Videogenerierungsmodelle, Tiefen- / Posensteuerung. Rolle: technisches Konzept, Workflow-Architektur, Previs und Bildqualitätskontrolle allein verantwortet.",
+      },
+    },
     "prj-room": {
       role: { zh: "实时系统开发", ja: "リアルタイムシステム開発", en: "Real-time System Development", de: "Echtzeitsystem-Entwicklung" },
       type: { zh: "交互式实时应用 · 传感器集成", ja: "インタラクティブ・リアルタイムアプリ · センサー統合", en: "Interactive Real-time Application · Sensor Integration", de: "Interaktive Echtzeit-Anwendung · Sensorintegration" },
@@ -151,7 +163,8 @@ window.RESUME_VARIANT = {
     },
   },
 
-  emphasizeItems: ["prj-room", "prj-vp"], // 门面：一个现场长稳运行、一个当场交付且带培训
+  // 门面：一个现场长稳运行、一个本地 AI 影片管线（2026-09-28 起替下虚拟制片，本人定）
+  emphasizeItems: ["prj-room", "prj-filmgen"],
 
   // 挡掉两个不适合对外的邮箱（求职邮箱、私人域名接单邮箱），本变体用 email-biz
   hideItems: ["email-pro", "email-freelance"],
@@ -159,7 +172,8 @@ window.RESUME_VARIANT = {
     // order 只排序、不隐藏：没列到的 Portfolio / GitHub / Instagram 仍然会显示在后面。
     // 真要挡掉 Instagram，把 "instagram" 加进上面的 hideItems。
     contact: ["email-biz", "phone", "linkedin"],
-    projects: ["prj-room", "prj-vp"],            // 折叠状态下先看到这两条
+    // 折叠状态下先看到前两条；虚拟制片显式排第三，否则会按 base.js 的顺序落到「我的灰发」后面
+    projects: ["prj-room", "prj-filmgen", "prj-vp"],
   },
 
   /* PDF 里给一个能扫的作品入口，指向 works.html（那一页按本变体的可见条目列出可点链接）。 */

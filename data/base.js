@@ -19,7 +19,7 @@ window.RESUME_BASE = {
     langs: ["zh", "ja", "en", "de"],
     defaultLang: "en",
     langLabels: { zh: "中", ja: "日", en: "EN", de: "DE" },
-    updated: "2026-06",
+    updated: "2026-09",
     /* 变体白名单的唯一真相。新增变体在这里加一行，works.html 就自动认得它。
        唯一的例外是 index.html 顶部那份内联白名单：它要在 body 渲染前同步判定，
        跑在 data/base.js 加载之前，读不到这里 → 必须手工同步（README「新变体登记」有清单）。 */
@@ -107,10 +107,7 @@ window.RESUME_BASE = {
     { id: "cap-webdes",  level: 5, since: "2017-01", name: { zh: "网页设计", ja: "Web デザイン", en: "Web Design", de: "Webdesign" } },
     { id: "cap-proddes", level: 4, name: { zh: "产品设计", ja: "プロダクトデザイン", en: "Product Design", de: "Produktdesign" } },
     /* —— AI 能力（ue5-tech 变体用；年限由 since 实时算出，见文件头说明）——
-       ★ cap-genai 的 since 是世鹏本人给的，本机只找得到 2026-08 起的生成式痕迹
-       （ComfyUI 模型库 8 个文件全是 2026-08-13、产出图 9 张、保存的工作流 0 个）。
-       侧边栏年限是本变体最大的卖点（「年限可核验，点数是自封的」）→ 发出去前请确认
-       2024-08 以来拿得出实际产出，拿不出就把这个月份往后调。 */
+       cap-genai 的 since（2024-08）由世鹏本人确认（2026-09-28），不再是待核事项。 */
     { id: "cap-genai",   level: 4, since: "2024-08", name: { zh: "视觉生成 AI 管线", ja: "ビジュアル生成AIパイプライン", en: "Visual Generative AI Pipeline", de: "Visuelle Generative-KI-Pipeline" } },
     { id: "cap-aiops",   level: 4, since: "2026-02", name: { zh: "本地 AI", ja: "ローカルAI", en: "Local AI", de: "Lokale KI" } },
     /* —— 商务 / 项目 / 跨文化能力（china-biz 变体用；该变体 hideSkillLevels:true 不显示点数）—— */
@@ -135,6 +132,7 @@ window.RESUME_BASE = {
     { id: "t-metasound",  name: "MetaSound",               group: "engine" },
     { id: "t-metahuman",  name: "MetaHuman",               group: "engine" },
     { id: "t-levelseq",   name: "Level Sequences",         group: "engine" },
+    { id: "t-mrq",        name: "Movie Render Queue",      group: "engine" },
     { id: "t-unity",      name: "Unity",                   group: "engine" },
     { id: "t-godot",      name: "Godot",                   group: "engine" },
     /* ai —— 清单已由世鹏逐条裁定（2026-08-18）：Flux 不列（本机只有 VAE、无主模型）；
@@ -143,11 +141,17 @@ window.RESUME_BASE = {
        ⚠️ 注意 base.js 是一整份静态文件发给每个访客：hideTools / onlyTools 只挡渲染、不挡下发。
        这里写的每一条，push 之后对所有访客都明文可见 —— 「先写上、发布前再删」行不通。
        工具集内容现在全站统一（本人 2026-08-21 定的口径：会用什么工具是客观事实，
-       不按投递方向增删）—— 没有变体再用 hideTools / onlyTools 挡它，机制本身留着备用。 */
+       不按投递方向增删）—— 没有变体再用 hideTools / onlyTools 挡它，机制本身留着备用。
+       2026-09-28 随 FilmGen 加入视频生成四条（本人逐条确认用过）：MiniMax H3 / Wan VACE /
+       Video Depth Anything 在交付管线里；Seedance 只在对照实验中用过 → 只进工具集，项目概述不提。 */
     { id: "t-claudecode", name: "Claude Code",             group: "ai" },
     { id: "t-codex",      name: "Codex",                   group: "ai" },
     { id: "t-comfyui",    name: "ComfyUI",                 group: "ai" },
+    { id: "t-minimaxh3",  name: "MiniMax H3",              group: "ai" },
+    { id: "t-wanvace",    name: "Wan VACE",                group: "ai" },
+    { id: "t-seedance",   name: "Seedance",                group: "ai" },
     { id: "t-controlnet", name: "ControlNet",              group: "ai" },
+    { id: "t-vda",        name: "Video Depth Anything",    group: "ai" },
     { id: "t-triposplat", name: "TripoSplat",              group: "ai" },
     { id: "t-llamacpp",   name: "llama.cpp",               group: "ai" },
     // interactive
@@ -182,6 +186,7 @@ window.RESUME_BASE = {
     { id: "t-py",         name: "Python",                  group: "code" },
     { id: "t-html",       name: "HTML / CSS",              group: "code" },
     { id: "t-vs",         name: "Visual Studio",           group: "code" },
+    { id: "t-ffmpeg",     name: "FFmpeg",                  group: "code" },
     // design
     { id: "t-ps",         name: "Photoshop",               group: "design" },
     { id: "t-affinity",   name: "Affinity Suite",          group: "design" },
@@ -197,6 +202,44 @@ window.RESUME_BASE = {
 
   /* —— 项目经历（video 有值 → 进作品集）————————— */
   projects: [
+    {
+      /* 背景 / 角色 / 技术内容 / 数字均经世鹏本人逐条确认（2026-09-28）。
+         context 的措辞是本人定的，别改成别的说法。没有 link：暂不公开作品。 */
+      id: "prj-filmgen",
+      period: "2026",
+      role: {
+        zh: "管线架构 · 技术美术 · UE 预演",
+        ja: "パイプライン設計 · テクニカルアート · UE プリビズ",
+        en: "Pipeline Architecture · Technical Art · UE Previs",
+        de: "Pipeline-Architektur · Technical Art · UE-Previs",
+      },
+      org: "FilmGen",
+      context: {
+        zh: "影视制作管线",
+        ja: "映像制作パイプライン",
+        en: "Film production pipeline",
+        de: "Filmproduktions-Pipeline",
+      },
+      type: {
+        zh: "UE5 白盒预演 → 本地 AI 视频生成",
+        ja: "UE5 ブロックアウト・プリビズ → ローカル AI 動画生成",
+        en: "UE5 Blockout Previs → Local AI Video Generation",
+        de: "UE5-Blockout-Previs → lokale KI-Videogenerierung",
+      },
+      summary: {
+        zh: "搭建本地部署的「UE5 白盒预演 → AI 视频生成」量产管线：Sequencer 设计机位与动作时序，ComfyUI 中按首帧与角色设定板生成镜头，布局与动作节奏跟随预演。主导设计模块化工作流与自定义节点，覆盖关键帧、角色一致性、姿态动作控制与多镜头长片生成。",
+        ja: "ローカル環境に「UE5 ブロックアウト・プリビズ → AI 動画生成」の量産パイプラインを構築：Sequencer でカメラワークと動作タイミングを設計し、ComfyUI で先頭フレームとキャラクターシートからショットを生成、レイアウトと動作のリズムはプリビズに追従する。モジュール式ワークフローとカスタムノードの設計を主導し、キーフレーム、キャラクターの一貫性、ポーズによる動作制御、複数ショットの長尺生成までをカバー。",
+        en: "Built a locally deployed production pipeline that turns UE5 blockout previs into AI video: camera and action timing designed in Sequencer, shots generated in ComfyUI from a first frame and character sheets, with layout and action rhythm following the previs. Led the design of modular workflows and custom nodes covering keyframes, character consistency, pose-driven motion control and multi-shot long-form generation.",
+        de: "Lokal betriebene Produktionspipeline, die UE5-Blockout-Previs in KI-Video überführt: Kamera- und Bewegungs-Timing im Sequencer, Shots in ComfyUI aus Startframe und Character Sheets, Layout und Rhythmus folgen der Previs. Konzeption modularer Workflows und eigener Nodes für Keyframes, Figurenkonsistenz, posenbasierte Bewegungssteuerung und Langform aus mehreren Shots.",
+      },
+      // 本人定的四个标签（2026-09-28）。「白盒预演」「虚幻」要按语言换写法 → 用四语对象（render.js 支持）
+      tags: [
+        { zh: "白盒预演", ja: "ブロックアウト・プリビズ", en: "Blockout Previs", de: "Blockout-Previs" },
+        "ComfyUI",
+        "MiniMax H3",
+        { zh: "虚幻", ja: "Unreal", en: "Unreal", de: "Unreal" },
+      ],
+    },
     {
       id: "prj-room",
       period: "2022 – 2026",
@@ -228,7 +271,7 @@ window.RESUME_BASE = {
         zh: "用户在虚拟房间中穿行，通过实时传感器与现实物体的反馈相连，在物理在场、数字记忆与沉浸叙事之间构建混合空间。",
         ja: "ユーザーはバーチャルな部屋を探索し、物理オブジェクトからのリアルタイムセンサーフィードバックと接続。身体的存在・デジタル記憶・没入型ストーリーテリングの間に混合空間を生成する。",
         en: "Users explore a virtual room connected to real-time sensor feedback from physical objects, creating a hybrid space between physical presence, digital memory and immersive storytelling.",
-        de: "Benutzer erkunden einen virtuellen Raum, der über Echtzeit-Sensorfeedback mit physischen Objekten verbunden ist — ein Hybridraum zwischen körperlicher Präsenz, digitalem Gedächtnis und immersivem Storytelling.",
+        de: "Benutzer erkunden einen virtuellen Raum, per Echtzeit-Sensorfeedback mit physischen Objekten verbunden — ein Hybridraum aus körperlicher Präsenz, digitalem Gedächtnis und immersivem Storytelling.",
       },
       tags: ["UE5", "MR", "VR", "Sensors"],
       video: "https://vimeo.com/showcase/11909785", // 千声之室 作品集
@@ -406,10 +449,10 @@ window.RESUME_BASE = {
         de: "Selbstständig",
       },
       summary: {
-        zh: "为艺术项目、制作团队与独立客户提供 Unreal Engine、实时 3D、VR/MR、交互系统、传感器集成、可视化及数字资产制作服务。服务范围涵盖德国本地与远程合作。",
-        ja: "芸術プロジェクト、制作チーム、独立クライアント向けに Unreal Engine、リアルタイム 3D、VR/MR、インタラクティブシステム、センサー統合、ビジュアライゼーション、デジタルアセット制作を提供。ドイツ国内およびリモートで対応。",
-        en: "UE5, real-time 3D, VR/MR, interactive systems, sensor integration, visualization and digital asset production — for art projects, media productions and independent clients across Germany and remote.",
-        de: "UE5, Echtzeit-3D, VR/MR, interaktive Systeme, Sensor-Integration, Visualisierung und digitale Asset-Produktion für Kunstprojekte, Medienproduktionen und unabhängige Kunden — in Deutschland und remote.",
+        zh: "为艺术项目、制作团队与独立客户提供 Unreal Engine、实时 3D、VR/MR、交互系统、传感器集成、可视化、AI 视频生成管线及数字资产制作服务。服务范围涵盖德国本地与远程合作。",
+        ja: "芸術プロジェクト、制作チーム、独立クライアント向けに Unreal Engine、リアルタイム 3D、VR/MR、インタラクティブシステム、センサー統合、ビジュアライゼーション、AI 動画生成パイプライン、デジタルアセット制作を提供。ドイツ国内およびリモートで対応。",
+        en: "UE5, real-time 3D, VR/MR, interactive systems, sensor integration, visualization, AI video generation pipelines and digital asset production — for art projects, media productions and independent clients across Germany and remote.",
+        de: "UE5, Echtzeit-3D, VR/MR, interaktive Systeme, Sensor-Integration, Visualisierung, KI-Videogenerierungs-Pipelines und digitale Asset-Produktion für Kunstprojekte, Medienproduktionen und unabhängige Kunden — in Deutschland und remote.",
       },
       tags: ["UE5", "VR/MR", "Sensors", "Real-time 3D"],
     },

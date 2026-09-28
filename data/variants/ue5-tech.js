@@ -15,6 +15,9 @@
 
    ★ 内容已定稿（2026-08-18，逐条经世鹏确认）：侧边栏九条的排序与年限、AI 工具清单、
      虚拟制片 Workshop 整条、网页设计 9 年。
+   ★ 2026-09-28 加入 FilmGen（逐条经世鹏确认）：intro 补上视频生成与影视预演、
+     项目排序改为 FilmGen → 千声之室、高亮加 MRQ 与 MiniMax H3；
+     为让 PDF 保持三页，另加了一组 itemOverrides 压缩（见文件下方）。
    ============================================================ */
 window.RESUME_VARIANT = {
   id: "ue5-tech",
@@ -27,10 +30,10 @@ window.RESUME_VARIANT = {
   },
 
   intro: {
-    zh: "KHM 媒体艺术 Diplom，专注 UE5 实时系统：Blueprint、C++ 插件、技术美术、VR/MR、传感器硬件集成（OSC/ESP32）与现场长稳运行。近年把视觉生成式 AI 接进创作管线 —— 自建 ComfyUI 多阶段工作流，覆盖图像与图生 3D 方向，并在本机自行部署、运行与调度本地模型。在艺术装置、虚拟制片与游戏开发之间工作。",
-    ja: "KHM メディアアーツ Diplom。UE5 リアルタイムシステムに注力：Blueprint、C++ プラグイン、テクニカルアート、VR/MR、センサー統合（OSC/ESP32）、現場での長期安定稼働。近年はビジュアル生成AIを制作パイプラインへ統合 —— ComfyUI の多段ワークフローを自作し、画像と画像から3Dを扱い、ローカルモデルの構築・運用も自ら行う。アートインスタレーション、バーチャルプロダクション、ゲーム開発のあいだで働く。",
-    en: "KHM Media Arts Diploma. Focused on UE5 real-time systems: Blueprint, C++ plugins, technical art, VR/MR, sensor hardware integration (OSC/ESP32) and rock-solid on-site uptime. In recent years I have brought visual generative AI into my production pipeline — building multi-stage ComfyUI workflows across image and image-to-3D, and deploying, running and scheduling local models on my own machine. I work across art installation, virtual production and game development.",
-    de: "KHM Diplom in Media Arts. Fokus auf UE5-Echtzeitsysteme: Blueprint, C++-Plugins, Technical Art, VR/MR, Sensor-Hardware-Integration (OSC/ESP32) und stabiler Vor-Ort-Betrieb. In den letzten Jahren habe ich visuelle generative KI in meine Produktionspipeline geholt — eigene mehrstufige ComfyUI-Workflows für Bild und Image-to-3D sowie Aufbau, Betrieb und Steuerung lokaler Modelle auf der eigenen Workstation. Ich arbeite zwischen Kunstinstallation, Virtual Production und Spieleentwicklung.",
+    zh: "KHM 媒体艺术 Diplom，专注 UE5 实时系统：Blueprint、C++ 插件、技术美术、VR/MR、传感器硬件集成（OSC/ESP32）与现场长稳运行。近年把视觉生成式 AI 接进创作管线 —— 自建 ComfyUI 多阶段工作流，覆盖图像、图生 3D 与视频生成，并在本机自行部署、量化与调度模型。在艺术装置、虚拟制片、影视预演与游戏开发之间工作。",
+    ja: "KHM メディアアーツ Diplom。UE5 リアルタイムシステムに注力：Blueprint、C++ プラグイン、テクニカルアート、VR/MR、センサー統合（OSC/ESP32）、現場での長期安定稼働。近年はビジュアル生成AIを制作パイプラインへ統合 —— ComfyUI の多段ワークフローを自作し、画像・画像から3D・動画生成を扱い、モデルの導入・量子化・運用も自ら行う。アートインスタレーション、バーチャルプロダクション、映像プリビズ、ゲーム開発のあいだで働く。",
+    en: "KHM Media Arts Diploma. Focused on UE5 real-time systems: Blueprint, C++ plugins, technical art, VR/MR, sensor hardware integration (OSC/ESP32) and rock-solid on-site uptime. In recent years I have brought visual generative AI into my production pipeline — building multi-stage ComfyUI workflows across image, image-to-3D and video, and deploying, quantizing and scheduling models on my own machine. I work across art installation, virtual production, film previs and game development.",
+    de: "KHM Diplom in Media Arts. Fokus auf UE5-Echtzeitsysteme: Blueprint, C++-Plugins, Technical Art, VR/MR, Sensorintegration (OSC/ESP32) und stabiler Vor-Ort-Betrieb. In den letzten Jahren habe ich visuelle generative KI in meine Produktionspipeline geholt — eigene mehrstufige ComfyUI-Workflows für Bild, Image-to-3D und Video sowie Aufbau, Quantisierung und Steuerung lokaler Modelle. Ich arbeite zwischen Kunstinstallation, Virtual Production, Film-Previs und Spieleentwicklung.",
   },
 
   greeting: null,
@@ -80,12 +83,12 @@ window.RESUME_VARIANT = {
 
   /* —— 工具集：沿用 01 号的高亮（AI 组只在本变体出现，整组不再另行高亮）——— */
   highlightTools: [
-    "t-ue5", "t-bp", "t-metaxr", "t-widgetbp", "t-animbp", "t-controlrig", "t-metasound", "t-metahuman", "t-levelseq",
+    "t-ue5", "t-bp", "t-metaxr", "t-widgetbp", "t-animbp", "t-controlrig", "t-metasound", "t-metahuman", "t-levelseq", "t-mrq",
     "t-osc", "t-arduino", "t-esp32",
     "t-shader", "t-light", "t-niagara", "t-env", "t-vp", "t-opt",
     "t-blender", "t-rokoko", "t-cpp", "t-vs",
     // AI：Claude Code 与 ComfyUI 与上面这批同级高亮（描边）
-    "t-claudecode", "t-comfyui",
+    "t-claudecode", "t-comfyui", "t-minimaxh3",
   ],
 
   /* —— PDF 作品集的共用 QR → works.html（本变体独有）————————————————
@@ -103,16 +106,49 @@ window.RESUME_VARIANT = {
      三页空白合计约等于白扔一整张 A4 的正文面积。机制见 render.js 的 printFullWidth 段。 */
   printFullWidth: ["work", "education"],
 
-  // 四条项目全部标重点（左侧绿竖线）；DeskDrawer 已降级到 moreWorks，改标 mw-deskdrawer
-  emphasizeItems: ["prj-room", "prj-grau", "prj-vp", "prj-versewiki", "mw-deskdrawer"],
+  // 五条项目全部标重点（左侧绿竖线）；DeskDrawer 已降级到 moreWorks，改标 mw-deskdrawer
+  emphasizeItems: ["prj-filmgen", "prj-room", "prj-grau", "prj-vp", "prj-versewiki", "mw-deskdrawer"],
   hideItems: ["email-freelance", "email-biz"], // 求职版只留求职邮箱；接单/对外邮箱都挡掉
   /* order.projects：折叠状态下网页只显示前两条（render.js 的 PRJ_COLLAPSED = 2），
-     所以谁排前两位＝谁是这份简历的门面。本变体投的是 UE 开发，选「千声之室」（实时交互装置）
-     与「虚拟制片」（实时合成管线 ＋ 代课讲师）。_order 的语义是「列出的排前面、其余保持原序」，
-     所以后面两条（我的灰发 / Verse Wiki）不用写，顺序也不变。
-     自由职业版（art-vr）不写这一项 → 沿用 base.js 的原始顺序，不受影响。 */
+     所以谁排前两位＝谁是这份简历的门面。2026-09-28 起选「FilmGen」（UE 预演 ＋ 生成式 AI，
+     正对标题的新方向）与「千声之室」（实时交互装置 ＋ 现场长稳运行）；「虚拟制片」与 FilmGen
+     同属影视管线，退到第三，避免门面两条讲同一件事。_order 的语义是「列出的排前面、其余保持
+     原序」—— 虚拟制片要显式写上才排得到第三，否则会落到「我的灰发」后面。 */
+  /* —— PDF 保三页的压缩（2026-09-28，本人确认）——————————————————————
+     FilmGen 加进来之后 ja/en/de 的 PDF 溢出到第 4 页，而第 4 页只剩几行工具清单 ＋ 页脚。
+     项目块在打印时不许跨页拆开，所以只省几行没用 —— 得让「虚拟制片」整块挤回第 1 页，
+     后面才会整体上移。下面四处都只作用于本变体、只删细节不改事实：
+       · 虚拟制片 / Verse Wiki：概述压到约 3 行（二者现在排在 FilmGen 与千声之室之后）；
+       · 两段教育：「方向」只留与 UE / 实时 3D 相关的几项；
+       · 两份早年非技术工作：去掉标签行。
+     base.js 里的完整文字不动（别的变体与将来要展开时还在）。改这里之前先跑 snapshot 看页数。 */
+  itemOverrides: {
+    "prj-vp": { summary: {
+      zh: "在 KHM 代课主持虚拟制片工作坊：搭建整套实时合成管线并带学员实操 —— Unreal Engine 5.5 配合 Composure 现场合成、LiveLink 实时相机追踪、与外部工具的 USD 资产交换。",
+      ja: "KHM で代講としてバーチャルプロダクションのワークショップを担当：リアルタイム合成パイプラインを構築し受講者と実践 —— Unreal Engine 5.5 と Composure による現場合成、LiveLink のカメラトラッキング、外部ツールとの USD アセット連携。",
+      en: "Taught KHM's virtual production workshop as substitute instructor: built the full real-time compositing pipeline and ran it hands-on — Unreal Engine 5.5 with Composure, live camera tracking via LiveLink, USD asset exchange with external tools.",
+      de: "Virtual-Production-Workshop an der KHM in Vertretung geleitet: komplette Echtzeit-Compositing-Pipeline aufgebaut und praktisch durchgeführt — Unreal Engine 5.5 mit Composure, Live-Kameratracking über LiveLink, USD-Assetaustausch mit externen Werkzeugen." } },
+    "prj-versewiki": { summary: {
+      zh: "面向有蓝图经验的 Unreal Engine 作者，把 Branch、ForEach、Set、Event Dispatcher 等蓝图概念逐条映射到 Verse 语法；9 章 30 节，每节配「蓝图对照」，全站中英双语。",
+      ja: "Unreal Engine のブループリント経験者向けに、Branch / ForEach / Set / Event Dispatcher などの概念を Verse の構文へ一つずつ対応づける。全 9 章 30 レッスン、各レッスンに「ブループリント対照」、中英バイリンガル。",
+      en: "For Unreal Engine authors who know Blueprints: maps Branch, ForEach, Set, Event Dispatcher and more onto Verse syntax, one by one. 30 lessons in 9 chapters, each with a Blueprint comparison; fully bilingual (CN / EN).",
+      de: "Für Unreal-Engine-Nutzer mit Blueprint-Erfahrung: Branch, ForEach, Set, Event Dispatcher u. a. einzeln auf Verse-Syntax abgebildet. 30 Lektionen in 9 Kapiteln, jeweils mit Blueprint-Vergleich; durchgehend zweisprachig (CN / EN)." } },
+    "edu-khm": { detail: {
+      zh: "方向：实时 3D、VR、游戏引擎、互动艺术、数字艺术装置、3D 扫描、建筑投影。",
+      ja: "専門：リアルタイム 3D、VR、ゲームエンジン、インタラクティブアート、デジタルアートインスタレーション、3Dスキャン、建築プロジェクションマッピング。",
+      en: "Focus: real-time 3D, VR, game engines, interactive art, digital installations, 3D scanning, projection mapping.",
+      de: "Schwerpunkte: Echtzeit-3D, VR, Game Engines, Interaktive Kunst, digitale Installationen, 3D-Scanning, Architekturprojektion." } },
+    "edu-hbut": { detail: {
+      zh: "方向：工业设计、产品设计、3D 造型、交互设计基础。",
+      ja: "専門：工業デザイン、プロダクトデザイン、3D モデリング、インタラクションデザイン基礎。",
+      en: "Focus: industrial design, product design, 3D modelling, interaction design fundamentals.",
+      de: "Schwerpunkte: Industriedesign, Produktdesign, 3D-Modellierung, Grundlagen Interaktionsdesign." } },
+    "work-portfolio": { tags: [] },
+    "work-design": { tags: [] },
+  },
+
   order: {
     contact: ["email-pro", "phone", "github"],
-    projects: ["prj-room", "prj-vp"],
+    projects: ["prj-filmgen", "prj-room", "prj-vp"],
   },
 };

@@ -88,6 +88,10 @@ works.html（作品链接页，同一份 base + 同一套变体机制，只是�
 
 **已完成**（2026-06-04 已部署上线 `gaojikuaileren.github.io/Shipeng_CV/`）：
 - [x] 真实内容灌入；4 职业变体（ue5-tech/art-vr/designer/china-biz）＋ 兼职独立页 `odd/`
+- [x] 2026-09-28 新项目 `prj-filmgen`（UE5 白盒预演 → 本地 AI 视频生成），进 ue5-tech 与 art-vr：
+      ue 排第一、fl 排第二（art-vr 用 itemOverrides 五段式改写）；设计版与中德商务版不显示项目板块，
+      没有 link → 不进作品示例 / works.html。工具集加 MRQ / FFmpeg / MiniMax H3 / Wan VACE /
+      Seedance / Video Depth Anything；`work-freelance` 服务范围加「AI 视频生成管线」。
 - [x] 2026-08-24 `?v=fl`（内部 ID 仍为 `art-vr`）整体换成德国企业客户版：
       展台搭建 / 影视制作 / 建筑可视化 / 数字代理商的项目经理与采购。
       原媒体艺术自由职业版与兔子彩蛋一并退役（在 git 历史里：`eb62e5b`、`c8e2cec`）。
@@ -135,8 +139,7 @@ works.html（作品链接页，同一份 base + 同一套变体机制，只是�
 - [ ] `moreWorks` 15 条全都没有 `link` / `video` → `works.html` 的「更多作品」组恒为空
       （空组不渲染，代码是对的，缺的是数据）。`s-gjklr.work` / `Spoy Wiki` / `SP_lessons` /
       `Shipeng CV` 都是有公开网址的，补 `link` ＋ `linkKind:"web"` 就会自动出现在那一页。
-- [ ] `cap-genai` 的 `since: "2024-08"` 是机主口述；本机只找得到 2026-08 起的生成式痕迹。
-      侧边栏年限是 ue5-tech 最大的卖点，发出去前请自查能否拿出佐证。
+- [x] `cap-genai` 的 `since: "2024-08"`：2026-09-28 机主确认保留。
 - [ ] `tools` 的 AI 组：`Flux` 本机只有 VAE、没有主模型，待机主确认是否真出过图。
       同批的 Stable Diffusion / SDXL、ControlNet、InstantID、LivePortrait 已因零痕迹删除。
 
