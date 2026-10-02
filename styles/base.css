@@ -108,9 +108,10 @@ html[lang="zh"] .cv-root, html[lang="ja"] .cv-root { line-height: 1.72; }
 .bcard-lines { font-size: .7rem; line-height: 1.7; color: var(--ink); }
 .bcard-qr svg { width: 64px; height: 64px; display: block; }
 
-/* 竖版名片预览（55:85，变体写了 card 字段时由 card-portrait.js 画在这块画布上）。
-   画布本身是高分辨率的，这里只定显示尺寸。三个上限取最小：屏宽、设计宽度、
-   以及「视口高度装得下整张卡」—— 横过来的手机上卡片会跟着变小，而不是被截掉。
+/* 图片名片的预览（竖版，变体写了 card.images 时 card.js 放一张 <img> 在这里）。
+   图片本身比显示尺寸大，这里只定显示尺寸，高度跟着图片自己的比例走。
+   三个上限取最小：屏宽、设计宽度、以及「视口高度装得下整张卡」——
+   横过来的手机上卡片会跟着变小，而不是被截掉。（55 / 85 是卡片的宽高比，只用来换算这个上限。）
    第二行的 dvh 是给手机浏览器的：vh 把地址栏那一截也算进去，卡片底部会被挡住；
    不认 dvh 的浏览器会忽略这一行，继续用上一行。 */
 .vcard { display: block; height: auto; background: #fff;
