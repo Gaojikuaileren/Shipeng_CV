@@ -22,6 +22,8 @@
        ⑩ interactions 的变体门禁同理（不命中就直接 return，彩蛋悄悄不装）
        ⑪ tools/snapshot.py 的变体清单有没有跟上（漏一个＝那个变体没有护栏，却照样报「全部一致」）
        ⑫ 控制台 hub.html 的四张表有没有跟上（漏了只影响你自己，所以只提示不报错）
+       ⑬ 竖版名片（变体的 card 字段）：二维码地址、联系方式 id、以及文案里的每个字是否都在
+          子集字体里（漏了不报错，只是那个字掉回系统字体，下载下来的名片粗细不一）
 
    退出码 0 = 全过；1 = 有问题，逐条列出。
    零依赖，不需要浏览器，也不需要本地服务器。
@@ -219,13 +221,64 @@ Object.entries(ALIAS).forEach(([short, id]) => {
     notes.push(`控制台 hub.html 的 NAMES/ORDER/CLEAN 里没有 ${id} —— 统计表里会漏掉这一行`);
 });
 
+/* ── ⑬ 竖版名片：文案、联系方式与字体子集 ─────────────────── */
+// 变体写了 card 字段就用竖版名片（scripts/export/card-portrait.js）。它的衬线与中日文字体是
+// **子集** —— 只含名片上那几个字。文案改了而子集没重切，新字就悄悄掉回系统字体，
+// 和旁边的字粗细对不上；页面不报任何错，只有下载下来的名片是花的。
+const cardDir = path.join(ROOT, "assets/fonts/card");
+const cardVariants = Object.entries(variants).filter(([, V]) => V && V.card);
+if (cardVariants.length) {
+  let cov = null;
+  try { cov = JSON.parse(fs.readFileSync(path.join(cardDir, "coverage.json"), "utf8")); } catch (e) { /* 下面报 */ }
+  if (!cov) fail("⑬ 有变体写了 card，但读不到 assets/fonts/card/coverage.json —— 先跑 python tools/card-fonts.py");
+  const latin = new Set(Array.from((cov && cov.latin) || ""));
+  const uniq = (s) => Array.from(new Set(Array.from(String(s || "")))).filter((ch) => ch !== "\n");
+  cardVariants.forEach(([v, V]) => {
+    const c = V.card;
+    if (!/^https?:\/\//.test(c.qrUrl || ""))
+      fail(`⑬ ${v} 的 card.qrUrl 不是 http(s) 地址：${c.qrUrl}（名片二维码会退回当前页面地址，本地预览时就是 localhost）`);
+    (c.contacts || []).forEach((id) => {
+      if (!hasIn(BASE.contact, id)) fail(`⑬ ${v} 的 card.contacts 指向不存在的联系方式：${id}`);
+      else if ((V.hideItems || []).indexOf(id) !== -1)
+        fail(`⑬ ${v} 的 card.contacts 里的 ${id} 被本变体自己的 hideItems 挡掉了 → 名片上会少一行`);
+    });
+    if (!cov) return;
+    // 中日文：每个字都得在负责那一栏的子集里
+    Object.entries(cov.fields || {}).forEach(([lf, key]) => {
+      const [lang, field] = lf.split(".");
+      const have = new Set(Array.from(((cov.fonts || {})[key] || {}).chars || ""));
+      const lack = uniq(c[field] && c[field][lang]).filter((ch) => !latin.has(ch) && !have.has(ch));
+      if (lack.length)
+        fail(`⑬ ${v} 名片的 ${lf} 用了子集字体里没有的字「${lack.join("")}」→ 跑 python tools/card-fonts.py（否则这些字会掉回系统字体）`);
+    });
+    // 英语 / 德语的衬线两栏：拉丁字符是整套下发的，但也只到 Latin-1 为止
+    ["en", "de"].forEach((lang) => ["name", "title"].forEach((field) => {
+      const lack = uniq(c[field] && c[field][lang]).filter((ch) => !latin.has(ch));
+      if (lack.length)
+        fail(`⑬ ${v} 名片的 ${lang}.${field} 用了名片衬线字体里没有的字符「${lack.join("")}」（只含基本拉丁与 Latin-1）→ 在 tools/card-fonts.py 的 LATIN 里补上再重跑`);
+    }));
+  });
+  // 绘制代码引用的字体文件 ↔ 目录里实际有的文件，两边必须一一对应
+  const cardSrc = fs.readFileSync(path.join(ROOT, "scripts/export/card-portrait.js"), "utf8");
+  const used = [...new Set([...cardSrc.matchAll(/"(card-[a-z]+-[a-z]+-\d+)"/g)].map((m) => m[1]))];
+  const onDisk = fs.existsSync(cardDir)
+    ? fs.readdirSync(cardDir).filter((f) => /\.woff2$/.test(f)).map((f) => f.replace(/\.woff2$/, "")) : [];
+  used.forEach((k) => {
+    if (onDisk.indexOf(k) === -1) fail(`⑬ card-portrait.js 引用了 ${k}.woff2，但 assets/fonts/card/ 里没有 —— 跑 python tools/card-fonts.py`);
+  });
+  onDisk.forEach((k) => {
+    if (used.indexOf(k) === -1)
+      fail(`⑬ assets/fonts/card/${k}.woff2 没有被 card-portrait.js 的 FACES 引用 —— 在那张表里加一行，否则这个字体永远不会被加载`);
+  });
+}
+
 /* ── 结果 ─────────────────────────────────────────────────── */
 const stats = `变体 ${registered.length}｜能力 ${(BASE.capabilities || []).length}｜工具 ${(BASE.tools || []).length}｜` +
   `项目 ${(BASE.projects || []).length}｜更多作品 ${(BASE.moreWorks || []).length}`;
 console.log(stats);
 notes.forEach((n) => console.log("提示：" + n));
 if (!problems.length) {
-  console.log("全部通过 —— 12 项检查无异常。");
+  console.log("全部通过 —— 13 项检查无异常。");
   process.exit(0);
 }
 console.log(`\n发现 ${problems.length} 处问题：`);

@@ -245,6 +245,26 @@
      已全部移除 —— 同一个元素在五份简历里现在是同样大小。只剩下面这一条内容取舍。 */
   body.v-designer [data-sec="education"] .cv-item-body { display: none; }
 
+  /* ===== 自由职业版（?v=fl，内部 ID art-vr）的版式标定（2026-10-02 实测，四语逐一验证）=====
+     起因：加了「服务范围」板块之后正文多出约 110mm，中 / 日文从 3 页涨到 4 页、
+     德语从 4 页涨到 5 页，多出来的那一页只挂着半段教育经历。
+     变体里已把「作品示例 ＋ 教育经历」挪到栅格外走全宽（printFullWidth），下面是配套的排法。
+     全部锁死在 body.v-art-vr，其余变体与 odd/ 的 PDF 必须逐块坐标不变。 */
+
+  /* 全宽流里的「作品示例」与「教育经历」左右并排（58% / 42%，中间留 10mm）。
+        竖着叠要多用 22–50mm：2026-10-02 实测，叠着排时中文版第 3 页只剩 2mm 余量 ——
+        换一台机器、中文字体差一行，页尾那行联系方式就会独自掉到第 4 页。
+        并排之后四语的末页都有 25mm 以上的余量。
+        · 58% 不是随手取的：二维码下面那行地址不许从中间折断（见下文 .cv-pprint-url-link），
+          线上地址 59 个字符、8pt 等宽字体下约 98mm；左边这块扣掉 5mm 内边距后是 101.7mm。
+          调窄之前先量那一行。
+        · 用 inline-block 而不是栅格：两块都是「不可拆」的短块，放不下就整行换页，
+          不会出现栅格跨页时那种一列空着的情况。 */
+  body.v-art-vr .cv-sec-print { display: inline-block !important; vertical-align: top;
+    box-sizing: border-box; }
+  body.v-art-vr .cv-sec-print[data-print-sec="portfolio"] { width: 58%; padding-right: 5mm; }
+  body.v-art-vr .cv-sec-print[data-print-sec="education"] { width: 42%; padding-left: 5mm; }
+
   /* 联系方式一律排在第 2 页开头 —— 所有变体、所有语言。
      为什么：不加这条时它落在哪一页完全由侧栏内容的语言长度决定，
      实测 designer 的中/日在第 2 页，而英/德挤在第 1 页末尾只剩 2.2mm / 7.5mm ——

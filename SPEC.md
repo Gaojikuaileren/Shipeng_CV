@@ -39,6 +39,10 @@ variants/<v>.js（按 ?v= 动态注入，RESUME_VARIANT）
        · emphasizeItems/hideItems → 条目级（项目/工作/教育/联系 id）
        · itemOverrides → 条目字段就地覆盖（同一段经历换叙述侧重，事实字段仍来自 base）
        · collab/contactNote → 可选板块数据（给了才渲染）
+       · card → 竖版名片（55 × 85 mm）的全部文案与二维码地址；给了才用竖版
+         （export/card-portrait.js），不给＝原来那张横版。名片上的字不从 headline 派生 ——
+         名片是要印出来的东西，身份行由变体自己定；二维码地址写死线上地址，不跟 location 走
+         （这一处是「运行时推地址」原则的**有意例外**：本地预览时下载的名片不能扫出 localhost）。
        · worksPage:true → PDF 作品集的共用二维码改指向 works.html（不写＝仍指 Vimeo 主页）
          协议守卫：只有 http(s) 才生成这个地址；file://（双击打开）返回 null → 整块退回
          「QR 指 Vimeo、不印说明行」。本机磁盘路径既扫不出东西，也不该印在给雇主的纸上。
@@ -88,6 +92,20 @@ works.html（作品链接页，同一份 base + 同一套变体机制，只是�
 
 **已完成**（2026-06-04 已部署上线 `gaojikuaileren.github.io/Shipeng_CV/`）：
 - [x] 真实内容灌入；4 职业变体（ue5-tech/art-vr/designer/china-biz）＋ 兼职独立页 `odd/`
+- [x] 2026-10-02 `?v=fl` 加入网页设计业务，定位放宽为「设计师 & 媒体开发者」：
+      头衔与简介改为覆盖三条业务；新增「服务范围」板块（复用 `collab` 机制，四块 2 × 2：
+      网页设计 / 合作方式 / 实时 3D 与交互媒体 / 3D · 动画 · 渲染）；侧栏加「网页设计」。
+      企业客户版原有的项目案例、数字、居留说明一字未动。写法规则（不写战绩、不写价格、
+      第三方数据不打包票）在 `data/variants/art-vr.js` 文件头。
+      PDF：正文多出约 110mm → 「作品示例 ＋ 教育经历」改走全宽流并左右并排（`printFullWidth`
+      ＋ print.css 里 `body.v-art-vr` 一段）。页数：中 3 / 英 4 / 德 4 与改前相同，日文 3 → 4。
+- [x] 2026-10-02 竖版名片（55 × 85 mm，四语）：变体 `card` 字段驱动，目前只有 `?v=fl` 用；
+      其余变体仍是横版，输出一个像素不变。预览与下载共用一段 canvas 绘制代码；
+      衬线与中日文字体是随站下发的子集（`assets/fonts/card/`，`tools/card-fonts.py` 生成，
+      开源 Noto，共约 48 KB，点开名片才加载）；`tools/check.js` 第 13 项核对文案与子集。
+      ⚠️ 拉丁姓名目前用的是 Noto Serif 的拉丁字形，不是样稿那种高反差展示衬线 ——
+      换字体只需改 `card-fonts.py` 的 PLAN 两行并重跑，再按新字体的宽度微调
+      `card-portrait.js` 里 NAME.latin 的 size / maxW。
 - [x] 2026-09-28 新项目 `prj-filmgen`（UE5 白盒预演 → 本地 AI 视频生成），进 ue5-tech 与 art-vr：
       ue 排第一、fl 排第二（art-vr 用 itemOverrides 五段式改写）；设计版与中德商务版不显示项目板块，
       没有 link → 不进作品示例 / works.html。工具集加 MRQ / FFmpeg / MiniMax H3 / Wan VACE /

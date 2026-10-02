@@ -2,6 +2,11 @@
    export/card.js — 名片（与 PDF 完整简历彻底不同）
    点 Card → 弹出名片卡片窗口，右上角 分享 / 下载 PNG。
    名片 = 极简（名字＋头衔＋核心联系＋二维码）。PNG 用 canvas 离线绘制，无依赖。
+
+   两种版式，由变体数据决定：
+     · 变体写了 card 字段 → 竖版名片，绘制在 export/card-portrait.js（目前只有 ?v=fl）；
+     · 没写 → 本文件里这张横版，与加竖版之前一模一样。
+   弹窗、分享、关闭、键盘这些外壳两种版式共用，只有「预览怎么建、PNG 怎么画」分开。
    ============================================================ */
 (function () {
   "use strict";
@@ -9,12 +14,17 @@
   let bound = false;
   let lastFocus = null;
 
+  // 这份数据该不该走竖版：变体给了 card，且竖版的脚本确实加载到了（odd 页不引它）
+  const portrait = (data) => (data && data.card && window.CardPortrait) || null;
+
   window.Exporter = window.Exporter || {};
   window.Exporter.card = function (data) {
     const modal = document.getElementById("card-modal");
     if (!modal) return;
     modal._data = data;
-    buildPreview(data);
+    const p = portrait(data);
+    if (p) p.preview(document.getElementById("card-preview"), data);
+    else buildPreview(data);
     lastFocus = document.activeElement; // 关闭后把焦点还回去
     modal.hidden = false;
     requestAnimationFrame(() => modal.classList.add("open"));
@@ -78,7 +88,10 @@
     const shareBtn = document.getElementById("btn-card-share");
     if (shareBtn) shareBtn.textContent = canNativeShare ? "⤴ Share" : "⎘ Copy Link";
     modal.querySelector("[data-share]").addEventListener("click", () => share(modal._data));
-    modal.querySelector("[data-download]").addEventListener("click", () => downloadPNG(modal._data));
+    modal.querySelector("[data-download]").addEventListener("click", () => {
+      const p = portrait(modal._data);
+      if (p) p.download(modal._data); else downloadPNG(modal._data);
+    });
     document.addEventListener("keydown", (e) => {
       const m = document.getElementById("card-modal");
       if (!m || m.hidden) return;           // 弹窗没开就别抢键盘
@@ -102,7 +115,9 @@
   }
 
   function share(data) {
-    const url = cardUrl(data);
+    // 竖版名片分享的是它二维码里的那个地址（写死的正式地址），不跟当前页面走
+    const p = portrait(data);
+    const url = p ? p.url(data) : cardUrl(data);
     const title = t(data.profile.name) + " — " + t(data.profile.title);
     if (navigator.share) navigator.share({ title, url }).catch(() => {});
     else if (navigator.clipboard) navigator.clipboard.writeText(url).then(() => window.toast && window.toast("链接已复制 / Link copied"));

@@ -627,6 +627,9 @@
         // 且不能带按钮与 id —— 否则同一个 id 在文档里出现两次
         const copy = RENDER[k] && RENDER[k](d, true);
         if (!copy) return;
+        // 重点板块的标题是强调色 —— 副本也要带上这个标记，否则同一个板块在屏幕上是绿的、
+        // 在纸上变回灰的。（ue5-tech 挪的两块都不是重点板块，所以这一行对它没有任何影响。）
+        if (emph.has(k)) copy.classList.add("is-emph-section");
         const inGrid = main.querySelector('[data-sec="' + k + '"]');
         if (inGrid) inGrid.classList.add("print-moved");
         append(frag, h("div", { class: "cv-sec-print", "data-print-sec": k }, copy));

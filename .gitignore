@@ -8,3 +8,6 @@ Thumbs.db
 
 # 输出快照（本机 + 当天生成，不进仓库）
 tools/.snapshot/
+
+# 名片字体的源文件（几十 MB 的整套字体，只在本机切子集用；进仓库的是 assets/fonts/card/ 里的子集）
+tools/.fontsrc/

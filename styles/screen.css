@@ -161,6 +161,11 @@
   .cv-collab { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--s4) var(--s3);
     grid-template-rows: auto auto auto; }
   .cv-cb { display: grid; grid-template-rows: subgrid; grid-row: span 3; }
+  /* 自由职业版（?v=fl）的「服务范围」有四块：固定排成 2 × 2。
+     不加这条，760–899px（平板竖屏，页面还是单栏、主区足够宽）时 auto-fit 会排成 3 ＋ 1 ——
+     第四块孤零零挂在第一列下面，右边空着两列。桌面端主区最多 588px，本来就只排得下两列，
+     所以这条只在那一段宽度上起作用；别的变体（china-biz 是两块）不受影响。 */
+  body.v-art-vr .cv-collab { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 .cv-cb { border-top: var(--hair) solid var(--line); padding-top: var(--s2); }
 .cv-cb-title { font-size: var(--fs-small); font-weight: 700; letter-spacing: .01em; margin-bottom: var(--s1); }

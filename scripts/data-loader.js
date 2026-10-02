@@ -83,6 +83,10 @@ window.DataLoader = {
       printFullWidth: v.printFullWidth || null,
       // ⧉ 复制按钮只给「姓名 + 个人链接」，不附 HR 评分模板（面向客户的变体用）
       copyLinksOnly: !!v.copyLinksOnly,
+      // 名片版式：变体给了 card（{ layout, name, title, tagline, qrUrl, qrLabel, contacts }）
+      // 就用竖版名片（export/card-portrait.js）；没给＝原来那张横版，一个像素都不变。
+      // 这里原样透传，不做合并：名片上的字是变体自己的一套，不从 headline 派生。
+      card: v.card || null,
       // 跨简历入口：{ to: "<短链>", label: {四语} } → 页面最底部居中一个按钮，通向另一份简历。
       // 只在屏幕上出现（print.css 里整块隐藏）。没声明的变体没有这个节点。
       crossLink: v.crossLink || null,

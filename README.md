@@ -65,6 +65,10 @@ node tools/serve.js
    - `contactNote` 联系方式下方一句话 CTA（如求职 ＋ 合作双身份）
    - `worksPage: true` 把 PDF 作品集里那个共用二维码改指向 `works.html`（见下方「作品链接页」）。
      不写＝二维码仍指向 Vimeo 主页（老变体保持原样，不多一次跳转）
+   - `printFullWidth: ["work", "education"]` 这些主区板块在 **PDF 里**脱离双栏、按整页宽度排（屏幕上不变）。
+     侧栏内容结束之后，每页左边那条 34% 的轨道是空的 —— 内容多的变体靠它少用一整页
+   - `card: { … }` 名片改用**竖版**（55 × 85 mm），名片上的字全部从这里取（见下方「导出 → Card」）。
+     不写＝原来那张横版。目前只有 `art-vr`（`?v=fl`）写了
 3. 把短链 `你的域名/?v=<短码>` 发给对应招聘方。
 4. 新变体还要在**三处**登记，否则不生效（漏了大多不报错，只是悄悄不对）：
    - `scripts/variants.js` 的 `ALIAS`（**短链 ↔ 内部 ID 的唯一真相**；
@@ -81,7 +85,7 @@ node tools/serve.js
 | 发出去的地址 | 内部 ID | 是谁 |
 |---|---|---|
 | `https://gaojikuaileren.github.io/Shipeng_CV/?v=ue` | `ue5-tech` | 游戏 / UE5 + 视觉生成式 AI |
-| `https://gaojikuaileren.github.io/Shipeng_CV/?v=fl` | `art-vr` | 德国企业客户（展台 / 影视 / 建筑可视化 / 代理商）|
+| `https://gaojikuaileren.github.io/Shipeng_CV/?v=fl` | `art-vr` | 自由职业：网页设计 ＋ 实时 3D / 互动展台 ＋ 3D · 动画 · 影像（小型企业与企业客户）|
 | `https://gaojikuaileren.github.io/Shipeng_CV/?v=ds` | `designer` | 设计 |
 | `https://gaojikuaileren.github.io/Shipeng_CV/?v=cd` | `china-biz` | 外贸 / 中德商务 |
 | `https://gaojikuaileren.github.io/Shipeng_CV/odd/` | `odd` | 兼职 Mini-Job |
@@ -91,6 +95,8 @@ node tools/serve.js
 > `art-vr` 这个 ID 现在名不副实：2026-08-24 `?v=fl` 的内容从「媒体艺术自由职业名片」
 > 整体换成了「德国企业客户」，但 ID 没改 —— 它是统计计数键与 `body.v-*` 排版类名，
 > 改名会把历史访问数断成两截、并要求重标 print.css。短暡存在过的 `biz-3d` / `bz` 已并入它。
+> 2026-10-02 又加入网页设计业务，定位放宽为「设计师 & 媒体开发者」：三条业务并列
+> （网页设计 / 实时 3D 与交互媒体 / 3D · 动画 · 影像），企业客户版原有的项目案例原样保留。
 
 **已经发出去的旧链（`?v=ue5-tech`）与 PDF 二维码里的长地址永久有效**：
 `index.html` 头部脚本认出长 ID 后照常渲染，只用 `history.replaceState` 把地址栏静默换成短链
@@ -120,6 +126,13 @@ node tools/serve.js
 - **↓ PDF** — 打印对话框选「另存为 PDF」= A4 简历（文字矢量、ATS 友好）。工具集/更多作品在 PDF 里横跨整页排最后；作品集变「二维码＋目录」；页尾带联系方式。
   · 「更多作品」在**网页上**超过 6 条会默认折叠（下方有展开/收起按钮）；**PDF 里永远全量展开、按钮不出现**。
 - **▭ Card** — 弹出名片卡片窗口：分享（iOS/Mac 系统分享 / 其他端复制链接）＋ 下载 PNG（canvas 离线绘制）。
+  两种版式，由变体数据决定：
+  · 缺省是**横版**（85 × 55 mm）：姓名 ＋ 岗位头衔 ＋ 联系方式 ＋ 指向当前页面的二维码。
+  · 变体写了 `card` 字段就是**竖版**（55 × 85 mm，目前只有 `?v=fl`）：姓名 / 身份行 / 方向行 /
+    二维码 / 两行联系方式，四语各一套文案，都写在该变体的 `card` 里；二维码地址是写死的线上地址
+    （`card.qrUrl`），不跟当前页面走 —— 本地预览时下载的名片也能扫到线上。
+    预览与下载是同一段绘制代码，PNG 是 600 dpi（1299 × 2008）并带物理尺寸，拖进排版软件就是原大。
+    文件名带语言（`shipeng-card-de.png`），切到哪种语言就下载哪一张。
 - **⧉ Copy** — 复制「姓名 ＋ 当前可见联系方式 ＋ HR 评分模板」（随当前语言）。
 
 > 打印 / PDF 的真实效果需在本地浏览器的打印对话框里看（预览环境看不到）。
@@ -183,7 +196,7 @@ node tools/check.js
 
 零依赖、不用浏览器、不用起服务器。数据与登记出错的方式几乎都是**静默**的 —— 四语漏一种会被
 i18n 用英文顶上、id 打错一个字母会让 `hideItems` 挡不住那条、新变体忘了在 worker 登记
-就一次访问也记不上 —— 这个脚本把它们变成命令行里的一行红字。查八项：
+就一次访问也记不上 —— 这个脚本把它们变成命令行里的一行红字。查十三项：
 
 1. 变体登记链路：短链表 ↔ `meta.variants` ↔ 数据文件 ↔ worker 白名单，四处必须对齐
 2. 四语完整性（`{zh,ja,en,de}` 一个都不能少）
@@ -197,8 +210,24 @@ i18n 用英文顶上、id 打错一个字母会让 `hideItems` 挡不住那条�
 10. `interactions` 的变体门禁同理（不命中直接 return，彩蛋悄悄不装）
 11. `tools/snapshot.py` 的变体清单跟上了没有 —— **漏一个等于那个变体没有护栏，而它照样报「全部一致」**
 12. 控制台 `hub.html` 的四张表跟上了没有（只影响你自己，所以只提示不报错）
+13. 竖版名片（变体的 `card` 字段）：二维码地址、联系方式 id，以及**文案里的每个字是否都在子集字体里**
+    （漏了不报错，只是那个字掉回系统字体，下载下来的名片粗细不一）
 
 出问题退出码 1 并逐条列出位置。它与下面那套快照是两回事：**这个查数据对不对，那个查显示有没有变**。
+
+## 改了名片上的中文 / 日文之后
+
+竖版名片是画在 canvas 上导出的，字体不能指望访客的设备（中文在 Windows 上会掉到细宋体），
+所以衬线与中日文字体随站点下发 —— 但只下发名片上**实际用到的那二十几个字**
+（`assets/fonts/card/`，每个文件 2–17 KB，点开名片时才加载）。改了变体 `card` 里的中日文就要重切：
+
+```bash
+python tools/card-fonts.py
+```
+
+只改英语 / 德语不用跑（拉丁字符是整套下发的）。忘了跑也不会悄悄出错：上面第 13 项会拦住。
+源字体是开源的 Noto Serif / Noto Sans（SIL OFL 1.1，许可全文在 `assets/fonts/card/OFL.txt`），
+Windows 11 自带；别的系统见该脚本开头的说明。需要 Python ＋ `fonttools` ＋ `brotli`，只是开发期工具。
 
 ## 改动之后怎么证明「显示没变」
 
@@ -240,7 +269,7 @@ python tools/snapshot.py check      # 改之后，核对
 - 站点：`https://gaojikuaileren.github.io/Shipeng_CV/`
 - 仓库：`github.com/Gaojikuaileren/Shipeng_CV`（main 分支根目录，GitHub Pages）
 - **私人控制台**：`/hub.html` —— 指令式（未被任何公开页链接，只给你自己用）
-  · `/s01` 游戏开发（`?v=ue`）　`/s02` 媒体艺术（`?v=fl`）　`/s03` 设计师（`?v=ds`）
+  · `/s01` 游戏开发（`?v=ue`）　`/s02` 自由职业（`?v=fl`）　`/s03` 设计师（`?v=ds`）
     `/s04` 兼职（`odd/`）　`/s05` 中德商务（`?v=cd`）
   · `/sdata` 看分职业访问统计：访问 / PDF / **扫码**（纸质二维码进作品页的次数）/
     **停留**（平均秒数）/ **读完**（平均滚动百分比）/ 本周，另有语言 · 国家 · 设备的分布
@@ -291,7 +320,7 @@ Shipeng_CV/
 │   └── data.js           兼职数据（独立，不引用主 base）
 ├── data/
 │   ├── base.js           核心内容（capabilities/tools/projects/work/…，四语）
-│   └── variants/         职位变体（ue5-tech / art-vr※ / designer / china-biz）※ art-vr = 企业客户版
+│   └── variants/         职位变体（ue5-tech / art-vr※ / designer / china-biz）※ art-vr = 自由职业版（?v=fl）
 ├── styles/
 │   ├── fonts.css         自托管 Hanken Grotesk @font-face
 │   ├── tokens.css        设计变量（颜色/字体/间距）← 想换风格先改这里
@@ -309,12 +338,14 @@ Shipeng_CV/
 │   ├── main.js           入口串联
 │   ├── lib/qrcode.js     自托管 QR 库
 │   ├── interactions/     交互层（预留，可按端开关）
-│   └── export/           pdf / card / text / qr 导出
+│   └── export/           pdf / card（横版名片）/ card-portrait（竖版名片）/ text / qr 导出
 ├── assets/
 │   ├── fonts/            Hanken Grotesk woff2（自托管）
+│   │   └── card/         竖版名片用的字体子集 ＋ coverage.json ＋ 许可（由 tools/card-fonts.py 生成）
 │   └── photo/            照片（现为占位 SVG）
 └── tools/
     ├── serve.js          本地预览服务器
-    ├── check.js          内容守卫（四语 / id / 登记链路 / tags 上限，见上文）
+    ├── check.js          内容守卫（四语 / id / 登记链路 / tags 上限 / 名片字体，见上文）
+    ├── card-fonts.py     重切竖版名片的字体子集（改了名片上的中日文之后跑，见上文）
     └── snapshot.py       输出回归护栏（改动前后比 DOM 与 PDF，见上文）
 ```
