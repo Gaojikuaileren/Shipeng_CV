@@ -134,7 +134,7 @@
   }
 
   /* —— 能力板块（可复用）——————————————————————
-     d.collab = [{ id, title, note?, items:[…] }, …]（多语字段）
+     d.collab = [{ id, title, note?, items?:[…] }, …]（多语字段；items 为空 → 不输出列表，只剩标题）
      变体给数据才渲染；不给 → 该板块不存在（其它变体零影响）。
      用途示例：china-biz 的「中德协作：德国端 / 中国端网络 / 技术与产品理解」。
   ———————————————————————————————————————————— */
@@ -147,7 +147,9 @@
           h("div", { class: "cv-cb" },
             h("h3", { class: "cv-cb-title" }, t(b.title)),
             b.note ? h("p", { class: "cv-cb-note" }, t(b.note)) : null,
-            h("ul", { class: "cv-cb-list" }, (b.items || []).map((it) => h("li", null, t(it))))))));
+            b.items && b.items.length
+              ? h("ul", { class: "cv-cb-list" }, b.items.map((it) => h("li", null, t(it))))
+              : null))));
   }
 
   /* —— 主区：工具集（d.tools 全部软件，按组；高亮项组内排前）*/

@@ -12,9 +12,12 @@
             ③ 3D、动画、渲染与本地影像制作流程
           企业客户版原有的内容（项目案例与其中的数字、侧栏年限、居留说明）一字未动，
           只是前面多了「服务范围」一块，头衔与简介改成覆盖三条业务。
+        · 2026-10-04（本人定）：去掉一切行业 / 客群指向的用词；「服务范围」收成四个大类、
+          只写类名不列细目：实时 3D 交互 / 网页设计与搭建 / 美术资产制作 / 影视后期。
+          原来的「合作方式」一块随之撤掉（它不是服务类别）。
 
    读者现在是两类人：
-     · **小型企业、机构和个人** —— 网页业务目前以餐馆和商铺为切入点；
+     · **小型企业、机构和个人**（网页业务）；
      · **展台搭建公司、影视制作公司、建筑可视化工作室、数字代理商的项目经理与采购**（原读者）。
    他们要判断的仍是那三件事：这人能不能交付、会不会在现场掉链子、签约有没有手续风险。
 
@@ -32,15 +35,12 @@
      · 只重新解释 base.js 里已有的真实经历。日期 / 学校 / 学历 / 语言等级只来自 base.js，
        这里一律用 itemOverrides 换叙述，绝不新增不存在的项目、客户、交付或年限。
 
-   网页业务怎么写（2026-10-02 定）：
-     · 讲「我提供什么、怎么合作」，不讲战绩。餐馆和商铺只说是当前面向的方向 ——
-       在有已上线、且客户同意公开的案例之前，不写客户名，也不写「已为多少家店……」。
+   业务怎么写（2026-10-02 定，2026-10-04 修订）：
+     · 不写任何行业或客群的具体指向（本人 2026-10-04 要求去掉）。
+     · 「服务范围」只有四个类名，不列细目、不写说明；要加先问本人。
+     · 不讲战绩：在有已上线、且客户同意公开的案例之前，不写客户名，也不写「已为多少家……」。
        在建的试点与静态演示不算案例；将来要加，按「在建试点 / 静态演示 / 已上线」分别标明。
-     · 能力证据只用 base.js 里已有的网页项目。账号登录与在线支付有 Verse Wiki 为证，
-       可以写「已实现」；预订、后台这类只写「按需求商定」。
      · 不写套餐表、价格、折扣、付款与维护条件 —— 这些都还没定。
-     · 账号与数据只说三句：域名 / 主机 / 账号归客户掌控；默认不加广告追踪；不出售客户数据。
-       不替第三方（搜索引擎、主机商、邮件服务）承诺「不处理数据」。
      · 「本地运行、素材不上传云端」只属于 3D 预演 → 影片镜头那条 AI 管线（FilmGen），
        不要泛化到网页或别的业务上。
 
@@ -71,14 +71,13 @@ window.RESUME_VARIANT = {
   },
 
   /* 简介 = 首屏。五句话：我是谁 → 网页 → 实时 3D（保住「离线、无人值守」这个卖点）→
-     3D / 动画 / 本地影像 → 都是我本人做的。细目放到下面「服务范围」，这里不列清单。
-     ⚠️ 「餐馆和商铺」写的是**面向的方向**，不是战绩 —— 别改成「已为……做过」。
-        「本地硬件上运行」只挂在 3D 预演 → 影片那一句上，见文件头。 */
+     3D / 动画 / 本地影像 → 都是我本人做的。这里不列清单。
+     ⚠️ 不写行业或客群指向（见文件头）；「本地硬件上运行」只挂在 3D 预演 → 影片那一句上。 */
   intro: {
-    zh: "科隆自由职业设计师与媒体艺术家，媒体艺术与产品设计出身。我做网站的设计与实现——目前以餐馆和商铺为切入点，也面向其他小型企业、机构和个人。用 Unreal Engine 5 开发实时 3D 应用：虚拟展厅、互动展台，离线跑在你的硬件上，整场展会无人值守也不掉链子。同时提供 3D、动画与渲染，并能把 3D 预演直接转成影片镜头，这条 AI 管线完全在本地硬件上运行。设计、实现到交付，都由我本人完成。",
-    ja: "ケルンを拠点とするフリーランスのデザイナー兼メディアアーティスト。メディアアートとプロダクトデザインを学びました。Web サイトのデザインと実装を手がけており、現在は飲食店や店舗を中心に、その他の小規模事業者・団体・個人の方にも対応します。Unreal Engine 5 ではリアルタイム 3D アプリケーションを開発——バーチャルショールームやインタラクティブ展示は、御社のハードウェア上でオフラインで動作し、展示会の全会期を無人で稼働し続けます。あわせて 3D・アニメーション・レンダリングを提供し、3D プリビズをそのまま映像ショットへ変換することもできます——この AI パイプラインはすべてローカルのハードウェア上で動作します。デザインから実装、納品まで、すべて私自身が担当します。",
-    en: "Freelance designer and media artist based in Cologne, trained in media art and product design. I design and build websites — currently with a focus on restaurants and shops, and just as readily for other small businesses, institutions and individuals. With Unreal Engine 5 I develop real-time 3D applications: virtual showrooms and interactive exhibits that run offline on your hardware and survive a full trade-fair week unattended. I also cover 3D, animation and rendering, up to film shots generated straight from a 3D previs — by an AI pipeline that runs entirely on local hardware. Design, implementation and handover are all my own work.",
-    de: "Freiberuflicher Designer und Medienkünstler in Köln, ausgebildet in Medienkunst und Produktdesign. Ich gestalte und baue Websites — derzeit mit Schwerpunkt auf Restaurants und Läden, ebenso für andere kleine Unternehmen, Einrichtungen und Einzelpersonen. Mit Unreal Engine 5 entwickle ich Echtzeit-3D-Anwendungen: virtuelle Showrooms und interaktive Exponate, die offline auf Ihrer Hardware laufen und einen ganzen Messeeinsatz ohne Betreuung durchhalten. Hinzu kommen 3D, Animation und Rendering, bis hin zu Filmshots direkt aus einer 3D-Previs — erzeugt von einer KI-Pipeline, die vollständig auf lokaler Hardware läuft. Gestaltung, Umsetzung und Übergabe verantworte ich selbst.",
+    zh: "科隆自由职业设计师与媒体艺术家，媒体艺术与产品设计出身。我做网站的设计与搭建。用 Unreal Engine 5 开发实时 3D 应用：虚拟展厅、互动展台，离线跑在你的硬件上，整场展会无人值守也不掉链子。同时提供 3D、动画与渲染，并能把 3D 预演直接转成影片镜头，这条 AI 管线完全在本地硬件上运行。设计、实现到交付，都由我本人完成。",
+    ja: "ケルンを拠点とするフリーランスのデザイナー兼メディアアーティスト。メディアアートとプロダクトデザインを学びました。Web サイトのデザインと構築を手がけています。Unreal Engine 5 ではリアルタイム 3D アプリケーションを開発——バーチャルショールームやインタラクティブ展示は、御社のハードウェア上でオフラインで動作し、展示会の全会期を無人で稼働し続けます。あわせて 3D・アニメーション・レンダリングを提供し、3D プリビズをそのまま映像ショットへ変換することもできます——この AI パイプラインはすべてローカルのハードウェア上で動作します。デザインから実装、納品まで、すべて私自身が担当します。",
+    en: "Freelance designer and media artist based in Cologne, trained in media art and product design. I design and build websites. With Unreal Engine 5 I develop real-time 3D applications: virtual showrooms and interactive exhibits that run offline on your hardware and survive a full trade-fair week unattended. I also cover 3D, animation and rendering, up to film shots generated straight from a 3D previs — by an AI pipeline that runs entirely on local hardware. Design, implementation and handover are all my own work.",
+    de: "Freiberuflicher Designer und Medienkünstler in Köln, ausgebildet in Medienkunst und Produktdesign. Ich gestalte und baue Websites. Mit Unreal Engine 5 entwickle ich Echtzeit-3D-Anwendungen: virtuelle Showrooms und interaktive Exponate, die offline auf Ihrer Hardware laufen und einen ganzen Messeeinsatz ohne Betreuung durchhalten. Hinzu kommen 3D, Animation und Rendering, bis hin zu Filmshots direkt aus einer 3D-Previs — erzeugt von einer KI-Pipeline, die vollständig auf lokaler Hardware läuft. Gestaltung, Umsetzung und Übergabe verantworte ich selbst.",
   },
 
   greeting: null,
@@ -106,7 +105,7 @@ window.RESUME_VARIANT = {
     de: "Aufenthaltstitel nach § 21 Abs. 5 AufenthG — freiberufliche Tätigkeit als Medienentwickler/Medienkünstler, bundesweit erlaubt bis 05.03.2028. Kopie des Titels und des Zusatzblatts stelle ich auf Anfrage vor Vertragsschluss zur Verfügung. Rechnung mit deutscher Steuernummer. Ich arbeite mit eigenen Betriebsmitteln, eigener Zeiteinteilung und für mehrere Auftraggeber.",
   },
 
-  /* 信息层级：简介（我是谁）→ 服务范围（我提供什么、怎么合作）→ 项目案例（凭什么信）→
+  /* 信息层级：简介（我是谁）→ 服务范围（我提供什么）→ 项目案例（凭什么信）→
      作品示例（可点的链接）→ 教育。「服务范围」排在案例之前：来的人先要知道能找我做什么。
 
      工具集不显示（本人 2026-08-24 定）：它是一整块长清单，把页面拉得很长，
@@ -120,117 +119,25 @@ window.RESUME_VARIANT = {
   },
 
   /* 板块标题按客户语境改写：「项目经历」听起来像履历，「项目案例」才是客户在找的东西。
-     collab 是通用的「能力板块」机制（china-biz 用它讲中德协作），这里用来并列三条业务。 */
+     collab 是通用的「能力板块」机制（china-biz 用它讲中德协作），这里用来并列四个服务大类。 */
   sectionTitles: {
     collab: { zh: "服务范围", ja: "サービス", en: "Services", de: "Leistungen" },
     projects: { zh: "项目案例", ja: "実績", en: "Reference Projects", de: "Referenzprojekte" },
     portfolio: { zh: "作品示例", ja: "作例", en: "Work Samples", de: "Arbeitsproben" },
   },
 
-  /* —— 服务范围：三条业务并列 ＋ 一块「怎么合作」——————————————————————
-     四块在桌面、平板与 PDF 里排成 2 × 2，手机上单列。写法规则见文件头「网页业务怎么写」。
-     ⚠️ 数组顺序 = 排布顺序，而且是量过的：第一排「网页 ＋ 合作方式」，第二排「实时 3D ＋ 3D / 动画」。
-          · 语义上，合作方式那四条（先出方案、按需报价、账号归客户、不加追踪）说的主要就是
-            网页项目，紧挨着网页那块读起来最顺；后两块是原有的两条业务。
-          · 版面上，同一排的两块等高（栅格按较高的那块撑开）。网页与合作方式是两块长的、
-            后两块是短的，长配长、短配短才不留白。原来「网页 ＋ 实时 3D」同排时，
-            德语 PDF 第一排要 100mm、第二排 77mm，第 1 页装不下 → 整份多出一页。
-     ⚠️ 每一块都要有 note：这个栅格用 subgrid 让「标题 / 说明 / 列表」三行横向对齐，
-        同一排里只要有一块缺 note，它的列表就会顶到说明那一行，把邻块撑出一段空白。
-     ⚠️ 每条都得对得上 base.js 里的真实经历或本人确认过的做法：
-          · sv-web 第 5 条「账号与在线支付已实现」的证据是 Verse Wiki；预订 / 后台只写「商定」。
-          · sv-rt 四条 = 千声之室 / 我的灰发 / 虚拟制片这几个案例里做过的事。
-          · sv-3d 第 4 条的「本地、不上传云端」只说 FilmGen 那条管线（本人确认属实）。
-          · sv-how 是合作方式，不是成果；不写价格、套餐、付款与维护条件。 */
+  /* —— 服务范围：四个大类，只写类名（本人 2026-10-04 定）——————————————————
+     顺序 = 本人给的顺序；桌面、平板与 PDF 里排成 2 × 2（screen.css 的 body.v-art-vr 规则），手机上单列。
+     不写 note、不写 items：本人要求服务范围不列具体内容，要加细目先问本人。
+     四块结构一致，subgrid 的三行里只用到标题那一行，横向仍然对齐
+     （render.js 遇到空 items 不输出列表，所以没有空的 <ul>）。
+     类名与 base.js 的经历对得上：实时 3D 交互＝千声之室 / 虚拟制片等；网页＝Verse Wiki 等；
+     美术资产＝3D 建模 / 扫描 / 数字人资产；影视后期＝KHM 方向与工具集里的剪辑合成软件。 */
   collab: [
-    {
-      id: "sv-web",
-      title: { zh: "网页设计与数字形象", ja: "Web デザイン・サイト制作", en: "Web Design & Digital Presence", de: "Webdesign & digitaler Auftritt" },
-      note: {
-        zh: "目前以餐馆和商铺为主要方向，也适用于其他小型企业、机构和个人。",
-        ja: "現在は飲食店・店舗が中心。その他の小規模事業者・団体・個人にも対応します。",
-        en: "Currently focused on restaurants and shops — equally suited to other small businesses, institutions and individuals.",
-        de: "Derzeit vor allem Restaurants und Läden — ebenso andere kleine Unternehmen, Einrichtungen und Einzelpersonen.",
-      },
-      items: [
-        { zh: "网站的视觉与信息结构设计，适配手机、平板和桌面",
-          ja: "サイトのビジュアルと情報構成の設計（スマートフォン・タブレット・PC 対応）",
-          en: "Visual design and information structure — for phone, tablet and desktop",
-          de: "Gestaltung und Informationsstruktur — für Smartphone, Tablet und Desktop" },
-        { zh: "店铺介绍、菜单、营业时间、联系方式及相关入口",
-          ja: "店舗紹介・メニュー・営業時間・連絡先と関連リンク",
-          en: "About page, menu, opening hours, contact and related links",
-          de: "Vorstellung des Betriebs, Speisekarte, Öffnungszeiten, Kontakt und weiterführende Links" },
-        { zh: "菜单及配套视觉材料的整理、排版与设计",
-          ja: "メニューと関連ビジュアル素材の整理・組版・デザイン",
-          en: "Menus and accompanying material: edited, typeset and designed",
-          de: "Speisekarte und Begleitmaterial: aufbereitet, gesetzt, gestaltet" },
-        { zh: "在约定范围内实现网站，并给出交付与后续更新方案",
-          ja: "合意した範囲でサイトを実装し、納品と更新の方法をご提案",
-          en: "Built within the agreed scope, with handover and a plan for later updates",
-          de: "Umsetzung im vereinbarten Umfang, mit Übergabe und einem Plan für spätere Aktualisierungen" },
-        { zh: "账号登录与在线支付已在自己的项目里实现（见 Verse Wiki）；预订、后台等功能按需求另行商定",
-          ja: "アカウント機能とオンライン決済は自身のプロジェクトで実装済み（Verse Wiki 参照）。予約・管理画面などはご要望に応じてご相談",
-          en: "User accounts and online payment already implemented in my own project (see Verse Wiki); booking, admin area and the like by arrangement",
-          de: "Nutzerkonten und Online-Zahlung im eigenen Projekt bereits umgesetzt (siehe Verse Wiki); Reservierung, Verwaltungsbereich u. Ä. nach Absprache" },
-      ],
-    },
-    {
-      id: "sv-how",
-      title: { zh: "合作方式", ja: "進め方", en: "Working Together", de: "Zusammenarbeit" },
-      note: {
-        zh: "设计与实现都由我本人负责。",
-        ja: "デザインも実装も、私自身が担当します。",
-        en: "I do the design and the implementation myself.",
-        de: "Gestaltung und Umsetzung übernehme ich persönlich.",
-      },
-      items: [
-        { zh: "先用一份针对性的视觉方案或轻量演示沟通，再确定项目",
-          ja: "まず的を絞ったビジュアル案や簡易デモで方向性を確認し、その上でプロジェクトを確定",
-          en: "A targeted visual proposal or a lightweight demo first, the project second",
-          de: "Erst ein gezielter Gestaltungsvorschlag oder eine kleine Demo, dann das Projekt" },
-        { zh: "工作范围与报价根据你的需求确认",
-          ja: "作業範囲とお見積りは、ご要望に合わせて確定",
-          en: "Scope and quote are agreed according to what you need",
-          de: "Umfang und Angebot richten sich nach Ihrem Bedarf" },
-        { zh: "域名、主机和相关账号由你掌控；我按项目需要获得授权，并做清楚的交付与交接",
-          ja: "ドメイン・サーバー・関連アカウントはお客様の管理下に。必要な範囲で権限をいただき、明確に納品・引き継ぎます",
-          en: "Domain, hosting and related accounts stay under your control; I work with the access you grant and hand over clearly",
-          de: "Domain, Hosting und zugehörige Konten bleiben in Ihrer Hand; ich arbeite mit Ihrer Freigabe und übergebe nachvollziehbar" },
-        { zh: "默认不加入广告追踪，不出售客户数据",
-          ja: "標準では広告トラッキングを入れず、お客様のデータを販売しません",
-          en: "No ad tracking by default; I do not sell client data",
-          de: "Standardmäßig ohne Werbe-Tracking; Kundendaten verkaufe ich nicht" },
-      ],
-    },
-    {
-      id: "sv-rt",
-      title: { zh: "实时 3D 与交互媒体", ja: "リアルタイム 3D・インタラクティブメディア", en: "Real-time 3D & Interactive Media", de: "Echtzeit-3D & interaktive Medien" },
-      note: "Unreal Engine 5 · Blueprint · Shader", // 专名不翻译，四语同一行
-      items: [
-        { zh: "虚拟展厅与互动展台", ja: "バーチャルショールームとインタラクティブ展示", en: "Virtual showrooms and interactive exhibits", de: "Virtuelle Showrooms und interaktive Exponate" },
-        { zh: "VR / MR 应用", ja: "VR / MR アプリケーション", en: "VR / MR applications", de: "VR-/MR-Anwendungen" },
-        { zh: "传感器与硬件交互", ja: "センサー・ハードウェアとの連携", en: "Sensor and hardware integration", de: "Sensorik und Hardware-Anbindung" },
-        { zh: "现场部署与调试，离线长时间稳定运行",
-          ja: "現地での設置・調整、オフラインでの長時間安定稼働",
-          en: "On-site set-up and commissioning; stable, unattended offline operation",
-          de: "Aufbau und Inbetriebnahme vor Ort; stabiler Offline-Dauerbetrieb" },
-      ],
-    },
-    {
-      id: "sv-3d",
-      title: { zh: "3D · 动画 · 渲染", ja: "3D・アニメーション・レンダリング", en: "3D, Animation & Rendering", de: "3D, Animation & Rendering" },
-      note: "Blender · Unreal Sequencer · ComfyUI", // 同上，专名
-      items: [
-        { zh: "3D 建模、动画与渲染", ja: "3D モデリング・アニメーション・レンダリング", en: "3D modelling, animation and rendering", de: "3D-Modellierung, Animation und Rendering" },
-        { zh: "由实时工程直接输出渲染影像", ja: "リアルタイムのプロジェクトからレンダリング映像を出力", en: "Rendered footage straight from the real-time project", de: "Gerendertes Bildmaterial direkt aus dem Echtzeit-Projekt" },
-        { zh: "3D 扫描与数字人资产", ja: "3D スキャンとデジタルヒューマンアセット", en: "3D scanning and digital-human assets", de: "3D-Scanning und Digital-Human-Assets" },
-        { zh: "把 3D 预演直接转成影片镜头：AI 管线在本地运行，素材不上传云端",
-          ja: "3D プリビズから映像ショットを直接生成：AI パイプラインはローカルで稼働し、素材をクラウドに上げません",
-          en: "Film shots straight from a 3D previs: the AI pipeline runs locally, no material goes to the cloud",
-          de: "Filmshots direkt aus der 3D-Previs: Die KI-Pipeline läuft lokal, kein Material geht in eine Cloud" },
-      ],
-    },
+    { id: "sv-rt",   title: { zh: "实时 3D 交互", ja: "リアルタイム 3D・インタラクション", en: "Real-time 3D & Interaction", de: "Echtzeit-3D & Interaktion" } },
+    { id: "sv-web",  title: { zh: "网页设计与搭建", ja: "Web デザイン・サイト構築", en: "Web Design & Development", de: "Webdesign & -entwicklung" } },
+    { id: "sv-art",  title: { zh: "美术资产制作", ja: "アートアセット制作", en: "Art Asset Production", de: "Art-Asset-Produktion" } },
+    { id: "sv-post", title: { zh: "影视后期", ja: "映像ポストプロダクション", en: "Film & Video Post-production", de: "Film- & Video-Postproduktion" } },
   ],
 
   /* 顺序：网页设计领头（与头衔、服务范围的顺序一致），其后沿用企业客户版原来的排法 ——
