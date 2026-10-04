@@ -13,8 +13,8 @@
           企业客户版原有的内容（项目案例与其中的数字、侧栏年限、居留说明）一字未动，
           只是前面多了「服务范围」一块，头衔与简介改成覆盖三条业务。
         · 2026-10-04（本人定）：去掉一切行业 / 客群指向的用词；「服务范围」收成四个大类、
-          只写类名不列细目：实时 3D 交互 / 网页设计与搭建 / 美术资产制作 / 影视后期。
-          原来的「合作方式」一块随之撤掉（它不是服务类别）。
+          每类一句简介、不列细目：实时 3D 交互 / 网页设计与搭建 / 美术资产制作 / 影视后期。
+          原来的「合作方式」一块撤掉、不再保留（本人确认）；简介改成讲「我」，不再罗列服务。
 
    读者现在是两类人：
      · **小型企业、机构和个人**（网页业务）；
@@ -37,7 +37,7 @@
 
    业务怎么写（2026-10-02 定，2026-10-04 修订）：
      · 不写任何行业或客群的具体指向（本人 2026-10-04 要求去掉）。
-     · 「服务范围」只有四个类名，不列细目、不写说明；要加先问本人。
+     · 「服务范围」四个类名，每类一句简介，不列细目；要加细目先问本人。
      · 不讲战绩：在有已上线、且客户同意公开的案例之前，不写客户名，也不写「已为多少家……」。
        在建的试点与静态演示不算案例；将来要加，按「在建试点 / 静态演示 / 已上线」分别标明。
      · 不写套餐表、价格、折扣、付款与维护条件 —— 这些都还没定。
@@ -70,14 +70,15 @@ window.RESUME_VARIANT = {
     de: "Designer & Medienkünstler · Webdesign / Echtzeit-3D / Interaktive Medien",
   },
 
-  /* 简介 = 首屏。五句话：我是谁 → 网页 → 实时 3D（保住「离线、无人值守」这个卖点）→
-     3D / 动画 / 本地影像 → 都是我本人做的。这里不列清单。
-     ⚠️ 不写行业或客群指向（见文件头）；「本地硬件上运行」只挂在 3D 预演 → 影片那一句上。 */
+  /* 简介 = 首屏，讲「我」：身份与出身 → 我怎么做事 → 我看重什么 → 我怎么和人合作。
+     服务清单不进这里（下面「服务范围」每类一句）。本人 2026-10-04 定：简介更多是表达我。
+     ⚠️ 艺术词汇只在第一、二句的身份与出身里出现（见文件头）；第一人称单数；不写行业或客群指向。
+        「设计师与媒体艺术家」与名片同一个说法，别换。 */
   intro: {
-    zh: "科隆自由职业设计师与媒体艺术家，媒体艺术与产品设计出身。我做网站的设计与搭建。用 Unreal Engine 5 开发实时 3D 应用：虚拟展厅、互动展台，离线跑在你的硬件上，整场展会无人值守也不掉链子。同时提供 3D、动画与渲染，并能把 3D 预演直接转成影片镜头，这条 AI 管线完全在本地硬件上运行。设计、实现到交付，都由我本人完成。",
-    ja: "ケルンを拠点とするフリーランスのデザイナー兼メディアアーティスト。メディアアートとプロダクトデザインを学びました。Web サイトのデザインと構築を手がけています。Unreal Engine 5 ではリアルタイム 3D アプリケーションを開発——バーチャルショールームやインタラクティブ展示は、御社のハードウェア上でオフラインで動作し、展示会の全会期を無人で稼働し続けます。あわせて 3D・アニメーション・レンダリングを提供し、3D プリビズをそのまま映像ショットへ変換することもできます——この AI パイプラインはすべてローカルのハードウェア上で動作します。デザインから実装、納品まで、すべて私自身が担当します。",
-    en: "Freelance designer and media artist based in Cologne, trained in media art and product design. I design and build websites. With Unreal Engine 5 I develop real-time 3D applications: virtual showrooms and interactive exhibits that run offline on your hardware and survive a full trade-fair week unattended. I also cover 3D, animation and rendering, up to film shots generated straight from a 3D previs — by an AI pipeline that runs entirely on local hardware. Design, implementation and handover are all my own work.",
-    de: "Freiberuflicher Designer und Medienkünstler in Köln, ausgebildet in Medienkunst und Produktdesign. Ich gestalte und baue Websites. Mit Unreal Engine 5 entwickle ich Echtzeit-3D-Anwendungen: virtuelle Showrooms und interaktive Exponate, die offline auf Ihrer Hardware laufen und einen ganzen Messeeinsatz ohne Betreuung durchhalten. Hinzu kommen 3D, Animation und Rendering, bis hin zu Filmshots direkt aus einer 3D-Previs — erzeugt von einer KI-Pipeline, die vollständig auf lokaler Hardware läuft. Gestaltung, Umsetzung und Übergabe verantworte ich selbst.",
+    zh: "我是住在科隆的自由职业设计师与媒体艺术家。先在湖北工业大学读产品设计，后在科隆媒体艺术学院（KHM）完成媒体艺术 Diplom。我喜欢把一个想法一路做到真正能用：先想清楚它给谁用、该是什么样子，再亲手把它做出来，调到稳定为止。设计和技术对我来说是同一件事的两面——画面要好看，结构要清楚，东西要经得起长时间使用。我用中文、德语、英语和日语工作，习惯和背景各不相同的人一起把事情做成。",
+    ja: "ケルンを拠点とするフリーランスのデザイナー兼メディアアーティストです。湖北工業大学でプロダクトデザインを学んだ後、ケルン・メディア芸術大学（KHM）でメディアアーツの Diplom を取得しました。アイデアを、実際に使えるものになるまで仕上げるのが好きです。誰がどう使うのか、どんな姿であるべきかを考え抜き、自分の手で形にして、安定して動くまで調整します。私にとってデザインと技術は同じものの表と裏——見た目が美しく、構造が明快で、長く使えること。中国語・ドイツ語・英語・日本語で仕事をし、さまざまな背景を持つ人と一緒にものをつくることに慣れています。",
+    en: "I'm a freelance designer and media artist based in Cologne. I studied product design at Hubei University of Technology and completed my Diploma in Media Arts at KHM Cologne. What I enjoy most is taking an idea all the way to something people can actually use: working out who it is for and what it should look like, then building it myself and tuning it until it runs reliably. To me, design and technology are two sides of the same thing — it should look right, be clearly structured and hold up in long-term use. I work in Chinese, German, English and Japanese, and I'm used to getting things done with people from very different backgrounds.",
+    de: "Ich bin freiberuflicher Designer und Medienkünstler in Köln. Nach dem Produktdesign-Studium an der Hubei University of Technology habe ich an der Kunsthochschule für Medien Köln (KHM) mein Diplom in Media Arts gemacht. Am liebsten bringe ich eine Idee bis zu etwas, das man wirklich benutzen kann: erst klären, für wen es ist und wie es aussehen soll, dann selbst umsetzen und so lange abstimmen, bis es zuverlässig läuft. Gestaltung und Technik sind für mich zwei Seiten derselben Sache — es soll gut aussehen, klar aufgebaut sein und im Dauereinsatz bestehen. Ich arbeite auf Chinesisch, Deutsch, Englisch und Japanisch und bin es gewohnt, mit Menschen ganz unterschiedlicher Hintergründe etwas auf die Beine zu stellen.",
   },
 
   greeting: null,
@@ -126,18 +127,39 @@ window.RESUME_VARIANT = {
     portfolio: { zh: "作品示例", ja: "作例", en: "Work Samples", de: "Arbeitsproben" },
   },
 
-  /* —— 服务范围：四个大类，只写类名（本人 2026-10-04 定）——————————————————
+  /* —— 服务范围：四个大类，每类一句简介（本人 2026-10-04 定）————————————————
      顺序 = 本人给的顺序；桌面、平板与 PDF 里排成 2 × 2（screen.css 的 body.v-art-vr 规则），手机上单列。
-     不写 note、不写 items：本人要求服务范围不列具体内容，要加细目先问本人。
-     四块结构一致，subgrid 的三行里只用到标题那一行，横向仍然对齐
-     （render.js 遇到空 items 不输出列表，所以没有空的 <ul>）。
-     类名与 base.js 的经历对得上：实时 3D 交互＝千声之室 / 虚拟制片等；网页＝Verse Wiki 等；
-     美术资产＝3D 建模 / 扫描 / 数字人资产；影视后期＝KHM 方向与工具集里的剪辑合成软件。 */
+     每块 = 类名 ＋ 一句 note，不写 items（本人：不列具体内容，但要有简短介绍）。
+     ⚠️ 四块都要有 note：subgrid 让「标题 / 说明」两行横向对齐，缺一块就会错位。
+        render.js 遇到空 items 不输出列表，所以没有空的 <ul>。
+     ⚠️ 每句都得对得上 base.js 的经历：实时 3D＝千声之室（离线、10 天无人值守）等；
+        网页＝Verse Wiki 等；美术资产＝3D / 扫描 / 数字人（我的灰发）与工具集里的 2D 软件；
+        影视后期＝KHM 方向、剪辑合成软件，以及 FilmGen —— 「本地」只挂在这条 AI 流程上。 */
   collab: [
-    { id: "sv-rt",   title: { zh: "实时 3D 交互", ja: "リアルタイム 3D・インタラクション", en: "Real-time 3D & Interaction", de: "Echtzeit-3D & Interaktion" } },
-    { id: "sv-web",  title: { zh: "网页设计与搭建", ja: "Web デザイン・サイト構築", en: "Web Design & Development", de: "Webdesign & -entwicklung" } },
-    { id: "sv-art",  title: { zh: "美术资产制作", ja: "アートアセット制作", en: "Art Asset Production", de: "Art-Asset-Produktion" } },
-    { id: "sv-post", title: { zh: "影视后期", ja: "映像ポストプロダクション", en: "Film & Video Post-production", de: "Film- & Video-Postproduktion" } },
+    { id: "sv-rt",
+      title: { zh: "实时 3D 交互", ja: "リアルタイム 3D・インタラクション", en: "Real-time 3D & Interaction", de: "Echtzeit-3D & Interaktion" },
+      note: { zh: "用 Unreal Engine 5 开发能上手操作的实时 3D 应用，离线运行，长时间无人值守也稳定。",
+              ja: "Unreal Engine 5 で、実際に操作できるリアルタイム 3D アプリケーションを開発。オフラインで動作し、長時間の無人稼働にも耐えます。",
+              en: "Real-time 3D applications people can actually operate, built in Unreal Engine 5 — running offline and stable through long unattended use.",
+              de: "Bedienbare Echtzeit-3D-Anwendungen mit Unreal Engine 5 — offline lauffähig und stabil auch im langen unbetreuten Betrieb." } },
+    { id: "sv-web",
+      title: { zh: "网页设计与搭建", ja: "Web デザイン・サイト構築", en: "Web Design & Development", de: "Webdesign & -entwicklung" },
+      note: { zh: "从视觉与信息结构设计到上线，做适配手机、平板和桌面的网站。",
+              ja: "ビジュアルと情報設計から公開まで、スマートフォン・タブレット・PC に対応したサイトをつくります。",
+              en: "Websites from visual design and structure through to launch — for phone, tablet and desktop.",
+              de: "Websites von Gestaltung und Struktur bis zum Launch — für Smartphone, Tablet und Desktop." } },
+    { id: "sv-art",
+      title: { zh: "美术资产制作", ja: "アートアセット制作", en: "Art Asset Production", de: "Art-Asset-Produktion" },
+      note: { zh: "3D 建模、贴图、扫描与数字人资产，以及 2D 插画，可直接用于引擎与渲染。",
+              ja: "3D モデリング・テクスチャ・スキャン、デジタルヒューマンのアセット、2D イラストまで。エンジンやレンダリングでそのまま使えます。",
+              en: "3D modelling, texturing, scanning and digital-human assets, plus 2D illustration — ready for engines and rendering.",
+              de: "3D-Modellierung, Texturing, Scans und Digital-Human-Assets, dazu 2D-Illustration — direkt einsetzbar in Engine und Rendering." } },
+    { id: "sv-post",
+      title: { zh: "影视后期", ja: "映像ポストプロダクション", en: "Film & Video Post-production", de: "Film- & Video-Postproduktion" },
+      note: { zh: "剪辑与合成，以及把 3D 预演直接转成影片镜头的本地 AI 流程。",
+              ja: "編集とコンポジット。3D プリビズから映像ショットを直接生成する、ローカルの AI ワークフローも。",
+              en: "Editing and compositing, plus a local AI workflow that turns a 3D previs straight into film shots.",
+              de: "Schnitt und Compositing, dazu ein lokaler KI-Workflow, der aus einer 3D-Previs direkt Filmshots macht." } },
   ],
 
   /* 顺序：网页设计领头（与头衔、服务范围的顺序一致），其后沿用企业客户版原来的排法 ——
@@ -163,6 +185,19 @@ window.RESUME_VARIANT = {
      FilmGen（2026-09-28 加入）的结果数字同样由本人给出：单镜头耗时、三种出片模式；
      「全部本地运行、素材不上传云端」经本人确认属实。 */
   itemOverrides: {
+    /* 教育「方向」只留与四个服务大类对得上的几项（2026-10-04）。PDF 里教育与作品示例
+       并排走全宽流，这一块的高度由较高的教育栏决定 —— 原文德语 6 + 4 行，把整块挤到第 4 页。
+       base.js 的完整写法不动（其余变体照旧）。 */
+    "edu-khm": { detail: {
+      zh: "方向：实时 3D、VR、游戏引擎、动画、3D 扫描、影视后期、建筑投影。",
+      ja: "専門：リアルタイム 3D、VR、ゲームエンジン、アニメーション、3D スキャン、映像ポストプロダクション、建築プロジェクションマッピング。",
+      en: "Focus: real-time 3D, VR, game engines, animation, 3D scanning, film/video post-production, projection mapping.",
+      de: "Schwerpunkte: Echtzeit-3D, VR, Game Engines, Animation, 3D-Scanning, Film-/Video-Postproduktion, Architekturprojektion." } },
+    "edu-hbut": { detail: {
+      zh: "方向：工业设计、产品设计、3D 造型、视觉设计。",
+      ja: "専門：工業デザイン、プロダクトデザイン、3D モデリング、ビジュアルデザイン。",
+      en: "Focus: industrial design, product design, 3D modelling, visual design.",
+      de: "Schwerpunkte: Industriedesign, Produktdesign, 3D-Modellierung, Visuelles Design." } },
     "prj-filmgen": {
       role: { zh: "AI 视频管线搭建", ja: "AI 動画パイプライン構築", en: "AI Video Pipeline Development", de: "KI-Video-Pipeline-Entwicklung" },
       type: { zh: "3D 预演 → AI 影片镜头 · 本地运行", ja: "3D プリビズ → AI 映像ショット · ローカル稼働", en: "3D Previs → AI Film Shots · Runs Locally", de: "3D-Previs → KI-Filmshots · lokal betrieben" },
@@ -190,7 +225,7 @@ window.RESUME_VARIANT = {
         zh: "任务：把真人形象与访谈素材转成可在 VR 里自由查看的数字资料库，供非技术用户直接上手。实现：建立从面部扫描到可用数字人资产的完整管线（清理、重拓扑、绑定），并做出 VR 中的浏览与检索交互。结果：扫描并重建 4 位人物，交付 2 个打包好的 Windows x86 可执行程序。技术：Unreal Engine 5、3D 扫描、数字人管线、VR。角色：独立负责扫描处理、资产管线与 VR 实现，投入约 6 个月。",
         ja: "課題：実在の人物像とインタビュー素材を、VR 上で自由に閲覧できるデジタル資料として整備し、非技術者がそのまま扱えるようにすること。実装：顔スキャンから使用可能なデジタルヒューマンアセットまでの一貫した工程（クリーンアップ・リトポロジー・リグ）を構築し、VR 内での閲覧・検索インタラクションを実装した。結果：4 名をスキャン・再構築し、Windows x86 向けにビルドした実行ファイル 2 本を納品。技術：Unreal Engine 5、3D スキャン、デジタルヒューマン工程、VR。担当：スキャン処理・アセット工程・VR 実装を単独で担当、稼働は約 6 か月。",
         en: "Task: turn real portraits and interview material into a digital archive that can be browsed freely in VR by non-technical users. Implementation: built the full pipeline from facial scan to usable digital-human asset (cleanup, retopology, rigging) and implemented browsing and lookup interaction inside VR. Result: 4 people scanned and rebuilt, 2 packaged Windows x86 builds delivered. Stack: Unreal Engine 5, 3D scanning, digital-human pipeline, VR. Role: sole responsibility for scan processing, asset pipeline and VR implementation; roughly 6 months of work.",
-        de: "Aufgabe: reale Porträts und Interviewmaterial in ein digitales Archiv überführen, das sich in VR frei durchsehen lässt und auch von Nicht-Technikern bedient werden kann. Umsetzung: durchgehende Pipeline vom Gesichtsscan bis zum einsatzfähigen Digital-Human-Asset aufgebaut (Bereinigung, Retopologie, Rigging) und die Navigation samt Suche in VR umgesetzt. Ergebnis: 4 Personen gescannt und rekonstruiert, 2 fertig gepackte Windows-x86-Builds geliefert. Technik: Unreal Engine 5, 3D-Scanning, Digital-Human-Pipeline, VR. Rolle: Scanverarbeitung, Asset-Pipeline und VR-Umsetzung allein verantwortet, Aufwand rund 6 Monate.",
+        de: "Aufgabe: reale Porträts und Interviewmaterial in ein digitales Archiv überführen, das sich in VR frei durchsehen und auch ohne Technikkenntnisse bedienen lässt. Umsetzung: durchgehende Pipeline vom Gesichtsscan bis zum einsatzfähigen Digital-Human-Asset (Bereinigung, Retopologie, Rigging), dazu Navigation und Suche in VR. Ergebnis: 4 Personen gescannt und rekonstruiert, 2 gepackte Windows-x86-Builds geliefert. Technik: Unreal Engine 5, 3D-Scanning, Digital-Human-Pipeline, VR. Rolle: Scanverarbeitung, Asset-Pipeline und VR-Umsetzung allein verantwortet, Aufwand rund 6 Monate.",
       },
     },
     "prj-vp": {
@@ -210,7 +245,7 @@ window.RESUME_VARIANT = {
         zh: "任务：把一套技术教学内容做成能自助购买、自助学习的双语站点，全流程无需人工介入。实现：独立完成前端、内容结构、账号与支付接入，部署在 Cloudflare 上并配好持续发布。结果：上线 9 章 30 课内容。技术：Cloudflare、Supabase、Stripe、UE Verse。角色：需求分析、设计、开发、上线与后续维护全部独立完成。",
         ja: "課題：技術教育コンテンツを、購入から受講まで利用者が自力で完結できる二言語サイトとして構築し、運用に人手を要しないようにすること。実装：フロントエンド、コンテンツ構造、アカウントと決済の接続をすべて単独で実装し、Cloudflare 上に配置して継続的な公開体制を整えた。結果：9 章 30 レッスンを公開。技術：Cloudflare、Supabase、Stripe、UE Verse。担当：要件整理・設計・開発・公開・保守まで単独で対応。",
         en: "Task: turn a body of technical training material into a bilingual site where users buy and study on their own, with no manual step in the loop. Implementation: built the front end, the content structure and the account and payment integration single-handedly, deployed on Cloudflare with continuous publishing in place. Result: 9 chapters and 30 lessons published. Stack: Cloudflare, Supabase, Stripe, UE Verse. Role: requirements, design, development, launch and ongoing maintenance all handled alone.",
-        de: "Aufgabe: technisches Schulungsmaterial in eine zweisprachige Website überführen, auf der Nutzer selbstständig kaufen und lernen, ohne dass ein manueller Schritt nötig wird. Umsetzung: Frontend, Inhaltsstruktur sowie Konten- und Zahlungsanbindung eigenständig umgesetzt, auf Cloudflare bereitgestellt und mit fortlaufender Veröffentlichung eingerichtet. Ergebnis: 9 Kapitel mit 30 Lektionen veröffentlicht. Technik: Cloudflare, Supabase, Stripe, UE Verse. Rolle: Anforderungen, Entwurf, Entwicklung, Launch und Wartung allein verantwortet.",
+        de: "Aufgabe: technisches Schulungsmaterial als zweisprachige Website, auf der Nutzer ohne manuellen Zwischenschritt selbst kaufen und lernen. Umsetzung: Frontend, Inhaltsstruktur, Konten- und Zahlungsanbindung eigenständig umgesetzt, auf Cloudflare mit fortlaufender Veröffentlichung bereitgestellt. Ergebnis: 9 Kapitel mit 30 Lektionen veröffentlicht. Technik: Cloudflare, Supabase, Stripe, UE Verse. Rolle: Anforderungen, Entwurf, Entwicklung, Launch und Wartung allein verantwortet.",
       },
     },
   },
@@ -236,7 +271,10 @@ window.RESUME_VARIANT = {
      德语从 4 页涨到 5 页，而多出来的那一页只挂着半段教育经历。
      侧栏在第 2 页就结束了，之后每页左边那条 34% 的轨道是空的（机制见 render.js 的
      printFullWidth 段）—— 把最后这两块挪到栅格外，按整页宽度排，正好把那一页收回来。
-     项目案例不挪：它挪出去以后，第 2 页「联系方式」右边会空出一整块。 */
+     项目案例不挪：它挪出去以后，第 2 页「联系方式」右边会空出一整块。
+     2026-10-04 起四语都是 3 页，而且英 / 德第 3 页基本写满（页脚落在 y≈804pt）：
+     教育「方向」用 itemOverrides 压短、我的灰发 / Verse Wiki 的德语措辞收紧，才装进来。
+     往第 2–3 页加任何内容之前，先跑 tools/snapshot.py 看页数。 */
   printFullWidth: ["portfolio", "education"],
 
   /* ⧉ 复制按钮只给「姓名 + 联系方式」，不附 HR 评分模板 —— 对面是客户，不是 HR。 */
