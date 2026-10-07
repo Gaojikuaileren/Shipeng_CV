@@ -60,7 +60,7 @@ window.DataLoader = {
       // 侧边栏能力右侧显示什么 → render（缺省 "level"，即改造前的行为）
       skillDisplay: this._skillDisplay(v),
       // 工具集（onlyTools 白名单 → hideTools 黑名单 → highlightTools 命中的标 _hl）
-      tools: this._flagTools(base.tools || [], v.highlightTools || [], v.onlyTools, v.hideTools),
+      tools: this._flagTools(base.tools || [], v.highlightTools || [], v.onlyTools, v.hideTools, v.id),
       projects: this._order(this._flag(base.projects, v), order.projects),
       work: this._order(this._flag(base.work, v), order.work),
       moreWorks: base.moreWorks ? this._flag(base.moreWorks, v) : [],
@@ -99,7 +99,18 @@ window.DataLoader = {
     return data;
   },
 
-  // 过滤 hideItems；emphasizeItems → _emph（条目级：项目/工作/作品/教育/联系方式）
+  /* onlyIn —— base.js 条目（项目 / 更多作品 / 工具 …）的「开放范围」：
+       不写 = 所有变体都看得见（改造前的行为，现有条目全都不写）；
+       onlyIn: ["ai-agent"] = 只有这些变体看得见，其余变体当它不存在。
+     为什么不用 hideItems 在别的变体里挡：那要求每个现有变体、以及将来每一个新变体
+     都记得去挡 —— 忘了不报错，只是悄悄多出一条。onlyIn 把「谁能看」写在条目自己身上，
+     新变体默认看不见，要开放就往数组里加 ID。tools/check.js 第 ⑭ 项核对这些 ID。
+     没加载到变体（id 为空）时 onlyIn 条目一律不显示。 */
+  _visibleIn(it, variantId) {
+    return !it.onlyIn || (!!variantId && it.onlyIn.indexOf(variantId) !== -1);
+  },
+
+  // 过滤 hideItems / onlyIn；emphasizeItems → _emph（条目级：项目/工作/作品/教育/联系方式）
   // itemOverrides[id] → 就地覆盖该条目的字段（role/summary/tags/detail…）：
   //   同一段真实经历，不同变体换侧重叙述。日期/公司/学历这些事实仍来自 base，不会分叉。
   _flag(items, v) {
@@ -107,7 +118,7 @@ window.DataLoader = {
     const emph = new Set(v.emphasizeItems || []);
     const ov = v.itemOverrides || {};
     return items
-      .filter((it) => !hide.has(it.id))
+      .filter((it) => this._visibleIn(it, v.id) && !hide.has(it.id))
       .map((it) => Object.assign({}, it, ov[it.id] || null, { _emph: emph.has(it.id) }));
   },
 
@@ -132,12 +143,12 @@ window.DataLoader = {
   // 两个名单都写时先过白名单再过黑名单（黑名单赢）。顺序始终是 base.js 的原顺序。
   // 黑名单的用处：往 base.tools 加一组新工具时，它会自动漏进所有没写 onlyTools 的变体
   //   —— 不想让某个变体看见，就在那个变体里 hideTools 掉。
-  _flagTools(tools, hlIds, onlyIds, hideIds) {
+  _flagTools(tools, hlIds, onlyIds, hideIds, variantId) {
     const hl = new Set(hlIds);
     const only = onlyIds && onlyIds.length ? new Set(onlyIds) : null;
     const hide = new Set(hideIds || []);
     return tools
-      .filter((tt) => (!only || only.has(tt.id)) && !hide.has(tt.id))
+      .filter((tt) => this._visibleIn(tt, variantId) && (!only || only.has(tt.id)) && !hide.has(tt.id))
       .map((tt) => Object.assign({}, tt, { _hl: hl.has(tt.id) }));
   },
 
@@ -177,6 +188,10 @@ window.DataLoader = {
     const s = v.sections || {};
     [].concat(s.order || [], s.hide || [], s.emphasize || []).forEach((k) => { if (SECTIONS.indexOf(k) === -1) bad.push("sections → " + k); });
     if (v.skillDisplay && ["level", "since", "both", "none"].indexOf(v.skillDisplay) === -1) bad.push("skillDisplay → " + v.skillDisplay);
+    // 引用了 onlyIn 没对本变体开放的条目：渲染时它根本不存在，引用等于白写
+    const closed = (id) => { const it = itemPool.concat(base.tools || []).find((x) => x.id === id); return !!it && !this._visibleIn(it, v.id); };
+    [].concat(v.emphasizeItems || [], Object.keys(v.itemOverrides || {}), v.highlightTools || [], (v.order || {}).projects || [])
+      .forEach((id) => { if (closed(id)) bad.push("onlyIn 未对本变体开放 → " + id); });
     if (bad.length) console.warn('[cv] 变体 "' + (v.id || "?") + '" 引用了无效 id：\n  ' + bad.join("\n  "));
 
     // since 写在 base.capabilities 上（不属于「变体引用了无效 id」）→ 单独一条警告。

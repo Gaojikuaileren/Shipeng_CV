@@ -174,6 +174,9 @@
 .cv-cb-list { display: flex; flex-direction: column; gap: 3px; font-size: var(--fs-small); color: var(--ink-soft); }
 .cv-cb-list li { position: relative; padding-left: var(--s3); hyphens: auto; overflow-wrap: break-word; }
 .cv-cb-list li::before { content: "—"; position: absolute; left: 0; color: var(--ink-faint); }
+/* 条目上的「其他版本」链接行（render.js 的 itemPages） */
+.cv-item-pages { font-size: var(--fs-small); color: var(--ink-soft); margin-top: var(--s1); }
+.cv-item-pages .cv-pages-lead { color: var(--ink-faint); }
 /* 板块被 emphasize 时，能力块顶线也用强调色 */
 .is-emph-section .cv-cb { border-top-color: var(--accent); }
 

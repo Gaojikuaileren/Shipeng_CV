@@ -34,8 +34,10 @@ node tools/serve.js
 - 项目想同时进「作品集」板块，就给它一个 `link`（外链），并用 `linkKind` 决定徽标：
   `"video"` ▶视频 / `"store"` ↗商店 / `"web"` ↗网站（不写＝web）。老字段 `video` 继续管用，等于 `linkKind:"video"`。
 - ⚠️ `base.js` 是所有变体共享的：往 `projects` / `moreWorks` / `tools` 加条目，
-  **所有没挡住它的变体都会跟着多出来**。只想给某一个变体用的内容，记得在其余变体里
-  用 `hideItems`（项目 / 作品）或 `hideTools`（软件）挡掉。
+  **所有没挡住它的变体都会跟着多出来**。只想给某一个变体用的内容，给那一条写
+  `onlyIn: ["变体ID"]`（2026-10-07 起）：只有列出的变体看得见，其余变体与将来的新变体默认看不见，
+  不用再去每个变体里 `hideItems` / `hideTools`（那种挡法忘了不报错）。`check.js` 第 ⑭ 项核对 ID。
+  `onlyIn` 只挡渲染、不挡下发 —— `base.js` 整份发给每个访客，写进去的字都是公开的。
 
 ---
 
@@ -70,12 +72,14 @@ node tools/serve.js
    - `card: { images, alt, size, qrUrl }` 名片改用**画好的图**（四语各一张），预览、下载、分享的都是
      图片本身（见下方「导出 → Card」）。不写＝原来那张现排的横版。目前只有 `art-vr`（`?v=fl`）写了
 3. 把短链 `你的域名/?v=<短码>` 发给对应招聘方。
-4. 新变体还要在**三处**登记，否则不生效（漏了大多不报错，只是悄悄不对）：
-   - `scripts/variants.js` 的 `ALIAS`（**短链 ↔ 内部 ID 的唯一真相**；
-     `index.html` 的裸入口拦截、`works.html` 的作品清单、`identity.js` 都从这里读）
+4. 新变体还要在这几处登记，否则不生效（漏了大多不报错，只是悄悄不对；`node tools/check.js` 会逐处核对）：
+   - `scripts/variants.js` 的 `ALIAS` 与 `PAGE`（**短链 ↔ 内部 ID 的唯一真相**；
+     `index.html` 的裸入口拦截、`works.html` 的作品清单、`identity.js` 都从这里读 ——
+     `index.html` 自己没有白名单，不用改）
    - `data/base.js` 的 `meta.variants`
    - `worker/cv-stats-worker.js` 的 `VARIANTS`（漏了 `/hit` 与 `/pdf` 返回 400，访问量一次都记不上；
      改完要在 `worker/` 目录跑 `wrangler deploy` 才生效）
+   - `tools/snapshot.py` 的 `VARIANTS`（开了 `worksPage` 的再加进 `WORKS_VARIANTS`）
    另外 `hub.html` 的 `ROUTES` / `NAMES` / `ORDER` / `CLEAN` 是控制台自己的清单，按需加。
 
 ### 短链与旧链
@@ -88,6 +92,7 @@ node tools/serve.js
 | `https://gaojikuaileren.github.io/Shipeng_CV/?v=fl` | `art-vr` | 自由职业：网页设计 ＋ 实时 3D / 互动展台 ＋ 3D · 动画 · 影像（小型企业与企业客户）|
 | `https://gaojikuaileren.github.io/Shipeng_CV/?v=ds` | `designer` | 设计 |
 | `https://gaojikuaileren.github.io/Shipeng_CV/?v=cd` | `china-biz` | 外贸 / 中德商务 |
+| `https://gaojikuaileren.github.io/Shipeng_CV/?v=ag` | `ai-agent` | AI Agent 开发（德国 Agentic AI 类岗位）|
 | `https://gaojikuaileren.github.io/Shipeng_CV/odd/` | `odd` | 兼职 Mini-Job |
 
 兼职版是独立页面，直接发 `odd/`；`?v=mn` 也认，会跳过去。
@@ -279,7 +284,7 @@ python tools/snapshot.py check      # 改之后，核对
 - 仓库：`github.com/Gaojikuaileren/Shipeng_CV`（main 分支根目录，GitHub Pages）
 - **私人控制台**：`/hub.html` —— 指令式（未被任何公开页链接，只给你自己用）
   · `/s01` 游戏开发（`?v=ue`）　`/s02` 自由职业（`?v=fl`）　`/s03` 设计师（`?v=ds`）
-    `/s04` 兼职（`odd/`）　`/s05` 中德商务（`?v=cd`）
+    `/s04` 兼职（`odd/`）　`/s05` 中德商务（`?v=cd`）　`/s06` AI Agent（`?v=ag`）
   · `/sdata` 看分职业访问统计：访问 / PDF / **扫码**（纸质二维码进作品页的次数）/
     **停留**（平均秒数）/ **读完**（平均滚动百分比）/ 本周，另有语言 · 国家 · 设备的分布
 

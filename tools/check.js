@@ -24,6 +24,9 @@
        ⑫ 控制台 hub.html 的四张表有没有跟上（漏了只影响你自己，所以只提示不报错）
        ⑬ 图片名片（变体的 card 字段）：四语的图是否都在、是不是 PNG、尺寸与 card.size 是否一致
           （缺一张不报错，只是那种语言点开名片是个裂开的图标）
+       ⑭ onlyIn（条目的开放范围）：写的必须是已登记的变体 ID；变体也不许引用没对它开放的条目
+          （写错一个字母＝那条在所有变体里都消失；引用了不开放的条目＝那行配置白写，都不报错）
+       ⑮ 条目上的「其他版本」链接（pages）：短链必须已登记，且不许指向私人控制台或兼职独立页
 
    退出码 0 = 全过；1 = 有问题，逐条列出。
    零依赖，不需要浏览器，也不需要本地服务器。
@@ -248,13 +251,44 @@ Object.entries(variants).filter(([, V]) => V && V.card).forEach(([v, V]) => {
   });
 });
 
+/* ── ⑭ onlyIn：条目的开放范围 ─────────────────────────────── */
+// base.js 的条目可以写 onlyIn: ["ai-agent"]，只对列出的变体可见（scripts/data-loader.js 的 _visibleIn）。
+const scoped = [].concat(pool, BASE.tools || [], BASE.capabilities || []).filter((it) => it && it.onlyIn);
+scoped.forEach((it) => {
+  if (!Array.isArray(it.onlyIn) || !it.onlyIn.length)
+    return fail(`⑭ ${it.id} 的 onlyIn 应是非空数组（不想限制就整行删掉，而不是写成空的）`);
+  it.onlyIn.forEach((v) => {
+    if (registered.indexOf(v) === -1) fail(`⑭ ${it.id} 的 onlyIn 写了未登记的变体：${v}（这条会在所有变体里消失）`);
+  });
+});
+const openTo = (id, v) => {
+  const it = [].concat(pool, BASE.tools || []).find((x) => x && x.id === id);
+  return !it || !it.onlyIn || it.onlyIn.indexOf(v) !== -1;
+};
+Object.entries(variants).forEach(([v, V]) => {
+  const refs = [].concat(V.highlightTools || [], V.emphasizeItems || [], Object.keys(V.itemOverrides || {}),
+    ...Object.values(V.order || {}));
+  refs.forEach((id) => { if (!openTo(id, v)) fail(`⑭ ${v} 引用了没对它开放的条目 ${id}（onlyIn 不含 ${v}，渲染时它不存在）`); });
+});
+
+/* ── ⑮ 「其他版本」链接行的短链 ─────────────────────────────── */
+// render.js 的 itemPages 把 pages[].v 拼成 ?v=<短链>：没登记的短链落到占位页（一个点），读者以为是坏链接。
+// mn（兼职独立页）不放：它会整页跳走，而且是另一类读者的简历；hub 不是变体，本来也拼不出来。
+[].concat(BASE.projects || [], BASE.moreWorks || []).filter((it) => it && it.pages).forEach((it) => {
+  if (!Array.isArray(it.pages) || !it.pages.length) return fail(`⑮ ${it.id} 的 pages 应是非空数组`);
+  it.pages.forEach((pg) => {
+    if (!pg || !Object.prototype.hasOwnProperty.call(ALIAS, pg.v)) fail(`⑮ ${it.id} 的 pages 用了未登记的短链：${pg && pg.v}`);
+    else if (pg.v === "mn") fail(`⑮ ${it.id} 的 pages 指向兼职独立页 mn —— 那是另一类读者的简历，不对外互链`);
+  });
+});
+
 /* ── 结果 ─────────────────────────────────────────────────── */
 const stats = `变体 ${registered.length}｜能力 ${(BASE.capabilities || []).length}｜工具 ${(BASE.tools || []).length}｜` +
   `项目 ${(BASE.projects || []).length}｜更多作品 ${(BASE.moreWorks || []).length}`;
 console.log(stats);
 notes.forEach((n) => console.log("提示：" + n));
 if (!problems.length) {
-  console.log("全部通过 —— 13 项检查无异常。");
+  console.log("全部通过 —— 15 项检查无异常。");
   process.exit(0);
 }
 console.log(`\n发现 ${problems.length} 处问题：`);

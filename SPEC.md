@@ -99,6 +99,14 @@ works.html（作品链接页，同一份 base + 同一套变体机制，只是�
       第三方数据不打包票）在 `data/variants/art-vr.js` 文件头。
       PDF：正文多出约 110mm → 「作品示例 ＋ 教育经历」改走全宽流并左右并排（`printFullWidth`
       ＋ print.css 里 `body.v-art-vr` 一段）。页数：中 3 / 英 4 / 德 4 与改前相同，日文 3 → 4。
+- [x] 2026-10-07 第六变体 `ai-agent`（`?v=ag`，hub `/s06`）：投德国 Agent / Agentic AI 类岗位，
+      定位「做创意和媒体工具的 AI Agent 开发者」。项目 LilPainter / JobFinder / Embobo / FilmGen（编排角度）/
+      Verse Wiki / DeskDrawer，事实来自各项目文档、经本人确认；未部署的项目不写链接。
+      新机制 `onlyIn`（`data-loader.js` 的 `_visibleIn` ＋ `check.js` ⑭）：base.js 条目只对列出的变体可见，
+      其余变体输出逐字节不变（snapshot 32 组一致）。PDF 四语 3 页，为此的取舍写在 `ai-agent.js` 里，逐条可撤。
+      Worker 白名单已在本地加 `ai-agent`，但 `wrangler deploy` 未执行 —— 部署前 `?v=ag` 的访问不计数。
+      另加 `prj-cvsite`（这个简历站本身）＋ 新字段 `pages`：条目下一行「其他版本」链接（ue / fl / ds / cd；
+      兼职页与 hub 不放），`check.js` ⑮ 核对短链。四语 PDF 仍为 3 页，但余量都只剩约 1 行。
 - [x] 2026-10-04 `?v=fl`「服务范围」收成四个大类、每类一句简介、不列细目：实时 3D 交互 /
       网页设计与搭建 / 美术资产制作 / 影视后期；「合作方式」一块撤掉；简介改成讲「我」；
       页面去掉行业 / 客群指向的用词（本人定）。`render.js`：`collab` 条目 items 为空时不输出列表

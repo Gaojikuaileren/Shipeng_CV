@@ -13,6 +13,12 @@
      旧字段 project.video 仍然管用，等价于 link + linkKind:"video"
    - moreWorks → 次要作品，仅在特定变体（如 ue5-tech）显示
    - contact.id → 变体用 hide:["id"] 控制显示哪个邮箱
+   - onlyIn: ["变体ID", …] → 这一条（项目 / 更多作品 / 工具 / 能力）只对列出的变体可见；
+     不写 = 所有变体可见（现有条目都不写）。专为某一份简历加的内容用它，不要去别的变体里 hideItems：
+     新变体默认看不见 onlyIn 条目，不会悄悄多出一条。机制见 data-loader.js 的 _visibleIn，check.js 第 ⑭ 项核对。
+     ⚠️ onlyIn 只挡渲染、不挡下发：本文件整份发给每个访客，写进来的每个字都是公开的。
+   - project.pages: [{ v: "<短链>", label }] ＋ pagesLabel → 条目下多一行「其他版本」链接（render.js 的 itemPages），
+     PDF 里也是可点的链接。短链须已登记、不许指向兼职页 mn（check.js 第 ⑮ 项）。目前只有 prj-cvsite 用。
    ============================================================ */
 window.RESUME_BASE = {
   meta: {
@@ -20,10 +26,11 @@ window.RESUME_BASE = {
     defaultLang: "en",
     langLabels: { zh: "中", ja: "日", en: "EN", de: "DE" },
     updated: "2026-09",
-    /* 变体白名单的唯一真相。新增变体在这里加一行，works.html 就自动认得它。
-       唯一的例外是 index.html 顶部那份内联白名单：它要在 body 渲染前同步判定，
-       跑在 data/base.js 加载之前，读不到这里 → 必须手工同步（README「新变体登记」有清单）。 */
-    variants: ["ue5-tech", "art-vr", "designer", "china-biz"],
+    /* 变体白名单。新增变体在这里加一行，works.html 就自动认得它。
+       index.html 头部的裸入口判定不读这里，读的是 scripts/variants.js 的 ALIAS / PAGE
+       （它在 body 渲染前同步执行，那时本文件还没加载）—— 两处都要登记，README「新变体登记」有清单。
+       （2026-10-07 更正：此前这里写的「index.html 内联白名单」已不存在，头部脚本改调 VARIANTS.resolve 了。） */
+    variants: ["ue5-tech", "art-vr", "designer", "china-biz", "ai-agent"],
   },
 
   /* —— 个人情报 ————————————————————————————————— */
@@ -110,6 +117,13 @@ window.RESUME_BASE = {
        cap-genai 的 since（2024-08）由世鹏本人确认（2026-09-28），不再是待核事项。 */
     { id: "cap-genai",   level: 4, since: "2024-08", name: { zh: "视觉生成 AI 管线", ja: "ビジュアル生成AIパイプライン", en: "Visual Generative AI Pipeline", de: "Visuelle Generative-KI-Pipeline" } },
     { id: "cap-aiops",   level: 4, since: "2026-02", name: { zh: "本地 AI", ja: "ローカルAI", en: "Local AI", de: "Lokale KI" } },
+    /* —— AI Agent 能力（ai-agent 变体用，2026-10-07 加；起始月 2026-07 为本人确认）——
+       cap-ue3d = 把 UE5 / 3D / 媒体背景压成侧栏一行，起始月沿用 cap-unreal 的 2022-01。 */
+    { id: "cap-agent",   level: 4, since: "2026-07", onlyIn: ["ai-agent"], name: { zh: "LLM Agent / 工具调用 / MCP", ja: "LLM エージェント / ツール呼び出し / MCP", en: "LLM Agents / Tool Calling / MCP", de: "LLM-Agenten / Tool Calling / MCP" } },
+    { id: "cap-pyts",    level: 4, since: "2026-07", onlyIn: ["ai-agent"], name: { zh: "Python / TypeScript", ja: "Python / TypeScript", en: "Python / TypeScript", de: "Python / TypeScript" } },
+    { id: "cap-orch",    level: 4, since: "2026-07", onlyIn: ["ai-agent"], name: { zh: "编排与质量验证", ja: "オーケストレーションと品質検証", en: "Orchestration & Quality Gates", de: "Orchestrierung & Qualitätsprüfung" } },
+    { id: "cap-webbe",   level: 4, since: "2026-07", onlyIn: ["ai-agent"], name: { zh: "Web 后端 / 全栈", ja: "Web バックエンド / フルスタック", en: "Web Backend / Full-Stack", de: "Web-Backend / Full-Stack" } },
+    { id: "cap-ue3d",    level: 5, since: "2022-01", onlyIn: ["ai-agent"], name: { zh: "UE5 / 3D / 媒体制作", ja: "UE5 / 3D / メディア制作", en: "UE5 / 3D / Media Production", de: "UE5 / 3D / Medienproduktion" } },
     /* —— 商务 / 项目 / 跨文化能力（china-biz 变体用；该变体 hideSkillLevels:true 不显示点数）—— */
     { id: "cap-lang",    level: 5, name: { zh: "多语沟通（中 / 德 / 英）", ja: "多言語コミュニケーション（中／独／英）", en: "Multilingual Communication (CN / DE / EN)", de: "Mehrsprachige Kommunikation (CN / DE / EN)" } },
     { id: "cap-xcult",   level: 5, name: { zh: "跨文化沟通（中德）", ja: "異文化コミュニケーション（中独）", en: "Cross-cultural Communication (CN–DE)", de: "Interkulturelle Kommunikation (CN–DE)" } },
@@ -187,6 +201,14 @@ window.RESUME_BASE = {
     { id: "t-html",       name: "HTML / CSS",              group: "code" },
     { id: "t-vs",         name: "Visual Studio",           group: "code" },
     { id: "t-ffmpeg",     name: "FFmpeg",                  group: "code" },
+    // 以下六条只在 ai-agent 变体显示（本人 2026-10-07 定）。证据：TypeScript / Electron＝LiveTracker，
+    // FastAPI＝Embobo 网关与 Spoy Wiki，Next.js / Cloudflare Workers＝SP_lessons，Supabase＝Verse Wiki。
+    { id: "t-ts",         name: "TypeScript",              group: "code", onlyIn: ["ai-agent"] },
+    { id: "t-fastapi",    name: "FastAPI",                 group: "code", onlyIn: ["ai-agent"] },
+    { id: "t-nextjs",     name: "Next.js",                 group: "code", onlyIn: ["ai-agent"] },
+    { id: "t-electron",   name: "Electron",                group: "code", onlyIn: ["ai-agent"] },
+    { id: "t-cfworkers",  name: "Cloudflare Workers",      group: "code", onlyIn: ["ai-agent"] },
+    { id: "t-supabase",   name: "Supabase",                group: "code", onlyIn: ["ai-agent"] },
     // design
     { id: "t-ps",         name: "Photoshop",               group: "design" },
     { id: "t-affinity",   name: "Affinity Suite",          group: "design" },
@@ -373,6 +395,106 @@ window.RESUME_BASE = {
       tags: ["UE Verse", "Cloudflare", "Supabase", "Stripe"],
       link: "https://verse-wiki.pages.dev",
       linkKind: "web",
+    },
+
+    /* ———— 以下五条只对 ai-agent 变体开放（onlyIn）。2026-10-07 加，事实逐条来自各项目文档、经本人确认 ————
+       · 没有部署 / 同步的项目一律不写链接，也不写「开源」「可访问」（本人：项目本身暂不公开）。
+       · 「正在开发」只写在句末，和已交付的能力分开 —— 别把计划写成已实现。
+       · DeskDrawer 已在「更多作品」里有一条（指产品官网）；这里的项目条目链接指 Microsoft Store，
+         两条地址不同，check.js ⑧ 不撞车；ai-agent 里把「更多作品」那条挡掉，页面上只出现一次。 */
+    {
+      id: "prj-lilpainter",
+      onlyIn: ["ai-agent"],
+      period: "2026",
+      role: { zh: "Agent 架构与开发", ja: "エージェント設計・開発", en: "Agent Architecture & Development", de: "Agenten-Architektur & Entwicklung" },
+      org: "LilPainter",
+      context: { zh: "个人项目", ja: "個人プロジェクト", en: "Personal project", de: "Eigenes Projekt" },
+      type: { zh: "本地游戏美术资产制作 Agent", ja: "ローカルのゲームアセット制作エージェント", en: "Local Agent for Game Asset Production", de: "Lokaler Agent für Game-Asset-Produktion" },
+      summary: {
+        zh: "让游戏开发者用少量输入批量制作 3D 道具、像素动画、配乐与音效。本地视觉语言模型（Qwen 27B / 35B-A3B，GGUF 量化，llama.cpp）读取冻结的任务包与参考图，生成受控的操作计划，由脚本执行器驱动 Blender（Python）与 Aseprite（Lua）；版本与分支本地持久化。加载模型逐次请求许可、用完释放显存，执行全程浮窗可见、可随时停止，成果过技术核验与来源门禁才保存。正在开发：结构化规格、独立质量门禁与 MCP 接入。",
+        ja: "ゲーム開発者向けに、少ない入力から 3D プロップ、ピクセルアニメ、BGM、効果音をまとめて制作。ローカルの視覚言語モデル（Qwen 27B / 35B-A3B、GGUF 量子化、llama.cpp）が凍結したタスクと参照画像を読んで制御された操作計画を立て、スクリプト実行器が Blender（Python）と Aseprite（Lua）で実行。バージョンとブランチはローカルに保存。モデルの読み込みは毎回許可制で終了後に VRAM を解放、実行中はオーバーレイからいつでも停止でき、成果は技術検証とソースゲートを通ってから保存。開発中：構造化仕様、独立した品質ゲート、MCP 連携。",
+        en: "Batch-produces 3D props, pixel animations, music and sound effects for game developers from minimal input. A local vision-language model (Qwen 27B / 35B-A3B, GGUF-quantized, llama.cpp) reads a frozen task package and reference images and plans controlled operations that a script executor runs in Blender (Python) and Aseprite (Lua); versions and branches persist locally. Each model load needs explicit permission and frees VRAM afterwards, a live overlay can stop any run, and results are saved only after technical checks and a source gate. In development: structured specs, an independent quality gate, MCP integration.",
+        de: "Erzeugt für Spieleentwickler aus wenigen Angaben 3D-Props, Pixel-Animationen, Musik und Soundeffekte im Batch. Ein lokales Vision-Language-Modell (Qwen 27B / 35B-A3B, GGUF-quantisiert, llama.cpp) liest Aufgabenpaket und Referenzbilder und plant kontrollierte Bedienschritte, die ein Skript-Executor in Blender (Python) und Aseprite (Lua) ausführt; Versionen und Branches lokal gespeichert. Modelle laden nur nach Freigabe und geben den VRAM danach frei, ein Overlay stoppt jeden Lauf; gespeichert wird erst nach technischer Prüfung und Quellen-Gate. In Entwicklung: strukturierte Spezifikationen, unabhängiges Quality Gate, MCP-Anbindung.",
+      },
+      tags: ["Local LLM", "Tool Use", "Blender", "llama.cpp"],
+    },
+    {
+      id: "prj-jobfinder",
+      onlyIn: ["ai-agent"],
+      period: "2026",
+      role: { zh: "Agent 工作流设计与开发", ja: "エージェントワークフロー設計・開発", en: "Agent Workflow Design & Development", de: "Agenten-Workflow & Entwicklung" },
+      org: "JobFinder",
+      context: { zh: "个人工具", ja: "個人用ツール", en: "Personal tool", de: "Eigenes Werkzeug" },
+      type: { zh: "求职 Agent · Claude Code ＋ MCP 浏览器工具", ja: "求職エージェント · Claude Code ＋ MCP ブラウザツール", en: "Job-Search Agent · Claude Code + MCP Browser Tools", de: "Jobsuche-Agent · Claude Code + MCP-Browser-Tools" },
+      summary: {
+        zh: "把德国求职里重复的搜岗、筛选、写信和填表交给 Agent，最后一步留给人。Claude Code 按 17 条项目规则运行：经 Claude in Chrome（MCP）在招聘平台搜岗，按 YAML 里的关键词、权重与阈值打分，从信件库挑信填槽、选对应简历，为每家生成材料包与一键复制的表单字段。状态与记忆存于只追加的 JSONL，Python 自检带闸门黄金测试。不编经历、不碰验证码，最终提交由人点击。",
+        ja: "ドイツでの求職の繰り返し作業（求人探し・選別・書類作成・フォーム入力）をエージェントに任せ、最後の一歩は人に残す。Claude Code が 17 条のプロジェクト規則で動き、Claude in Chrome（MCP）で求人サイトを検索、YAML のキーワード・重み・しきい値で採点し、書類ライブラリから選んで差し込み、対応する履歴書と、コピーするだけのフォーム項目付きの企業別パッケージを用意する。状態と記憶は追記専用の JSONL に保存、Python の自己検査がゲート自体をゴールデンテストで確認。経歴は作らず CAPTCHA には触れず、最終送信は人がクリック。",
+        en: "Hands the repetitive parts of a job search in Germany — finding, screening, writing, form-filling — to an agent and leaves the last step to a human. Claude Code runs under 17 project rules: searches job platforms via Claude in Chrome (MCP), scores postings by YAML-defined keywords, weights and thresholds, fills a letter from a curated library, picks the matching CV and builds a per-company packet with copy-ready form fields. State and memory live in append-only JSONL; a Python self-check golden-tests its own gates. No invented experience, no CAPTCHA handling — a human clicks submit.",
+        de: "Ein Agent übernimmt die wiederkehrenden Teile der Jobsuche in Deutschland — Suchen, Sichten, Anschreiben, Formulare; den letzten Schritt macht ein Mensch. Claude Code arbeitet nach 17 Projektregeln: Jobportale über Claude in Chrome (MCP), Scoring nach Keywords, Gewichten und Schwellen aus YAML, Anschreiben aus kuratierter Bibliothek, passende CV-Variante, je Firma ein Paket mit kopierfertigen Formularfeldern. Zustand und Gedächtnis in Append-only-JSONL, Python-Selbsttest mit Golden Tests für die eigenen Gates. Nichts erfunden, keine CAPTCHAs — abgeschickt wird von Menschenhand.",
+      },
+      tags: ["Claude Code", "MCP", "Python", "Human-in-the-Loop"],
+    },
+    {
+      id: "prj-embobo",
+      onlyIn: ["ai-agent"],
+      period: "2026",
+      role: { zh: "架构与全栈开发", ja: "アーキテクチャ・フルスタック開発", en: "Architecture & Full-Stack Development", de: "Architektur & Full-Stack-Entwicklung" },
+      org: "Embobo",
+      context: { zh: "个人项目", ja: "個人プロジェクト", en: "Personal project", de: "Eigenes Projekt" },
+      type: { zh: "本地私人 AI 助手", ja: "ローカルのパーソナル AI アシスタント", en: "Local Personal AI Assistant", de: "Lokaler persönlicher KI-Assistent" },
+      summary: {
+        zh: "数据不出本机的私人 AI 助手。Python FastAPI 模型网关按需拉起 llama.cpp 服务、由显存仲裁决定装载；记忆库（PostgreSQL ＋ Qdrant）完成单机验收；局域网配对准入；统一客户端（WPF：对话、翻译）两台真机验收；六道 pre-commit 闸门守住接口契约。正在开发：桌面宠物、同声传译与日程。",
+        ja: "データが手元の PC から出ないパーソナル AI アシスタント。Python の FastAPI ゲートウェイが VRAM アービターのもとで llama.cpp サーバーを必要時に起動。記憶ストア（PostgreSQL ＋ Qdrant）は単体検証済み、LAN 端末はペアリングと認可で接続、WPF の統合クライアント（チャット・翻訳）は実機 2 台で検収済み、6 段の pre-commit ゲートがインターフェース契約を守る。開発中：デスクトップコンパニオン、同時通訳、スケジュール管理。",
+        en: "A private AI assistant whose data never leaves the machine. A Python FastAPI gateway starts llama.cpp servers on demand under a VRAM arbiter; a memory store (PostgreSQL + Qdrant) passed standalone acceptance; LAN devices are paired and admitted; the unified WPF client (chat, translation) was signed off on two real PCs; six pre-commit gates guard the interface contracts. In development: desktop companion, simultaneous interpretation, scheduling.",
+        de: "Privater KI-Assistent, dessen Daten den Rechner nie verlassen. Ein FastAPI-Gateway (Python) startet llama.cpp-Server bei Bedarf, ein VRAM-Arbiter entscheidet über das Laden; ein Gedächtnisspeicher (PostgreSQL + Qdrant) hat die Einzelplatz-Abnahme bestanden; LAN-Geräte werden gekoppelt und zugelassen; der WPF-Client (Chat, Übersetzung) wurde auf zwei echten PCs abgenommen; sechs Pre-Commit-Gates sichern die Schnittstellenverträge. In Entwicklung: Desktop-Begleiter, Simultandolmetschen, Terminplanung.",
+      },
+      tags: ["FastAPI", "llama.cpp", "Qdrant", "WPF"],
+    },
+    {
+      id: "prj-deskdrawer",
+      onlyIn: ["ai-agent"],
+      period: "2026",
+      role: { zh: "产品开发与发布", ja: "製品開発・リリース", en: "Product Development & Release", de: "Produktentwicklung & Release" },
+      org: "DeskDrawer",
+      context: { zh: "自有产品", ja: "自作製品", en: "Own product", de: "Eigenes Produkt" },
+      type: { zh: "Windows 桌面整理工具 · 已上架并产生营收", ja: "Windows デスクトップ整理ツール · 販売中・収益あり", en: "Windows Desktop Organizer · Shipping, Revenue-generating", de: "Windows-Desktop-Organizer · im Verkauf, mit Umsatz" },
+      summary: {
+        zh: "把桌面图标分组进透明收纳板，需要时把一块板变成真实文件夹。本地优先、一次性买断，无广告、无遥测、无订阅；在 Microsoft Store 销售，配完整文档站。",
+        ja: "デスクトップのアイコンを透明なボードにまとめ、必要ならボードを本物のフォルダーに変える。ローカル優先・買い切りで、広告・テレメトリ・サブスクなし。Microsoft Store で販売し、ドキュメントサイトも整備。",
+        en: "Groups desktop icons into transparent boards and can turn a board into a real folder. Local-first, one-time purchase, no ads, telemetry or subscription; sold on the Microsoft Store with a full documentation site.",
+        de: "Sortiert Desktop-Symbole in transparente Ablagen und macht auf Wunsch einen echten Ordner daraus. Local-first, Einmalkauf, ohne Werbung, Telemetrie oder Abo; im Microsoft Store erhältlich, mit vollständiger Dokumentation.",
+      },
+      tags: ["C#", ".NET", "WinForms", "Microsoft Store"],
+      link: "https://apps.microsoft.com/detail/9n904wfphzfz",
+      linkKind: "store",
+    },
+    {
+      /* 这个简历网站本身（本人 2026-10-07 要求写进 AI Agent 版，并把其他版本放出来当演示）。
+         事实只取本仓库自己能证明的：README（零构建 / 零依赖 / PDF 导出 / 无 cookie 统计）、tools/check.js（15 项）、
+         tools/snapshot.py（6 变体 × 4 语 DOM＋PDF ＋ 3 个作品页 × 4 语 DOM）。改了这些数字记得同步这里。
+         pages = 「其他版本」链接行（render.js 的 itemPages）：只放面向职位的简历版本；
+         兼职独立页（mn）与私人控制台 hub.html 不放（check.js ⑮ 挡 mn）。 */
+      id: "prj-cvsite",
+      onlyIn: ["ai-agent"],
+      period: "2026",
+      role: { zh: "设计与全栈开发", ja: "設計・フルスタック開発", en: "Design & Full-Stack Development", de: "Konzeption & Full-Stack" },
+      org: "Shipeng_CV",
+      context: { zh: "本简历网站", ja: "この履歴書サイト", en: "This CV site", de: "Diese CV-Website" },
+      type: { zh: "多版本简历站 · 四语 · PDF 导出", ja: "多バージョン履歴書サイト · 4 言語 · PDF 出力", en: "Multi-version CV Site · 4 Languages · PDF Export", de: "CV-Website in mehreren Versionen · 4 Sprachen · PDF" },
+      summary: {
+        zh: "这份简历本身：零构建、零依赖的数据驱动静态站，一份数据按职位生成 6 个版本 × 4 种语言并导出矢量 A4 PDF；访问统计跑在 Cloudflare Worker 上、不用 cookie。用 Claude Code 开发，守卫脚本让每次改动可检验：check.js 核对 15 类数据错误，snapshot.py 比对 36 组 DOM 与 PDF 版面。",
+        ja: "この履歴書そのもの。ビルド不要・依存ゼロのデータ駆動型静的サイトで、1 つのデータから職種別 6 バージョン × 4 言語とベクター A4 PDF を生成。アクセス統計は Cookie を使わない Cloudflare Worker。Claude Code で開発し、検査スクリプトで変更を検証可能に：check.js が 15 種類のデータミスを検出、snapshot.py が 36 グループの DOM と PDF レイアウトを比較。",
+        en: "This CV itself: a data-driven static site with no build step or dependencies — one dataset renders six job-targeted versions in four languages and exports vector A4 PDFs; visitor stats run on a cookie-free Cloudflare Worker. Built with Claude Code; guard scripts make every change checkable — check.js catches 15 classes of data errors, snapshot.py compares DOM and PDF layout across 36 groups.",
+        de: "Dieser Lebenslauf selbst: datengetriebene statische Website ohne Build und Abhängigkeiten — ein Datensatz ergibt sechs stellenspezifische Versionen in vier Sprachen samt Vektor-PDF; Statistik über einen Cloudflare Worker ohne Cookies. Mit Claude Code entwickelt und durch Prüfskripte abgesichert: check.js erkennt 15 Fehlerklassen, snapshot.py vergleicht DOM und PDF-Layout über 36 Gruppen.",
+      },
+      pagesLabel: { zh: "其他版本", ja: "ほかのバージョン", en: "Other versions", de: "Weitere Versionen" },
+      pages: [
+        { v: "ue", label: { zh: "UE5 技术美术", ja: "UE5 テクニカルアート", en: "UE5 Tech Art", de: "UE5 Tech Art" } },
+        { v: "fl", label: { zh: "自由职业", ja: "フリーランス", en: "Freelance", de: "Freiberuflich" } },
+        { v: "ds", label: { zh: "设计", ja: "デザイン", en: "Design", de: "Design" } },
+        { v: "cd", label: { zh: "中德商务", ja: "中独ビジネス", en: "China–Germany", de: "China–Deutschland" } },
+      ],
+      tags: ["JavaScript", "Cloudflare Workers", "Python", "i18n"],
     },
   ],
 

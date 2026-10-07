@@ -2,7 +2,7 @@
    variants.js — 变体注册表：短链 ↔ 内部 ID（全站唯一一份）
 
    为什么分两套名字：
-     · **短链**（ue / fl / ds / mn / cd）是对外的名字 —— 印在二维码里、发在邮件里、
+     · **短链**（ue / fl / ds / mn / cd / ag）是对外的名字 —— 印在二维码里、发在邮件里、
        念给人听，越短越好扫、越不容易抄错。
      · **内部 ID**（ue5-tech / art-vr / …）是对内的名字 —— 统计后端的计数键、
        print.css 里 body.v-* 的逐变体排版标定、data/variants/ 的文件名，全都用它。
@@ -30,10 +30,11 @@
     ds: "designer",   // 设计
     mn: "odd",        // 兼职 Mini-Job
     cd: "china-biz",  // 外贸 / 中德商务
+    ag: "ai-agent",   // AI Agent 开发（德国 Agentic AI 类岗位），2026-10-07 加
   };
 
   /* 在 index.html 里渲染的变体 */
-  var PAGE = { "ue5-tech": 1, "art-vr": 1, "designer": 1, "china-biz": 1 };
+  var PAGE = { "ue5-tech": 1, "art-vr": 1, "designer": 1, "china-biz": 1, "ai-agent": 1 };
 
   /* 有自己独立页面的变体：解析到它就要整页跳过去，而不是在 index.html 里渲染 */
   var EXTERNAL = { odd: "odd/" };

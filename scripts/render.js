@@ -233,9 +233,27 @@
           ctx ? h("span", { class: "cv-item-ctx" }, " — " + ctx) : null)),
       typ ? h("p", { class: "cv-item-type" }, typ) : null,
       h("p", { class: "cv-item-body" }, t(e.summary)),
+      e.pages && e.pages.length ? itemPages(e) : null,
       // tag 可以是字符串（各语言同一个，绝大多数条目）或 {zh,ja,en,de}（要按语言换写法时）；t() 对字符串原样返回
       e.tags && e.tags.length ? h("ul", { class: "cv-tags" }, e.tags.map((tg) => h("li", null, t(tg)))) : null);
   }
+  /* —— 条目上的「其他版本」链接行（e.pages = [{ v: "<短链>", label }]，e.pagesLabel 是行首说明）——
+     目前只有 base.js 的 prj-cvsite（简历站本身，onlyIn ai-agent）用它：让读者点开同一份数据生成的
+     其他版本，当作活的演示。链接是相对地址（本地与线上都对，并带上当前语言）；Chrome 导出 PDF 时
+     会把它们解析成绝对地址并保留为可点的链接，所以 PDF 里不再另印网址（试过：独占一行时 ag 多出一页）。
+     短链必须在 scripts/variants.js 登记过，tools/check.js 第 ⑮ 项核对。 */
+  function itemPages(e) {
+    const lang = window.I18n.current;
+    const links = [];
+    e.pages.forEach((pg, i) => {
+      if (i) links.push(" · ");
+      links.push(h("a", { class: "cv-link", href: "?v=" + encodeURIComponent(pg.v) + "&lang=" + encodeURIComponent(lang) }, t(pg.label)));
+    });
+    return h("p", { class: "cv-item-pages" },
+      e.pagesLabel ? h("span", { class: "cv-pages-lead" }, t(e.pagesLabel) + (lang === "zh" || lang === "ja" ? "：" : ": ")) : null,
+      links);
+  }
+
   /* 折叠开关：项目经历与「更多作品」是同一套行为，只有三处不同 ——
      数哪些行（选择器）、留几条（阈值）、按钮上写什么（四语文案）。
      做成工厂而不是两份拷贝：那两份已经悄悄分叉过一次（一份写了 scrollIntoView 的理由，

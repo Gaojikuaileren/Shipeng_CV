@@ -61,7 +61,7 @@ PORT = 5180
 
 # 短链与语言：唯一真相在 scripts/variants.js，这里是它的镜像。
 # 加变体时两处都要改 —— 护栏漏掉一个变体，那个变体就等于没有护栏。
-VARIANTS = ["ue", "fl", "ds", "cd", "mn"]
+VARIANTS = ["ue", "fl", "ds", "cd", "mn", "ag"]
 LANGS = ["zh", "ja", "en", "de"]
 
 # 作品页（PDF 二维码扫进来的落地页）也要有基线 —— 它渲染的是同一份数据的另一种排布，

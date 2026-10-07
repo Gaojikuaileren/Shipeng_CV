@@ -181,6 +181,8 @@
   .cv-cb-list { gap: 0.6mm; font-size: 9pt; line-height: 1.4; }
   .cv-cb-list li::before { color: #777; } /* #999 只有 2.8:1，低于 AA */
   .cv-contact-note { font-size: 8.5pt; color: #444; border-top: 0.4pt solid #ccc; }
+  /* 「其他版本」链接行（PDF 里仍是可点的链接，见 render.js 的 itemPages） */
+  .cv-item-pages { font-size: 8.5pt; margin-top: 1mm; }
 
   /* UE5+AI 专项：本变体内容最多（完整工具集 ＋ 4 件作品 ＋ 二维码说明行），
      不收密度就会为了一行页尾多出整整一页。锁死在 body.v-ue5-tech 上 ——
