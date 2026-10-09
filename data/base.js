@@ -119,7 +119,10 @@ window.RESUME_BASE = {
     { id: "cap-aiops",   level: 4, since: "2026-02", name: { zh: "本地 AI", ja: "ローカルAI", en: "Local AI", de: "Lokale KI" } },
     /* —— AI Agent 能力（ai-agent 变体用，2026-10-07 加；起始月 2026-07 为本人确认）——
        cap-ue3d = 把 UE5 / 3D / 媒体背景压成侧栏一行，起始月沿用 cap-unreal 的 2022-01。 */
-    { id: "cap-agent",   level: 4, since: "2026-07", onlyIn: ["ai-agent"], name: { zh: "LLM Agent / 工具调用 / MCP", ja: "LLM エージェント / ツール呼び出し / MCP", en: "LLM Agents / Tool Calling / MCP", de: "LLM-Agenten / Tool Calling / MCP" } },
+    { id: "cap-agent",   level: 4, since: "2026-07", onlyIn: ["ai-agent"], name: { zh: "LLM Agent / 工具调用 / 记忆 / MCP", ja: "LLM エージェント / ツール呼び出し / 記憶 / MCP", en: "LLM Agents / Tool Calling / Memory / MCP", de: "LLM-Agenten / Tool Calling / Gedächtnis / MCP" } },
+    // cap-agentic：本人「用 Claude Code / Codex 并行开发」的公开说法（2026-10-09 从简介挪到侧栏）。
+    // 证据：LilPainter 的并行会话派发与 Codex 项目技能、JobFinder 的 Claude Code 规则与命令、本仓库的多会话开发。
+    { id: "cap-agentic", level: 4, since: "2026-07", onlyIn: ["ai-agent"], name: { zh: "Agentic Coding（Claude Code / Codex 多会话并行）", ja: "エージェンティック・コーディング（Claude Code / Codex 並行セッション）", en: "Agentic Coding (parallel Claude Code / Codex sessions)", de: "Agentic Coding (parallele Claude-Code-/Codex-Sitzungen)" } },
     { id: "cap-pyts",    level: 4, since: "2026-07", onlyIn: ["ai-agent"], name: { zh: "Python / TypeScript", ja: "Python / TypeScript", en: "Python / TypeScript", de: "Python / TypeScript" } },
     { id: "cap-orch",    level: 4, since: "2026-07", onlyIn: ["ai-agent"], name: { zh: "编排与质量验证", ja: "オーケストレーションと品質検証", en: "Orchestration & Quality Gates", de: "Orchestrierung & Qualitätsprüfung" } },
     { id: "cap-webbe",   level: 4, since: "2026-07", onlyIn: ["ai-agent"], name: { zh: "Web 后端 / 全栈", ja: "Web バックエンド / フルスタック", en: "Web Backend / Full-Stack", de: "Web-Backend / Full-Stack" } },

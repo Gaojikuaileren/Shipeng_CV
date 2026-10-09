@@ -32,15 +32,16 @@ window.RESUME_VARIANT = {
     de: "AI Engineer (Agentic) · Lokale LLMs / Tool Calling / Kreativ- & Medienwerkzeuge",
   },
 
-  /* 三句：① Agent 系统（操作软件、调用工具、有记忆、质量检查、人工确认）② 媒体与 3D 背景
-     ③ 开发方式（本人同意公开：Claude Code / Codex 并行开发）—— 原先是单独一块「开发方式」，
-     为守 3 页压成这一句；那一块的数据仍留在下面 collab 里，从 sections.hide 拿掉 "collab" 即可恢复。
-     「本地模型和 API 都用」：LilPainter / Embobo 是本地模型，JobFinder 走 Claude —— 不能笼统说全本地。 */
+  /* 简介讲「我」（本人 2026-10-09 定稿：B 的开头 ＋ C 的内容）：站在创作工具两边 → 性格与做事方式 →
+     产品设计与媒体艺术各教会我什么 → 带进 AI Agent（模型操作真实软件、人始终看得见管得住）→ 所在地与语言。
+     技术细节交给下面的项目。原先写在简介里的两项按本人要求挪到侧栏：「记忆」并进 cap-agent，
+     「Claude Code / Codex 多会话并行」成了 cap-agentic（Agentic Coding）。
+     ⚠️ 与自由职业版（?v=fl）的简介刻意写得不同：本页的「其他版本」能直接点过去，两段雷同会像复制粘贴。 */
   intro: {
-    zh: "我开发会操作真实软件的 AI Agent，本地模型和 API 都用：模型规划步骤、调用 Blender、Aseprite 和浏览器等工具，有记忆、状态跨轮次保存，产出先过质量检查，加载模型与最终提交由人确认。背后是 KHM 媒体艺术与多年 UE5 / 3D 制作经验——我懂创意工具，也知道一件资产什么时候才算真正能用。开发上我同时调度多个 Claude Code / Codex 会话，用项目规范文件、技能和验证门禁让每次改动都有据可查。",
-    ja: "実際のソフトウェアを操作する AI エージェントを、ローカルモデルと API の両方で開発しています。モデルが手順を計画し、Blender・Aseprite・ブラウザなどのツールを呼び出し、記憶を持ち、状態はラウンドをまたいで保持。成果は品質チェックを通してから扱い、モデルの読み込みと最終送信は人が確認します。土台は KHM でのメディアアートと長年の UE5 / 3D 制作経験——クリエイティブツールを理解し、アセットがいつ本当に使えるかを知っています。開発では複数の Claude Code / Codex セッションを並行して動かし、プロジェクト規約・スキル・検証ゲートですべての変更を追跡可能にしています。",
-    en: "I build AI agents that operate real software, on local models and via API: the model plans the steps and calls tools such as Blender, Aseprite and the browser, with memory and state that persist across runs; output has to pass quality checks, and a human confirms model loading and the final submission. Behind that is a Media Arts diploma from KHM and years of UE5 / 3D production — I know creative tools, and I know when an asset is actually usable. I develop with several Claude Code / Codex sessions in parallel, kept in line by project rule files, skills and verification gates so every change is traceable.",
-    de: "Ich entwickle KI-Agenten, die echte Software bedienen — mit lokalen Modellen wie per API: Das Modell plant die Schritte und ruft Werkzeuge wie Blender, Aseprite und den Browser auf, mit Gedächtnis und Zustand über Läufe hinweg; Ergebnisse müssen Qualitätsprüfungen bestehen, und ein Mensch bestätigt das Laden des Modells und das endgültige Absenden. Dahinter stehen ein Diplom in Media Arts der KHM und jahrelange UE5-/3D-Produktion — ich kenne kreative Werkzeuge und weiß, wann ein Asset wirklich brauchbar ist. Entwickelt wird mit mehreren parallelen Claude-Code-/Codex-Sitzungen, abgesichert durch Projektregeln, Skills und Prüf-Gates — jede Änderung bleibt nachvollziehbar.",
+    zh: "我一直站在创作工具的两边：一边自己用 UE5 和 Blender 做作品，一边写工具，把重复的活交给程序。我好奇、动手快，也有点较真：一个想法会一路做到能用为止，再把它做稳。产品设计让我先想人怎么用，媒体艺术让我习惯在技术和表达之间来回切换；这两年我把这种习惯带进了 AI Agent——让模型去操作真实软件，同时让人始终看得见、管得住。现居科隆，用中、德、英、日四种语言工作。",
+    ja: "私はずっと、クリエイティブツールの両側に立ってきました。UE5 や Blender で自分の作品をつくる一方で、繰り返しの作業をプログラムに任せるツールを書いています。好奇心が強く、手を動かすのが早く、少しこだわりも強い——アイデアは使えるところまでやり切り、それから安定させます。プロダクトデザインでは「人がどう使うか」から考えることを、メディアアートでは技術と表現を行き来することを身につけました。この 2 年ほどはその姿勢を AI エージェントに持ち込み、モデルに実際のソフトウェアを操作させながら、人がいつでも状況を見て制御できるようにしています。ケルン在住、中国語・ドイツ語・英語・日本語で仕事をしています。",
+    en: "I've always worked on both sides of creative tools: making my own work in UE5 and Blender, and writing tools that hand the repetitive parts to software. I'm curious, quick to build and a bit of a stickler: an idea goes all the way to something usable, and then I make it solid. Product design taught me to think first about how people will use a thing; media art got me used to switching between technology and expression. Over the past two years I've carried that into AI agents — letting models operate real software while people can always see what's happening and stay in control. Based in Cologne, working in Chinese, German, English and Japanese.",
+    de: "Ich arbeite seit jeher auf beiden Seiten kreativer Werkzeuge: Ich gestalte eigene Arbeiten in UE5 und Blender und schreibe Werkzeuge, die das Wiederkehrende an Software abgeben. Ich bin neugierig, setze schnell um und bin ziemlich gründlich: Eine Idee bringe ich bis zu etwas Brauchbarem — und mache es dann stabil. Das Produktdesign hat mich gelehrt, zuerst an die Nutzung zu denken, die Medienkunst, zwischen Technik und Ausdruck zu wechseln. In den letzten zwei Jahren habe ich das auf KI-Agenten übertragen: Modelle bedienen echte Software, und Menschen sehen jederzeit, was passiert, und behalten die Kontrolle. Ich lebe in Köln und arbeite auf Chinesisch, Deutsch, Englisch und Japanisch.",
   },
 
   greeting: null,
@@ -63,7 +64,7 @@ window.RESUME_VARIANT = {
   /* 顺序：项目（主证据）→ 工具集（ATS 关键词）→ 工作 → 教育。为守 3 页而隐藏的板块（各自可撤回）：
        · portfolio「作品示例」：本变体只有 Verse Wiki 与 DeskDrawer 两条带链接，约 60mm 换来的信息太少；
        · moreWorks「更多作品」：SP_lessons / LiveTracker 等的技术栈已在工具集里；
-       · collab「开发方式」：压成了简介第三句（见上）。 */
+       · collab「开发方式」：现在由侧栏 cap-agentic 一行代替（数据仍在下面 collab 里，从 hide 拿掉即可恢复）。 */
   sections: {
     order: ["intro", "projects", "collab", "toolset", "moreWorks", "work", "education"],
     hide: ["portfolio", "moreWorks", "collab"],
@@ -110,7 +111,7 @@ window.RESUME_VARIANT = {
   /* —— 侧栏：本人给的顺序。cap-aiops（本地 AI，2026-02 起）沿用 ue5-tech 那一条，名称不改；
      其余五条是 onlyIn 只对本变体开放的新能力。年限由 since 实时算出。 */
   skillDisplay: "since",
-  sidebar: ["cap-agent", "cap-pyts", "cap-aiops", "cap-orch", "cap-webbe", "cap-ue3d"],
+  sidebar: ["cap-agent", "cap-agentic", "cap-pyts", "cap-aiops", "cap-orch", "cap-webbe", "cap-ue3d"],
 
   /* —— 工具集：内容与其余变体相同，另多出六条 onlyIn 工具（TypeScript / FastAPI / Next.js /
      Electron / Cloudflare Workers / Supabase）。高亮只挑本人真用过、与 Agent 岗位相关的。 */
