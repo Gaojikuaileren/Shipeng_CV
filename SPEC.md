@@ -92,6 +92,8 @@ works.html（作品链接页，同一份 base + 同一套变体机制，只是�
 
 **已完成**（2026-06-04 已部署上线 `gaojikuaileren.github.io/Shipeng_CV/`）：
 - [x] 真实内容灌入；4 职业变体（ue5-tech/art-vr/designer/china-biz）＋ 兼职独立页 `odd/`
+- [x] 2026-11-04 `?v=fl` 收窄：侧栏去掉 `cap-genai`；`prj-filmgen` 进 `hideItems`；「影视后期」简介收短；
+      `contactNote` 去掉居留两句，保留开票与独立经营。其余变体不变。
 - [x] 2026-10-02 `?v=fl` 加入网页设计业务，定位放宽为「设计师与媒体艺术家」：
       头衔与简介改为覆盖三条业务；新增「服务范围」板块（复用 `collab` 机制，四块 2 × 2：
       网页设计 / 合作方式 / 实时 3D 与交互媒体 / 3D · 动画 · 渲染）；侧栏加「网页设计」。

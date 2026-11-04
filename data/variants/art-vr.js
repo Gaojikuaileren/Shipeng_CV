@@ -15,6 +15,8 @@
         · 2026-10-04（本人定）：去掉一切行业 / 客群指向的用词；「服务范围」收成四个大类、
           每类一句简介、不列细目：实时 3D 交互 / 网页设计与搭建 / 美术资产制作 / 影视后期。
           原来的「合作方式」一块撤掉、不再保留（本人确认）；简介改成讲「我」，不再罗列服务。
+        · 2026-11-04：侧栏不再列 cap-genai；FilmGen 不在本版显示（hideItems）；「影视后期」一句收短；
+          联系方式下方撤掉居留说明，只留开票与独立经营两句。
 
    读者现在是两类人：
      · **小型企业、机构和个人**（网页业务）；
@@ -96,14 +98,12 @@ window.RESUME_VARIANT = {
       visibility: "public" },
   ],
 
-  /* 联系方式下方：专门消除「雇一个外国人有没有风险」这个顾虑。
-     位置显眼但不抢主内容 —— 它在侧栏联系方式底下，不进正文。
-     ⚠️ 页面上不放任何证件图片或证件号码，只写「可应要求提供」。 */
+  /* 联系方式下方：开票与独立经营两句，在侧栏联系方式底下，不进正文。 */
   contactNote: {
-    zh: "居留许可依《居留法》第 21 条第 5 款签发——允许以媒体开发者 / 媒体从业者身份在德国全境从事自由职业，有效至 2028-03-05。签约前可应要求提供居留卡与附页复印件。开具带德国税号的发票。使用自有生产设备、自行安排工时、同时服务多个委托方。",
-    ja: "滞在許可はドイツ滞在法第 21 条第 5 項に基づくもので、メディア開発者としてドイツ全土でのフリーランス活動が 2028 年 3 月 5 日まで認められています。契約前であれば、滞在カードと付属書類の写しをご提示します。請求書はドイツの税番号付きで発行。自前の設備を用い、稼働時間は自ら管理し、複数の発注者と取引しています。",
-    en: "Residence permit under § 21 (5) of the German Residence Act — freelance work as a media developer is permitted throughout Germany until 5 March 2028. Copies of the permit and its supplementary sheet are available on request before signing. Invoicing with a German tax number. I work with my own equipment, set my own hours and serve several clients.",
-    de: "Aufenthaltstitel nach § 21 Abs. 5 AufenthG — freiberufliche Tätigkeit als Medienentwickler/Medienkünstler, bundesweit erlaubt bis 05.03.2028. Kopie des Titels und des Zusatzblatts stelle ich auf Anfrage vor Vertragsschluss zur Verfügung. Rechnung mit deutscher Steuernummer. Ich arbeite mit eigenen Betriebsmitteln, eigener Zeiteinteilung und für mehrere Auftraggeber.",
+    zh: "开具带德国税号的发票。使用自有生产设备、自行安排工时、同时服务多个委托方。",
+    ja: "請求書はドイツの税番号付きで発行。自前の設備を用い、稼働時間は自ら管理し、複数の発注者と取引しています。",
+    en: "Invoicing with a German tax number. I work with my own equipment, set my own hours and serve several clients.",
+    de: "Rechnung mit deutscher Steuernummer. Ich arbeite mit eigenen Betriebsmitteln, eigener Zeiteinteilung und für mehrere Auftraggeber.",
   },
 
   /* 信息层级：简介（我是谁）→ 服务范围（我提供什么）→ 项目案例（凭什么信）→
@@ -134,7 +134,7 @@ window.RESUME_VARIANT = {
         render.js 遇到空 items 不输出列表，所以没有空的 <ul>。
      ⚠️ 每句都得对得上 base.js 的经历：实时 3D＝千声之室（离线、10 天无人值守）等；
         网页＝Verse Wiki 等；美术资产＝3D / 扫描 / 数字人（我的灰发）与工具集里的 2D 软件；
-        影视后期＝KHM 方向、剪辑合成软件，以及 FilmGen —— 「本地」只挂在这条 AI 流程上。 */
+        影视后期＝KHM 方向与剪辑合成软件。 */
   collab: [
     { id: "sv-rt",
       title: { zh: "实时 3D 交互", ja: "リアルタイム 3D・インタラクション", en: "Real-time 3D & Interaction", de: "Echtzeit-3D & Interaktion" },
@@ -156,10 +156,10 @@ window.RESUME_VARIANT = {
               de: "3D-Modellierung, Texturing, Scans und Digital-Human-Assets, dazu 2D-Illustration — direkt einsetzbar in Engine und Rendering." } },
     { id: "sv-post",
       title: { zh: "影视后期", ja: "映像ポストプロダクション", en: "Film & Video Post-production", de: "Film- & Video-Postproduktion" },
-      note: { zh: "剪辑与合成，以及把 3D 预演直接转成影片镜头的本地 AI 流程。",
-              ja: "編集とコンポジット。3D プリビズから映像ショットを直接生成する、ローカルの AI ワークフローも。",
-              en: "Editing and compositing, plus a local AI workflow that turns a 3D previs straight into film shots.",
-              de: "Schnitt und Compositing, dazu ein lokaler KI-Workflow, der aus einer 3D-Previs direkt Filmshots macht." } },
+      note: { zh: "剪辑与合成。",
+              ja: "編集とコンポジット。",
+              en: "Editing and compositing.",
+              de: "Schnitt und Compositing." } },
   ],
 
   /* 顺序：网页设计领头（与头衔、服务范围的顺序一致），其后沿用企业客户版原来的排法 ——
@@ -168,7 +168,7 @@ window.RESUME_VARIANT = {
      cap-techart 不列 —— 它显示「1 年」，对客户是减分项；名片式的短列表少一条
      不构成履历矛盾（求职版仍然列，年限口径没有分叉）。 */
   skillDisplay: "since",
-  sidebar: ["cap-webdes", "cap-unreal", "cap-3d", "cap-vr", "cap-sensor", "cap-artdes", "cap-genai"],
+  sidebar: ["cap-webdes", "cap-unreal", "cap-3d", "cap-vr", "cap-sensor", "cap-artdes"],
 
   /* 工具集突出企业客户认得出的名字：引擎与渲染管线、硬件对接、建模。 */
   highlightTools: [
@@ -198,6 +198,7 @@ window.RESUME_VARIANT = {
       ja: "専門：工業デザイン、プロダクトデザイン、3D モデリング、ビジュアルデザイン。",
       en: "Focus: industrial design, product design, 3D modelling, visual design.",
       de: "Schwerpunkte: Industriedesign, Produktdesign, 3D-Modellierung, Visuelles Design." } },
+    // 2026-11-04 起 hideItems 挡着，这段不渲染；从 hideItems 拿掉就恢复。
     "prj-filmgen": {
       role: { zh: "AI 视频管线搭建", ja: "AI 動画パイプライン構築", en: "AI Video Pipeline Development", de: "KI-Video-Pipeline-Entwicklung" },
       type: { zh: "3D 预演 → AI 影片镜头 · 本地运行", ja: "3D プリビズ → AI 映像ショット · ローカル稼働", en: "3D Previs → AI Film Shots · Runs Locally", de: "3D-Previs → KI-Filmshots · lokal betrieben" },
@@ -250,17 +251,17 @@ window.RESUME_VARIANT = {
     },
   },
 
-  // 门面：一个现场长稳运行、一个本地 AI 影片管线（2026-09-28 起替下虚拟制片，本人定）
-  emphasizeItems: ["prj-room", "prj-filmgen"],
+  // 门面：现场长稳运行那一条
+  emphasizeItems: ["prj-room"],
 
-  // 挡掉两个不适合对外的邮箱（求职邮箱、私人域名接单邮箱），本变体用 email-biz
-  hideItems: ["email-pro", "email-freelance"],
+  // 挡掉两个不适合对外的邮箱（求职邮箱、私人域名接单邮箱），本变体用 email-biz；FilmGen 本版不显示
+  hideItems: ["email-pro", "email-freelance", "prj-filmgen"],
   order: {
     // order 只排序、不隐藏：没列到的 Portfolio / GitHub / Instagram 仍然会显示在后面。
     // 真要挡掉 Instagram，把 "instagram" 加进上面的 hideItems。
     contact: ["email-biz", "phone", "linkedin"],
-    // 折叠状态下先看到前两条；虚拟制片显式排第三，否则会按 base.js 的顺序落到「我的灰发」后面
-    projects: ["prj-room", "prj-filmgen", "prj-vp"],
+    // 折叠状态下先看到前两条；虚拟制片显式排第二，否则会按 base.js 的顺序落到「我的灰发」后面
+    projects: ["prj-room", "prj-vp"],
   },
 
   /* PDF 里给一个能扫的作品入口，指向 works.html（那一页按本变体的可见条目列出可点链接）。 */
