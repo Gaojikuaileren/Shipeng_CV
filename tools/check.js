@@ -26,7 +26,8 @@
           （缺一张不报错，只是那种语言点开名片是个裂开的图标）
        ⑭ onlyIn（条目的开放范围）：写的必须是已登记的变体 ID；变体也不许引用没对它开放的条目
           （写错一个字母＝那条在所有变体里都消失；引用了不开放的条目＝那行配置白写，都不报错）
-       ⑮ 条目上的「其他版本」链接（pages）：短链必须已登记，且不许指向私人控制台或兼职独立页
+       ⑮ 条目上的「其他版本」链接（pages）：短链必须已登记，且不许指向私人控制台或兼职独立页；
+          正文里的链接（summaryLinks）：那几个字必须原样出现在各语言的 summary 里，地址是 http(s)
 
    退出码 0 = 全过；1 = 有问题，逐条列出。
    零依赖，不需要浏览器，也不需要本地服务器。
@@ -281,8 +282,24 @@ Object.entries(variants).forEach(([v, V]) => {
     else if (pg.v === "mn") fail(`⑮ ${it.id} 的 pages 指向兼职独立页 mn —— 那是另一类读者的简历，不对外互链`);
   });
 });
+// 正文里的链接（summaryLinks，render.js 的 bodyWithLinks）：要包成链接的那几个字必须原样出现在
+// 当前语言的 summary 里 —— 找不到时页面不报错、只是悄悄没有链接。base 条目与各变体的 itemOverrides 都查，
+// 变体里查的是合并后的样子（覆盖的 summary 优先）。
+const linkCheck = (where, it) => (it.summaryLinks || []).forEach((l, i) => LANGS.forEach((lang) => {
+  const text = l && l.text && (typeof l.text === "string" ? l.text : l.text[lang]);
+  const url = l && l.url && (typeof l.url === "string" ? l.url : l.url[lang]);
+  const sum = it.summary && (typeof it.summary === "string" ? it.summary : it.summary[lang]);
+  if (!/^https?:\/\//.test(url || "")) fail(`⑮ ${where} 的 summaryLinks[${i}].url.${lang} 不是 http(s) 地址：${url}`);
+  if (!text || String(sum || "").indexOf(text) === -1)
+    fail(`⑮ ${where} 的 summaryLinks[${i}].text.${lang} 没有原样出现在 summary.${lang} 里 —— 页面上不会有这个链接`);
+}));
+[].concat(BASE.projects || [], BASE.work || [], BASE.moreWorks || []).forEach((it) => it && linkCheck(it.id, it));
+Object.entries(variants).forEach(([v, V]) => Object.entries(V.itemOverrides || {}).forEach(([id, ov]) => {
+  const base = pool.find((x) => x && x.id === id) || {};
+  if (ov.summaryLinks || base.summaryLinks) linkCheck(`${v} 的 ${id}`, Object.assign({}, base, ov));
+}));
 
-/* ── 结果 ─────────────────────────────────────────────────── */
+/* ── 结果─────────────────────────────────────────────────── */
 const stats = `变体 ${registered.length}｜能力 ${(BASE.capabilities || []).length}｜工具 ${(BASE.tools || []).length}｜` +
   `项目 ${(BASE.projects || []).length}｜更多作品 ${(BASE.moreWorks || []).length}`;
 console.log(stats);

@@ -232,10 +232,31 @@
           t(e.role), h("span", { class: "cv-at" }, " · "), orgNode,
           ctx ? h("span", { class: "cv-item-ctx" }, " — " + ctx) : null)),
       typ ? h("p", { class: "cv-item-type" }, typ) : null,
-      h("p", { class: "cv-item-body" }, t(e.summary)),
+      h("p", { class: "cv-item-body" }, bodyWithLinks(e)),
       e.pages && e.pages.length ? itemPages(e) : null,
       // tag 可以是字符串（各语言同一个，绝大多数条目）或 {zh,ja,en,de}（要按语言换写法时）；t() 对字符串原样返回
       e.tags && e.tags.length ? h("ul", { class: "cv-tags" }, e.tags.map((tg) => h("li", null, t(tg)))) : null);
+  }
+  /* —— 正文里的一段文字做成链接（e.summaryLinks = [{ text: {四语}, url: 字符串或 {四语} }]）——
+     不另起一行：纸面高度一点不变，PDF 里照样可点。text 必须原样出现在当前语言的 summary 里
+     （tools/check.js 第 ⑮ 项核对）；万一找不到就不加链接、原样输出。
+     没写 summaryLinks 的条目返回原来那个字符串 → DOM 与加这个机制之前逐字相同。
+     目前只有 art-vr 的千声之室用它（DOK Leipzig 上这件作品的页面）。 */
+  function bodyWithLinks(e) {
+    const txt = t(e.summary);
+    if (!e.summaryLinks || !e.summaryLinks.length) return txt;
+    let parts = [txt];
+    e.summaryLinks.forEach((l) => {
+      const needle = t(l.text);
+      parts = parts.reduce((acc, p) => {
+        const i = typeof p === "string" && needle ? p.indexOf(needle) : -1;
+        if (i === -1) return acc.concat([p]);
+        return acc.concat([p.slice(0, i),
+          h("a", { class: "cv-link", href: t(l.url), target: "_blank", rel: "noopener" }, needle),
+          p.slice(i + needle.length)]);
+      }, []);
+    });
+    return parts;
   }
   /* —— 条目上的「其他版本」链接行（e.pages = [{ v: "<短链>", label }]，e.pagesLabel 是行首说明）——
      目前只有 base.js 的 prj-cvsite（简历站本身，onlyIn ai-agent）用它：让读者点开同一份数据生成的

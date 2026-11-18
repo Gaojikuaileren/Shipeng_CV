@@ -34,6 +34,8 @@
        项目案例仍按交付口径写，不写驻留 / Residenz / 策展 / 沉浸式体验；
        同一批经历的讲法：装置→系统 / 应用，展览→连续运行 X 周且公开可访问，
        观众体验→用户操作，概念研究→需求分析与方案设计，实时影像→实时渲染，沉浸式→交互式 / 可操作。
+       例外（本人 2026-11-18 要求）：千声之室写明作品 2026 年在 DOK Leipzig（DOK Neuland）展出 ——
+       只写作品参展，不写本人在这次展出中做了什么。
      · 只重新解释 base.js 里已有的真实经历。日期 / 学校 / 学历 / 语言等级只来自 base.js，
        这里一律用 itemOverrides 换叙述，绝不新增不存在的项目、客户、交付或年限。
 
@@ -213,11 +215,20 @@ window.RESUME_VARIANT = {
       role: { zh: "实时系统开发", ja: "リアルタイムシステム開発", en: "Real-time System Development", de: "Echtzeitsystem-Entwicklung" },
       type: { zh: "交互式实时应用 · 传感器集成", ja: "インタラクティブ・リアルタイムアプリ · センサー統合", en: "Interactive Real-time Application · Sensor Integration", de: "Interaktive Echtzeit-Anwendung · Sensorintegration" },
       summary: {
-        zh: "任务：在一个实体空间里，让来访者通过触碰现场物体来操作一套实时 3D 应用，全程无需工作人员讲解。实现：搭建 UE5 实时场景与状态机，把物理物体上的传感器信号接入引擎，做成可操作的交互流程。结果：现场连续运行 10 天，每天 5–8 小时，公开可访问 4 周，计划外重启 0 次。技术：Unreal Engine 5、Blueprint、传感器硬件（OSC / ESP32）、实时渲染。角色：独立完成技术方案、实现与现场调试，投入约 1 年。",
-        ja: "課題：実空間で、来場者が現場の物体に触れるだけでリアルタイム 3D アプリを操作でき、係員の説明を要しない構成にすること。実装：UE5 のリアルタイムシーンとステートマシンを構築し、物体側のセンサー信号をエンジンへ取り込み、操作可能なインタラクションとして組み立てた。結果：現地で 10 日間、1 日 5〜8 時間の連続稼働、4 週間一般公開、予定外の再起動 0 回。技術：Unreal Engine 5、Blueprint、センサー機器（OSC / ESP32）、リアルタイムレンダリング。担当：技術設計・実装・現地調整を単独で担当、稼働は約 1 年。",
-        en: "Task: let visitors operate a real-time 3D application in a physical space simply by touching objects on site, with no staff explanation needed. Implementation: built the UE5 real-time scene and state machine, fed sensor signals from the physical objects into the engine and turned them into an operable interaction flow. Result: ran on site for 10 days, 5–8 hours a day, publicly accessible for 4 weeks, zero unplanned restarts. Stack: Unreal Engine 5, Blueprint, sensor hardware (OSC / ESP32), real-time rendering. Role: sole responsibility for concept, implementation and on-site commissioning; roughly a year of work.",
-        de: "Aufgabe: Besucher sollen eine Echtzeit-3D-Anwendung allein durch das Berühren von Objekten vor Ort bedienen können, ohne Erklärung durch Personal. Umsetzung: UE5-Echtzeitszene und Zustandsautomat aufgebaut, Sensorsignale der physischen Objekte in die Engine geführt und zu einem bedienbaren Ablauf verarbeitet. Ergebnis: 10 Tage im Dauerbetrieb vor Ort, täglich 5–8 Stunden, 4 Wochen öffentlich zugänglich, keine ungeplanten Neustarts. Technik: Unreal Engine 5, Blueprint, Sensorhardware (OSC / ESP32), Echtzeitrendering. Rolle: Konzeption, Umsetzung und Inbetriebnahme vor Ort allein verantwortet, Aufwand rund ein Jahr.",
+        zh: "任务：在一个实体空间里，让来访者通过触碰现场物体来操作一套实时 3D 应用，全程无需工作人员讲解。实现：搭建 UE5 实时场景与状态机，把物理物体上的传感器信号接入引擎，做成可操作的交互流程。结果：现场连续运行 10 天，每天 5–8 小时，公开可访问 4 周，计划外重启 0 次。2026 年在 DOK Leipzig（DOK Neuland 单元）展出。技术：Unreal Engine 5、Blueprint、传感器硬件（OSC / ESP32）、实时渲染。角色：独立完成技术方案、实现与现场调试，投入约 1 年。",
+        ja: "課題：実空間で、来場者が現場の物体に触れるだけでリアルタイム 3D アプリを操作でき、係員の説明を要しない構成にすること。実装：UE5 のリアルタイムシーンとステートマシンを構築し、物体側のセンサー信号をエンジンへ取り込み、操作可能なインタラクションとして組み立てた。結果：現地で 10 日間、1 日 5〜8 時間の連続稼働、4 週間一般公開、予定外の再起動 0 回。2026 年、DOK Leipzig（DOK Neuland 部門）で展示。技術：Unreal Engine 5、Blueprint、センサー機器（OSC / ESP32）、リアルタイムレンダリング。担当：技術設計・実装・現地調整を単独で担当、稼働は約 1 年。",
+        en: "Task: let visitors operate a real-time 3D application in a physical space simply by touching objects on site, with no staff explanation needed. Implementation: built the UE5 real-time scene and state machine, fed sensor signals from the physical objects into the engine and turned them into an operable interaction flow. Result: ran on site for 10 days, 5–8 hours a day, publicly accessible for 4 weeks, zero unplanned restarts. Shown at DOK Leipzig 2026 (DOK Neuland). Stack: Unreal Engine 5, Blueprint, sensor hardware (OSC / ESP32), real-time rendering. Role: sole responsibility for concept, implementation and on-site commissioning; roughly a year of work.",
+        de: "Aufgabe: Besucher sollen eine Echtzeit-3D-Anwendung allein durch das Berühren von Objekten vor Ort bedienen können, ohne Erklärung durch Personal. Umsetzung: UE5-Echtzeitszene und Zustandsautomat aufgebaut, Sensorsignale der physischen Objekte in die Engine geführt und zu einem bedienbaren Ablauf verarbeitet. Ergebnis: 10 Tage im Dauerbetrieb vor Ort, täglich 5–8 Stunden, 4 Wochen öffentlich zugänglich, keine ungeplanten Neustarts. 2026 bei DOK Leipzig (DOK Neuland) gezeigt. Technik: Unreal Engine 5, Blueprint, Sensorhardware (OSC / ESP32), Echtzeitrendering. Rolle: Konzeption, Umsetzung und Inbetriebnahme vor Ort allein verantwortet, Aufwand rund ein Jahr.",
       },
+      // 正文里的 DOK Leipzig 几个字直接链到这件作品在 DOK Leipzig 官网上的页面（不另起一行，见 render.js 的 bodyWithLinks）
+      summaryLinks: [{
+        text: { zh: "DOK Leipzig（DOK Neuland 单元）", ja: "DOK Leipzig（DOK Neuland 部門）",
+                en: "DOK Leipzig 2026 (DOK Neuland)", de: "DOK Leipzig (DOK Neuland)" },
+        url: { zh: "https://www.dok-leipzig.de/en/film/room-thousand-voices/programm",
+               ja: "https://www.dok-leipzig.de/en/film/room-thousand-voices/programm",
+               en: "https://www.dok-leipzig.de/en/film/room-thousand-voices/programm",
+               de: "https://www.dok-leipzig.de/film/room-thousand-voices/programm" },
+      }],
     },
     "prj-grau": {
       role: { zh: "3D 扫描与数字人管线", ja: "3D スキャンとデジタルヒューマン工程", en: "3D Scanning & Digital Human Pipeline", de: "3D-Scanning & Digital-Human-Pipeline" },
