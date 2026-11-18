@@ -92,6 +92,10 @@ works.html（作品链接页，同一份 base + 同一套变体机制，只是�
 
 **已完成**（2026-06-04 已部署上线 `gaojikuaileren.github.io/Shipeng_CV/`）：
 - [x] 真实内容灌入；4 职业变体（ue5-tech/art-vr/designer/china-biz）＋ 兼职独立页 `odd/`
+- [x] 2026-11-18 `?v=ds` 网页设计：`work-freelance` 在本版用 `itemOverrides` 写成「自由职业网页设计师」，
+      一句话只讲设计；新条目 `prj-websample`（`onlyIn: ["designer"]`，链接到一张网页设计示例页）
+      由 `order.projects` 排进「作品示例」第一条（本版项目板块隐藏，所以它只出现在作品示例与 works.html）。
+      不放截图、不加说明文字（本人要求）。没有新机制；其余变体输出不变。
 - [x] 2026-11-04 `?v=fl` 收窄：侧栏去掉 `cap-genai`；`prj-filmgen` 进 `hideItems`；「影视后期」简介收短；
       `contactNote` 去掉居留两句，保留开票与独立经营。其余变体不变。
 - [x] 2026-10-02 `?v=fl` 加入网页设计业务，定位放宽为「设计师与媒体艺术家」：
