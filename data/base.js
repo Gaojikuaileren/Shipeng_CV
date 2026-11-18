@@ -500,15 +500,16 @@ window.RESUME_BASE = {
       tags: ["JavaScript", "Cloudflare Workers", "Python", "i18n"],
     },
     {
-      /* 网页设计示例页：只对设计版开放，排它「作品示例」第一（designer.js 的 order.projects）。
-         设计版隐藏项目板块 → 这条只以「作品示例」里的一行链接出现（PDF 目录 ＋ works.html），
-         所以只写那一行用得到的字段。名称取示例页自己的页面标题，不另起名字（本人要求）。 */
+      /* 网页设计：只对设计版开放，排它「作品示例」第一（designer.js 的 order.projects）。
+         链到作品集站的网页设计列表页（截图，点开是每一张示例页）。设计版隐藏项目板块 →
+         这条只以「作品示例」里的一行链接出现（PDF 目录 ＋ works.html），所以只写那一行用得到的字段。
+         名称用列表页自己的标题。 */
       id: "prj-websample",
       onlyIn: ["designer"],
       period: "2026",
-      org: "Maocai und Malatang",
-      type: { zh: "餐厅网站设计", ja: "飲食店の Web デザイン", en: "Restaurant website design", de: "Webdesign für ein Restaurant" },
-      link: "https://entwurf-zgmjg5.pages.dev/",
+      org: { zh: "网页设计", ja: "Web デザイン", en: "Web Design", de: "Webdesign" },
+      type: { zh: "餐厅网站", ja: "飲食店の Web サイト", en: "Restaurant websites", de: "Restaurant-Websites" },
+      link: "https://s-gjklr.work/web/",
       linkKind: "web",
     },
   ],
